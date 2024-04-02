@@ -1,5 +1,4 @@
 #include "BinaryIO.h"
-#include "winsock.h"
 #include "meshtags.h"
 #include "databuffers.h"
 #include "skinmodelpoly.h"

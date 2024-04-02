@@ -23,6 +23,9 @@
     <ClInclude Include="include\meshbuffers.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\databuffers.h" />
+    <ClInclude Include="src\dll\framework.h" />
+    <ClInclude Include="src\dll\interfaceskinmodel.h" />
+    <ClInclude Include="src\dll\pch.h" />
     <ClInclude Include="src\meshtags.h" />
     <ClInclude Include="src\modelfile.h" />
     <ClInclude Include="src\skinmodel.h" />
@@ -33,6 +36,9 @@
     <ClCompile Include="include\BinaryIO.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\databuffers.cpp" />
+    <ClCompile Include="src\dll\dllmain.cpp" />
+    <ClCompile Include="src\dll\interfaceskinmodel.cpp" />
+    <ClCompile Include="src\dll\pch.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\modelfile.cpp" />
     <ClCompile Include="src\skinmodel.cpp" />
@@ -64,13 +70,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -146,6 +152,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\WWE2K_MDL\Link\$(TargetName).dll"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -163,6 +172,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\WWE2K_MDL\Link\$(TargetName).dll"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

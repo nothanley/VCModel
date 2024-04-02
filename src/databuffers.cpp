@@ -70,7 +70,7 @@ CDataBuffer::getModelBones_2_8(
         if (unkValueB != -1) {
             buffer += 0x10;
             buffer += 0x10;
-        }
+		}
 
         /* Filter irregular joint types */
         if (isTypeJoint)
@@ -170,19 +170,19 @@ void setData(char* buffer, const MeshBuffer& mBuffer, Mesh& mesh)
 			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.texcoords);
 			break;
 		case COLOR:
-		{
-			VertexColorSet set;
-			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, set.data);
-			mesh.colors.push_back(set);
-		}
-		break;
+			{
+				VertexColorSet set;
+				Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, set.data);
+				mesh.colors.push_back(set);
+			}
+			break;
 		default:
 			break;
 	}
 }
 
 
-void InitMeshBuffer(char*& buffer, Mesh& mesh, const std::vector<std::string>& strings)
+void LoadMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& strings)
 {
 	MeshBuffer mBuffer;
 	mBuffer.format = strings.at(ReadUInt16(buffer));
@@ -192,13 +192,10 @@ void InitMeshBuffer(char*& buffer, Mesh& mesh, const std::vector<std::string>& s
 
 	/* Load mesh buffer charptr */
 	uint32_t size = Data::getDataSetSize(mesh.numVerts, mBuffer.property);
-	char* meshBuffer = new char[size];
-	memcpy(meshBuffer, buffer, size);
 
 	/* Collect and set mesh buffer data */
 	setData(buffer, mBuffer, mesh);
 	buffer += size;
-	delete[] meshBuffer;
 }
 
 void getSkinData(char*& buffer, Mesh& mesh) {
@@ -264,7 +261,7 @@ void getMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& stri
 		uint32_t dataMagic = ReadUInt32(buffer);
 		uint32_t typeMagic = ReadUInt32(buffer);
 		uint32_t formatMagic = ReadUInt32(buffer);
-		InitMeshBuffer(buffer, mesh, strings);
+		LoadMeshData(buffer, mesh, strings);
 	}
 
 	getSkinData(buffer, mesh);
@@ -310,11 +307,11 @@ getTriangleBuffer(char*& buffer, Mesh* mesh, const std::vector<Material>& mtlTab
 	uint32_t numMaterials = ReadUInt32(buffer);
 
 	/* Ignore face settings and assign last selected material to mesh*/
-	for (int i = 0; i < numMaterials; i++) {
+	for (int i = 0; i < numMaterials; i++) 
+	{
 		uint32_t matIndex = ReadUInt32(buffer);
 		uint32_t affectedFaceIndexFirst = ReadUInt32(buffer);
 		uint32_t affectedFaceIndexSize = ReadUInt32(buffer);
-
 		mesh->material = mtlTable.at(matIndex);
 	}
 

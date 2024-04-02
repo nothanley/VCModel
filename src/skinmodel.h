@@ -22,9 +22,8 @@ class CSkinModel
 	public:
 		std::vector<Mesh*> getMeshes() const { return m_meshes; }
 		int getNumMeshes() { return m_meshes.size(); }
-		int getNumBones() { return m_bones.size(); }
-		int getNumMats() { return m_materials.size(); }
-		void free();
+		int getNumBones()  { return m_bones.size(); }
+		int getNumMats()   { return m_materials.size(); }
 		void saveToObjFile(const char* path, bool split = true);
 
 	private:

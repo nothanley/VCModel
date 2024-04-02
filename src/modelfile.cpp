@@ -1,10 +1,8 @@
-#include "modelfile.h"
 #include <BinaryIO.h>
-#include "meshtags.h"
-#include "winsock.h"
 #include "common.h"
+#include "modelfile.h"
+#include "meshtags.h"
 #include "skinmodelpoly.h"
-
 using namespace BinaryIO;
 
 CModelContainer::CModelContainer(const char* path)
@@ -29,14 +27,20 @@ CModelContainer::LoadFile() {
 	if (!m_fileBf)
 		throw std::runtime_error("Cannot read MDL file.");
 
+	/* load skin model object */
 	CModelContainer::ValidateContainer();
 	CModelContainer::ReadContents();
+
+	/* free memory */
+	delete[] m_fileBf;
+	m_fileBf = nullptr;
 }
 
 void
-CModelContainer::ReadContents() {
+CModelContainer::ReadContents() 
+{
 	if (!m_isReady)
-		throw std::logic_error("Attempting to read contents of an invalid MDL container.");
+		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
 
 	printf("Opening Model File: %s\n", m_sFilePath.c_str());
 	switch (m_version)

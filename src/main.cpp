@@ -6,7 +6,6 @@ int main()
     CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
     CSkinModel* model = mdlFile.getModel();
 
-    if (model) {
+    if (model)
         delete model;
-    }
 }

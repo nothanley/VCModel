@@ -25,6 +25,9 @@
     <Filter Include="Source\Helper">
       <UniqueIdentifier>{f9a8bdad-5752-40f0-a5da-33f8c0dc80cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Wrapper">
+      <UniqueIdentifier>{792135d2-898a-4814-b82b-424a45bfcff6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -42,9 +45,6 @@
     <ClInclude Include="include\meshbuffers.h">
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="src\wavefront.h">
-      <Filter>Source\Model\VC</Filter>
-    </ClInclude>
     <ClInclude Include="include\BinaryIO.h">
       <Filter>Source\Helper</Filter>
     </ClInclude>
@@ -53,6 +53,18 @@
     </ClInclude>
     <ClInclude Include="src\skinmodelpoly.h">
       <Filter>Source\Model\VC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wavefront.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dll\pch.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dll\framework.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dll\interfaceskinmodel.h">
+      <Filter>Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,9 +80,6 @@
     <ClCompile Include="src\databuffers.cpp">
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="src\wavefront.cpp">
-      <Filter>Source\Model\VC</Filter>
-    </ClCompile>
     <ClCompile Include="include\BinaryIO.cpp">
       <Filter>Source\Helper</Filter>
     </ClCompile>
@@ -79,6 +88,18 @@
     </ClCompile>
     <ClCompile Include="src\skinmodelpoly.cpp">
       <Filter>Source\Model\VC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wavefront.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dll\pch.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dll\interfaceskinmodel.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dll\dllmain.cpp">
+      <Filter>Wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
