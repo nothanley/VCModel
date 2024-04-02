@@ -4,9 +4,7 @@
 #include <meshtags.h>
 
 using namespace BinaryIO;
-using namespace VCModel;
 using namespace MeshBuffers;
-
 
 void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 	BoundingBox& box = mesh.bounds;
@@ -22,7 +20,7 @@ void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 }
 
 void 
-CDataBuffer::getStringTable(char* buffer, const uintptr_t& blockPos, std::vector<std::string>& stringTable)
+CDataBuffer::getStringTable(char* buffer, std::vector<std::string>& stringTable)
 {
 	uint32_t numStrings = ReadUInt32(buffer);
 	printf("\n\tStringTable size: %d", numStrings);
@@ -40,18 +38,16 @@ CDataBuffer::getStringTable(char* buffer, const uintptr_t& blockPos, std::vector
 
 
 void
-CDataBuffer::getModelBones_Ver_2_8(
+CDataBuffer::getModelBones_2_8(
     char* buffer,
     const uintptr_t& size,
     std::vector<RigBone*>& bones,
     const std::vector<std::string>& stringTable)
 {
-
-    uint32_t numUnks0, numUnks1, numUnks2, numBones;
-    numUnks0 = ReadUInt32(buffer);
-    numUnks1 = ReadUInt32(buffer);
-    numBones = ReadUInt32(buffer);
-    numUnks2 = ReadUInt32(buffer);
+    uint32_t numUnks0 = ReadUInt32(buffer);
+    uint32_t numUnks1 = ReadUInt32(buffer);
+    uint32_t numBones = ReadUInt32(buffer);
+    uint32_t numUnks2 = ReadUInt32(buffer);
 
     printf("\n\tTotal Bones: %d", numBones);
     bones.resize(numBones);
@@ -59,9 +55,6 @@ CDataBuffer::getModelBones_Ver_2_8(
     /* Iterate and collect all rig bones */
     for (int i = 0; i < numBones; i++)
     {
-        if (i > 0xcf) {
-            printf("");
-        }
         int16_t index = ReadInt16(buffer);
         int16_t parentIndex = ReadInt16(buffer);
         bool isTypeJoint = !(index == 0 && parentIndex == 0);
@@ -94,23 +87,12 @@ CDataBuffer::getModelBones_Ver_2_8(
 }
 
 void
-CDataBuffer::getModelBones(
+CDataBuffer::getModelBones_2_5(
     char* buffer,
     const uintptr_t & size,
     std::vector<RigBone*>&bones,
-    const std::vector<std::string>&stringTable,
-    const int& containerType)
+    const std::vector<std::string>&stringTable)
 {
-
-    switch (containerType)
-    {
-        case MDL_VERSION_2_8:
-            CDataBuffer::getModelBones_Ver_2_8(buffer, size, bones, stringTable);
-            return;
-        default:
-            break;
-    }
-
     uint32_t numUnks0 = ReadUInt32(buffer);
     uint32_t numBones = ReadUInt32(buffer);
     uint32_t numUnks1 = ReadUInt32(buffer);

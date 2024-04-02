@@ -1,76 +1,68 @@
 #include "modelfile.h"
-#include "vcmodel.h"
 #include <BinaryIO.h>
 #include "meshtags.h"
 #include "winsock.h"
+#include "common.h"
+#include "skinmodelpoly.h"
 
 using namespace BinaryIO;
 
-VCModel::CContainer::CContainer(std::istream* stream)
-    : fs(stream)
+CModelContainer::CModelContainer(const char* path)
+	: m_sFilePath(path),
+	  m_data(nullptr),
+	  m_fileBf(nullptr),
+	  m_isReady(false),
+	  m_model(nullptr)
 {
-    Load();
+	LoadFile();
 }
 
-
-VCModel::CContainer::CContainer(const char* path) 
-	: m_sFilePath(path)
+CModelContainer::~CModelContainer() 
 {
-	Load();
-//	fs->close();
-}
-
-//static
-//uintptr_t GetFileBufferSize(std::filebuf* buffer)
-//{
-//	buffer->pubseekoff(0, std::ios::end);
-//	std::streampos size = buffer->pubseekoff(0, std::ios::cur);
-//	return uintptr_t(size);
-//}
-
-void
-VCModel::CContainer::Load() {
-	if (!fs)
-		fs= new std::ifstream(this->m_sFilePath, ios::binary);
-	if (!fs->good())
-		throw std::runtime_error("Cannot read MDL stream.");
-
-	CContainer::ValidateContainer();
-	CContainer::ReadContents();
-//	fs->close();
+	if (m_fileBf)
+		delete m_fileBf;
 }
 
 void
-VCModel::CContainer::ReadContents() {
-	if (!isOk)
+CModelContainer::LoadFile() {
+	m_fileBf = VCFile::Common::readBinaryFile(m_sFilePath);
+	if (!m_fileBf)
+		throw std::runtime_error("Cannot read MDL file.");
+
+	CModelContainer::ValidateContainer();
+	CModelContainer::ReadContents();
+}
+
+void
+CModelContainer::ReadContents() {
+	if (!m_isReady)
 		throw std::logic_error("Attempting to read contents of an invalid MDL container.");
-		
-	fs->seekg(0x4);
-	m_fileVersion = BinaryIO::ReadUInt32(*fs);
 
 	printf("Opening Model File: %s\n", m_sFilePath.c_str());
-
-	m_pModel = new VCModel::CPackage(fs, this);
-	return;
-
-	try {
-		m_pModel = new VCModel::CPackage(fs, this); }
-	catch (...) {
-		throw std::runtime_error("Failed to load VCModel file.");
+	switch (m_version)
+	{
+		case MDL_VERSION_2_5:
+			this->m_model = new CSkinModel_2_5(m_data, this);
+			break;
+		case MDL_VERSION_2_8:
+			this->m_model = new CSkinModel_2_8(m_data, this);
+			break;
+		default:
+			printf("Unsupported MDL version.\n");
+			break;
 	}
 }
 
 void
-VCModel::CContainer::ValidateContainer() {
-	fs->seekg(ios::beg);
-	uint32_t signature = ReadUInt32(*fs);
-//	this->m_fileSize = GetFileBufferSize(fs->rdbuf());
+CModelContainer::ValidateContainer() 
+{
+	/* Initialize stream pointer*/
+	uint32_t signature;
+	this->m_data = m_fileBf;
 
-	// Validates type and version
-	if (signature == MDL_MAGIC)
-		this->isOk = true;
-
-	/* Reset stream pointer */
-	fs->seekg(ios::beg);
+	/* Get file tag data */
+	signature  = ReadUInt32(m_data);
+	m_version  = ReadUInt32(m_data);
+	m_isReady  = (signature == MDL_MAGIC);
 }
 

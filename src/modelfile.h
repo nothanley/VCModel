@@ -2,36 +2,27 @@
 #include <fstream>
 #pragma once
 
-namespace VCModel{
+class CSkinModel;
+class CModelContainer {
 
-	class CPackage;
-	class CContainer {
+public:
+	CModelContainer(const char* path);
+	~CModelContainer();
 
-	public:
-        CContainer();
-        CContainer(std::istream* stream);
-        CContainer(const char* path);
-		~CContainer() 
-		{
-			if (m_pModel)
-				delete m_pModel;
-		}
+public:
+	CSkinModel* getModel(){ return m_model; }
+	uint32_t  getVersion(){ return m_version; }
 
-		VCModel::CPackage* getModel() { return this->m_pModel; }
-		int getVersion() { return this->m_fileVersion; }
+private:
+	void LoadFile();
+	void ReadContents();
+	void ValidateContainer();
 
-	private:
-		void Load();
-		void ReadContents();
-		void ValidateContainer();
-
-	private:
-		VCModel::CPackage* m_pModel = nullptr;
-		std::string m_sFilePath;
-		uint32_t m_fileVersion;
-        std::istream* fs = nullptr;
-//		uintptr_t m_fileSize;
-		bool isOk = false;
-	};
-
-}
+private:
+	char* m_fileBf;
+	char* m_data;
+	bool m_isReady;
+	std::string m_sFilePath;
+	uint32_t m_version;
+	CSkinModel* m_model;
+};

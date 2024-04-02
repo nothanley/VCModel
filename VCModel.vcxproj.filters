@@ -1,63 +1,89 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Include">
-      <UniqueIdentifier>{664b3525-606b-4aaa-b5ce-95080b114fb3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CLI">
       <UniqueIdentifier>{a9f9bb5c-572b-4b2e-a816-da1c44221cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{664b3525-606b-4aaa-b5ce-95080b114fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Container">
+      <UniqueIdentifier>{bf590b1f-e010-4c18-b32c-2eb2ea2accdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model">
+      <UniqueIdentifier>{0f0b46c5-01ee-4c53-b3ea-1a6939b4434b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model\Mesh">
+      <UniqueIdentifier>{9180b65b-423c-4b98-9783-2cfdc526cfa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model\VC">
+      <UniqueIdentifier>{b39a7549-7b30-4fff-ac46-209a628d30e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File">
+      <UniqueIdentifier>{9085ad71-3824-42e7-b46f-7ca0ad64e182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Helper">
+      <UniqueIdentifier>{f9a8bdad-5752-40f0-a5da-33f8c0dc80cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source\Container</Filter>
     </ClInclude>
-    <ClInclude Include="src\vcmodel.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wavefront.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="src\common.h">
+      <Filter>Source\File</Filter>
     </ClInclude>
     <ClInclude Include="src\databuffers.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\meshtags.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\meshbuffers.h">
-      <Filter>Include</Filter>
+      <Filter>Source\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wavefront.h">
+      <Filter>Source\Model\VC</Filter>
     </ClInclude>
     <ClInclude Include="include\BinaryIO.h">
-      <Filter>Include</Filter>
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skinmodel.h">
+      <Filter>Source\Model\VC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\skinmodelpoly.h">
+      <Filter>Source\Model\VC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\vcmodel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wavefront.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\databuffers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\modelfile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>CLI</Filter>
     </ClCompile>
+    <ClCompile Include="src\modelfile.cpp">
+      <Filter>Source\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="src\databuffers.cpp">
+      <Filter>Source\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wavefront.cpp">
+      <Filter>Source\Model\VC</Filter>
+    </ClCompile>
     <ClCompile Include="include\BinaryIO.cpp">
-      <Filter>Include</Filter>
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skinmodel.cpp">
+      <Filter>Source\Model\VC</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skinmodelpoly.cpp">
+      <Filter>Source\Model\VC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\VCModel">
-      <Filter>Include</Filter>
+      <Filter>Source\Helper</Filter>
     </None>
   </ItemGroup>
 </Project>

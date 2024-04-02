@@ -17,6 +17,6 @@ enum enMeshBfTags
 	MTL  = 0x214c544d,
 	MBfD = 0x4466424d,
 	LODs = 0x73444f4c,
-	ENDP = 0x454E4421,
 	ENDM = 0x454E444D,
+	END  = 0x21444e45,
 };

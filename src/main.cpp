@@ -1,9 +1,12 @@
-// VCModel.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <vcmodel.h>
+// VCModel.cpp : This file contains the 'main' function. Program execution begins and ends there. //
+#include <VCModel>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
+    CSkinModel* model = mdlFile.getModel();
+
+    if (model) {
+        delete model;
+    }
 }
