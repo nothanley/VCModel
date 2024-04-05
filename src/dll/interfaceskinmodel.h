@@ -12,6 +12,8 @@ extern "C" __declspec(dllexport) const char* getMeshName(void* pSkinModel, const
 
 extern "C" __declspec(dllexport) const float* getVertexData(void* pSkinModel, const int index);
 
+extern "C" __declspec(dllexport) const float* getMeshNormals(void* pSkinModel, const int index);
+
 extern "C" __declspec(dllexport) int getNumVerts(void* pSkinModel, const int index);
 
 extern "C" __declspec(dllexport) const uint32_t* getMeshTriangleList(void* pSkinModel, const int index);

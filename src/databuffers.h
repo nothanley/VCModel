@@ -57,6 +57,29 @@ struct Mesh {
 	std::vector<float> binormals, tangents;
 	std::vector<VertexColorSet> colors;
 	std::vector<Triangle> triangles;
+
+	/* Flips all mesh triangle faces inside out. */
+	void flipNormals() 
+	{
+		for (auto& tri : triangles)
+			tri = Triangle{ tri.y, tri.x, tri.z };
+	}
+
+	/* Re-arrange normals for blender import/interface */
+	void convertSplitNorms() 
+	{
+		std::vector<float> data;
+		for (int i = 0; i < numVerts; i++) 
+		{
+			int index = (i * 4);
+			data.push_back( normals.at(index + 0) );
+			data.push_back( normals.at(index + 1) );
+			data.push_back( normals.at(index + 2) );
+		}
+		
+		this->normals = data;
+	}
+
 };
 
 struct MeshBuffer {

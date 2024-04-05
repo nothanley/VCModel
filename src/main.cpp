@@ -6,6 +6,9 @@ int main()
     CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
     CSkinModel* model = mdlFile.getModel();
 
+    auto mesh = model->getMeshes().front();
+    mesh->convertSplitNorms();
+
     if (model)
         delete model;
 }

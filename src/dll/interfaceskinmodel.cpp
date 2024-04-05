@@ -96,7 +96,8 @@ const uint32_t* getMeshTriangleList(void* pSkinModel, const int index) {
         return nullptr;
 
     /* Load mesh */
-    auto mesh = model->getMeshes().at(index);   
+    auto mesh = model->getMeshes().at(index);
+    mesh->flipNormals();
 
     /* Cast triangle vector to index list */  
     /* todo: this is hacky, if we alter the triangle struct we cannot use a cast */
@@ -106,3 +107,16 @@ const uint32_t* getMeshTriangleList(void* pSkinModel, const int index) {
 }
 
 
+const float* getMeshNormals(void* pSkinModel, const int index) {
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    mesh->convertSplitNorms();
+
+    /* Rearrange normal data */
+    return mesh->normals.data();
+}
