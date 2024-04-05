@@ -11,7 +11,16 @@ struct Vec4 {
 	float x, y, z, w;
 };
 
-struct RigBone {
+struct Matrix3 {
+	Vec3 x, y, z;
+};
+
+struct Matrix4 {
+	Vec4 x, y, z, w;
+};
+
+struct RigBone 
+{
 	Vec3 translation;
 	Vec4 quaternion;
 	std::string name;
@@ -19,11 +28,13 @@ struct RigBone {
 	std::vector<RigBone*> children;
 };
 
-struct Material {
+struct Material 
+{
 	std::string name;
 };
 
-struct VertexColorSet {
+struct VertexColorSet 
+{
 	std::vector<float> data;
 };
 
@@ -59,27 +70,10 @@ struct Mesh {
 	std::vector<Triangle> triangles;
 
 	/* Flips all mesh triangle faces inside out. */
-	void flipNormals() 
-	{
-		for (auto& tri : triangles)
-			tri = Triangle{ tri.y, tri.x, tri.z };
-	}
+	void flipNormals();
 
 	/* Re-arrange normals for blender import/interface */
-	void convertSplitNorms() 
-	{
-		std::vector<float> data;
-		for (int i = 0; i < numVerts; i++) 
-		{
-			int index = (i * 4);
-			data.push_back( normals.at(index + 0) );
-			data.push_back( normals.at(index + 1) );
-			data.push_back( normals.at(index + 2) );
-		}
-		
-		this->normals = data;
-	}
-
+	void convertSplitNorms();
 };
 
 struct MeshBuffer {

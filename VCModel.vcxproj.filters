@@ -101,6 +101,9 @@
     <ClCompile Include="src\dll\dllmain.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>
+    <ClCompile Include="include\meshbuffers.cpp">
+      <Filter>Source\Model\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\VCModel">

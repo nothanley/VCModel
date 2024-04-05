@@ -2,9 +2,10 @@
 #include "BinaryIO.h"
 #include "meshbuffers.h"
 #include <meshtags.h>
+#include "winsock.h"
 
 using namespace BinaryIO;
-using namespace MeshBuffers;
+using namespace MeshSerializer;
 
 void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 	BoundingBox& box = mesh.bounds;
@@ -17,6 +18,26 @@ void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 	box.maxX = ReadFloat(buffer);
 	box.maxY = ReadFloat(buffer);
 	box.maxZ = ReadFloat(buffer);
+}
+
+void Mesh::flipNormals()
+{
+	for (auto& tri : triangles)
+		tri = Triangle{ tri.y, tri.x, tri.z };
+}
+
+void Mesh::convertSplitNorms()
+{
+	std::vector<float> data;
+	for (int i = 0; i < numVerts; i++)
+	{
+		int index = (i * 4);
+		data.push_back(normals.at(index + 0));
+		data.push_back(normals.at(index + 1));
+		data.push_back(normals.at(index + 2));
+	}
+
+	this->normals = data;
 }
 
 void 
@@ -55,22 +76,19 @@ CDataBuffer::getModelBones_2_8(
     /* Iterate and collect all rig bones */
     for (int i = 0; i < numBones; i++)
     {
-        int16_t index = ReadInt16(buffer);
+        int16_t index		= ReadInt16(buffer);
         int16_t parentIndex = ReadInt16(buffer);
-        bool isTypeJoint = !(index == 0 && parentIndex == 0);
+        bool isTypeJoint	= !(index == 0 && parentIndex == 0);
 
-        RigBone* bone = new RigBone;
+        RigBone* bone	  = new RigBone;
         bone->translation = Vec3{ ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) };
-        bone->quaternion = Vec4{ ReadFloat(buffer), ReadFloat(buffer),
-                                  ReadFloat(buffer), 0.0 };
+        bone->quaternion  = Vec4{ ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer), 0.0 };
 
         int unkValueA = ReadUInt8(buffer);  /* Perhaps a flag? */
         int unkValueB = ReadUInt32(buffer); /* Unknown dword value */
 
         if (unkValueB != -1) {
-            buffer += 0x10;
-            buffer += 0x10;
-		}
+            buffer += 0x20;  }
 
         /* Filter irregular joint types */
         if (isTypeJoint)
@@ -185,9 +203,9 @@ void setData(char* buffer, const MeshBuffer& mBuffer, Mesh& mesh)
 void LoadMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& strings)
 {
 	MeshBuffer mBuffer;
-	mBuffer.format = strings.at(ReadUInt16(buffer));
+	mBuffer.format   = strings.at(ReadUInt16(buffer));
 	mBuffer.property = strings.at(ReadUInt16(buffer));
-	mBuffer.type = strings.at(ReadUInt32(buffer));
+	mBuffer.type	 = strings.at(ReadUInt32(buffer));
 	buffer = Data::roundPointerToNearest4(buffer);
 
 	/* Load mesh buffer charptr */
