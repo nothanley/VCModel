@@ -105,8 +105,4 @@ public:
 
 	static void getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& meshTable, const std::vector<Material>& mtlTable, const std::vector<std::string>& strings);
 
-private:
-	static RigBone* loadBoneTransform(char*& buffer);
-
-	static void mapBoneToParentSpace(RigBone* target, const RigBone* parent);
 };

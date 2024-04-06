@@ -8,6 +8,107 @@
 using namespace BinaryIO;
 using namespace MeshSerializer;
 
+inline 
+glm::mat4 dot_4x4(const glm::mat4x4& a, const glm::mat4x4& b)
+{
+	glm::mat4 result;
+
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+		{
+			float num = 0;
+
+			for (int k = 0; k < 4; k++)
+				num += a[i][k] * b[k][j];
+
+			result[i][j] = num;
+		}
+
+	return result;
+}
+
+inline 
+void mapBoneToParentSpace(RigBone* child, const RigBone* parent)
+{
+	child->matrix = dot_4x4(child->matrix, parent->matrix);
+}
+
+inline 
+RigBone* loadBoneTransform(char*& buffer)
+{
+	/* Reads bone transformation matrix */
+	RigBone* bone = new RigBone;
+	glm::vec3 position( ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) );
+	glm::vec3 rotation( ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) );
+
+	bone->matrix     = glm::eulerAngleZYX( rotation.x, rotation.y, rotation.z );
+	bone->matrix[3]  = glm::vec4(          position.z, position.y, position.x, 1.0f);
+	return bone;
+}
+
+
+inline 
+void readBone2_8(char*& buffer, 
+	const std::vector<std::string>& stringTable, std::vector<RigBone*>& bones) 
+{
+	int16_t index = ReadInt16(buffer);
+	int16_t parentIndex = ReadInt16(buffer);
+	bool isTypeJoint = !(index == 0 && parentIndex == 0);
+
+	/* Get bone transformation matrix */
+	RigBone* bone = loadBoneTransform(buffer);
+	bone->index   = index;
+	bones.at(index)   = (isTypeJoint) ? bone : nullptr;
+	int8_t  unkValueA = ReadUInt8(buffer);  /* Perhaps a flag? */
+	int32_t unkValueB = ReadUInt32(buffer); /* Unknown dword value */
+
+	if (unkValueB != -1)
+		buffer += 0x20;
+
+	/* Filter irregular joint types */
+	if (!isTypeJoint) {
+		delete bone;
+		return; }
+	
+	bone->name = stringTable.at(index);
+
+	/* Update bone transform to world-space*/
+	if (parentIndex == -1) return;
+	bones.at(parentIndex)->children.push_back(bone);
+	bone->parent = bones.at(parentIndex);
+	mapBoneToParentSpace(bone, bone->parent);
+}
+
+inline
+void readBone2_5(char*& buffer,
+	const std::vector<std::string>& stringTable, std::vector<RigBone*>& bones)
+{
+	int16_t index = ReadInt16(buffer);
+	int16_t parentIndex = ReadInt16(buffer);
+	bool isTypeJoint = !(index == 0 && parentIndex == 0);
+
+	/* Get bone transformation matrix */
+	RigBone* bone   = loadBoneTransform(buffer);
+	bone->index     = index;
+	bones.at(index) = (isTypeJoint) ? bone : nullptr;
+	buffer += sizeof(uint32_t);
+
+	/* Filter irregular joint types */
+	if (!isTypeJoint) {
+		delete bone;
+		return; }
+
+	bone->name = stringTable.at(index);
+
+	/* Update bone transform to world-space*/
+	if (parentIndex == -1) return;
+	bones.at(parentIndex)->children.push_back(bone);
+	bone->parent = bones.at(parentIndex);
+	mapBoneToParentSpace(bone, bone->parent);
+}
+
+
+
 void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 	BoundingBox& box = mesh.bounds;
 	if (getRadius)
@@ -71,26 +172,6 @@ CDataBuffer::getStringTable(char* buffer, std::vector<std::string>& stringTable)
 }
 
 void
-CDataBuffer::mapBoneToParentSpace(RigBone* child, const RigBone* parent)
-{
-	child->matrix = parent->matrix * child->matrix;
-}
-
-RigBone* 
-CDataBuffer::loadBoneTransform(char*& buffer)
-{
-	/* Reads bone transformation matrix */
-	RigBone* bone = new RigBone;
-
-	auto translation = glm::vec4(ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer), 1.0f);
-	auto rotation    = glm::eulerAngleXYZ(ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer));
-
-	bone->matrix	= rotation;
-	bone->matrix[3] = translation;
-	return bone;
-}
-
-void
 CDataBuffer::getModelBones_2_8(
     char* buffer,
     const uintptr_t& size,
@@ -103,42 +184,11 @@ CDataBuffer::getModelBones_2_8(
     uint32_t numUnks2 = ReadUInt32(buffer);
     bones.resize(numBones);
 
-    /* Iterate and collect all rig bones */
-    for (int i = 0; i < numBones; i++)
-    {
-        int16_t index		= ReadInt16(buffer);
-        int16_t parentIndex = ReadInt16(buffer);
-        bool isTypeJoint	= !(index == 0 && parentIndex == 0);
-
-		/* Get bone transformation matrix */
-		RigBone* bone = loadBoneTransform(buffer);
-		bone->index = index;
-
-        int unkValueA = ReadUInt8(buffer);  /* Perhaps a flag? */
-        int unkValueB = ReadUInt32(buffer); /* Unknown dword value */
-
-        if (unkValueB != -1)
-			buffer += 0x20;
-
-        /* Filter irregular joint types */
-        if (isTypeJoint)
-        {
-            bone->name = stringTable.at(index);
-            bones.at(index) = bone;
-            if (parentIndex != -1) 
-			{
-                bones.at(parentIndex)->children.push_back(bone);
-                bone->parent = bones.at(parentIndex);
-
-				/* Calculate final transform matrix */
-				mapBoneToParentSpace(bone, bone->parent);
-            }
-        }
-        else { 
-			bones.at(index) = nullptr;
-			delete bone; 
-		}
-    }
+	/* Iterate and collect all rig bones */
+	for (int i = 0; i < numBones; i++)
+	{
+		readBone2_8(buffer, stringTable, bones);
+	}
 }
 
 void
@@ -158,33 +208,7 @@ CDataBuffer::getModelBones_2_5(
     /* Iterate and collect all rig bones */
     for (int i = 0; i < numBones; i++)
     {
-        int16_t index = ReadInt16(buffer);
-        int16_t parentIndex = ReadInt16(buffer);
-        bool isTypeJoint = !(index == 0 && parentIndex == 0);
-
-		/* Get bone transformation matrix */
-		RigBone* bone = loadBoneTransform(buffer);
-		bone->index = index;
-		buffer += sizeof(uint32_t);
-
-        /* Filter irregular joint types */
-        if (isTypeJoint)
-        {
-            bone->name = stringTable.at(index);
-            bones.at(index) = bone;
-            if (parentIndex != -1) 
-			{
-                bones.at(parentIndex)->children.push_back(bone);
-                bone->parent = bones.at(parentIndex);
-
-				/* Calculate final transform matrix */
-				mapBoneToParentSpace(bone, bone->parent);
-            }
-        }
-        else {
-			bones.at(index) = nullptr;
-			delete bone;
-		}
+		readBone2_5(buffer, stringTable, bones);
     }
 }
 
