@@ -20,7 +20,8 @@ class CSkinModel
 		static void saveObjFile(Mesh* mesh, const char* path);
 
 	public:
-		std::vector<Mesh*> getMeshes() const { return m_meshes; }
+		std::vector<Mesh*>    getMeshes() const { return m_meshes; }
+		std::vector<RigBone*> getBones() const  { return m_bones; };
 		int getNumMeshes() { return m_meshes.size(); }
 		int getNumBones()  { return m_bones.size(); }
 		int getNumMats()   { return m_materials.size(); }

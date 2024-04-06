@@ -29,10 +29,16 @@ void writeNorms(std::ofstream& myfile, Mesh* mesh)
 void writeUVs(std::ofstream& myfile, Mesh* mesh) 
 {
 	myfile << "\n";
-	int numUVs = mesh->texcoords.size();
+	if (mesh->texcoords.size() == 0)
+		return;
+
+	/* Export only default uv channel to .obj stream */
+	auto defaultMap = mesh->texcoords.front().map;
+
+	int numUVs = defaultMap.size();
 	for (int i = 0; i < numUVs; i += 2) {
-		auto x = mesh->texcoords.at(i);
-		auto y = mesh->texcoords.at(i + 1);
+		auto x = defaultMap.at(i);
+		auto y = defaultMap.at(i + 1);
 
 		x = (x < 0) ? -x : x;
 		y = (y < 0) ? -y : y;

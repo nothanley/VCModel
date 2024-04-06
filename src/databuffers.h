@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <glm/glm.hpp>
 #pragma once
 
 struct Vec3 {
@@ -21,8 +22,8 @@ struct Matrix4 {
 
 struct RigBone 
 {
-	Vec3 translation;
-	Vec4 quaternion;
+	int16_t index;
+	glm::mat4 matrix;
 	std::string name;
 	RigBone* parent = nullptr;
 	std::vector<RigBone*> children;
@@ -54,6 +55,10 @@ struct Triangle {
 	uint32_t x, y, z;
 };
 
+struct UVMap {
+	std::vector<float> map;
+};
+
 struct Mesh {
 	std::string name;
 	Material material;
@@ -64,16 +69,20 @@ struct Mesh {
 		numVerts;
 
 	Skin skin;
-	std::vector<float> vertices, normals, texcoords;
+	std::vector<float> vertices, normals;
 	std::vector<float> binormals, tangents;
 	std::vector<VertexColorSet> colors;
 	std::vector<Triangle> triangles;
+	std::vector<UVMap> texcoords;
 
 	/* Flips all mesh triangle faces inside out. */
 	void flipNormals();
 
 	/* Re-arrange normals for blender import/interface */
 	void convertSplitNorms();
+
+	/* Translates and aligns UV map to Blender/MAX 3D space*/
+	void translateUVs(const int& index);
 };
 
 struct MeshBuffer {
@@ -95,4 +104,9 @@ public:
 	static void getMeshes(char* buffer, const uintptr_t& size, std::vector<Mesh*>& meshTable, const std::vector<std::string>& stringTable);
 
 	static void getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& meshTable, const std::vector<Material>& mtlTable, const std::vector<std::string>& strings);
+
+private:
+	static RigBone* loadBoneTransform(char*& buffer);
+
+	static void mapBoneToParentSpace(RigBone* target, const RigBone* parent);
 };

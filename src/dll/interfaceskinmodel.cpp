@@ -56,6 +56,39 @@ int getNumVerts(void* pSkinModel, const int index) {
     return mesh->numVerts;
 }
 
+int getNumUvChannels(void* pSkinModel, const int index) 
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return 0;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    return mesh->texcoords.size();
+}
+
+const float* getMeshUvChannel(void* pSkinModel, const int meshIndex, const int channelIndex)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return 0;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    auto uvs = &mesh->texcoords;
+
+    if (channelIndex > uvs->size())
+        return nullptr;
+
+    /* Extrapolate uv channel */
+    mesh->translateUVs(channelIndex);
+
+    auto& channel = uvs->at(channelIndex).map;
+    return channel.data();
+}
+
 const char* getMeshName(void* pSkinModel, const int index) {
     // Convert void pointer back to CSkinModel pointer
     CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
@@ -119,4 +152,96 @@ const float* getMeshNormals(void* pSkinModel, const int index) {
 
     /* Rearrange normal data */
     return mesh->normals.data();
+}
+
+int getNumBones(void* pSkinModel) 
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model)
+        return 0;
+
+    return model->getNumBones();
+}
+
+
+const char* getBoneName(void* pSkinModel, const int boneIndex) 
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || boneIndex > model->getNumBones())
+        return nullptr;
+
+    /* Load mesh */
+    auto bone = model->getBones().at(boneIndex);
+
+    /* Check valid bone entry */
+    if (!bone) 
+        return nullptr;
+
+    //printf("\nLoading Bone: %s\n", bone->name.c_str());
+    return bone->name.c_str();
+}
+
+int getBoneParentIndex(void* pSkinModel, const int boneIndex)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || boneIndex > model->getNumBones())
+        return -1;
+
+    /* Load skeleton */
+    auto  skeleton = model->getBones();
+    auto& parent   = skeleton.at(boneIndex)->parent;
+
+    if (parent == nullptr)
+        return -1;
+
+    return parent->index;
+}
+
+const float* getGlmMatToFloatPtr(const glm::mat4& mat) {
+    // Allocate memory for the matrix data
+    float* transform = new float[16];
+
+    // Load matrix data into the array
+    transform[0]  = mat[0].x;  
+    transform[1]  = mat[0].y; 
+    transform[2]  = mat[0].z; 
+    transform[3]  = mat[0].w;
+
+    transform[4]  = mat[1].x;  
+    transform[5]  = mat[1].y;  
+    transform[6]  = mat[1].z;  
+    transform[7]  = mat[1].w;
+
+    transform[8]  = mat[2].x;  
+    transform[9]  = mat[2].y; 
+    transform[10] = mat[2].z;  
+    transform[11] = mat[2].w;
+
+    transform[12] = mat[3].x;  
+    transform[13] = mat[3].y; 
+    transform[14] = mat[3].z; 
+    transform[15] = mat[3].w;
+
+    return transform;
+}
+
+const float* getBoneTransformMatrix(void* pSkinModel, const int boneIndex)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || boneIndex > model->getNumBones())
+        return nullptr;
+
+    /* Load bone matrices */
+    auto bone = model->getBones().at(boneIndex);
+    return getGlmMatToFloatPtr(bone->matrix);
+}
+
+void freeMemory_float32(float* data) 
+{
+    if (!data) return;
+    delete[] data;
 }

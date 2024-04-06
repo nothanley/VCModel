@@ -3,6 +3,7 @@
 #include "meshbuffers.h"
 #include <meshtags.h>
 #include "winsock.h"
+#include <glm/gtx/euler_angles.hpp>
 
 using namespace BinaryIO;
 using namespace MeshSerializer;
@@ -40,6 +41,18 @@ void Mesh::convertSplitNorms()
 	this->normals = data;
 }
 
+void Mesh::translateUVs(const int& index)
+{
+	if (index > texcoords.size())
+		return;
+
+	auto& map = this->texcoords.at(index).map;
+	/* Flip Y axis and translate up by one unit */
+	for (int i = 0; i < map.size(); i += 2) {
+		map[i + 1] = -(map[i + 1] - 1.0f);
+	}
+}
+
 void 
 CDataBuffer::getStringTable(char* buffer, std::vector<std::string>& stringTable)
 {
@@ -57,6 +70,25 @@ CDataBuffer::getStringTable(char* buffer, std::vector<std::string>& stringTable)
 	}
 }
 
+void
+CDataBuffer::mapBoneToParentSpace(RigBone* child, const RigBone* parent)
+{
+	child->matrix = parent->matrix * child->matrix;
+}
+
+RigBone* 
+CDataBuffer::loadBoneTransform(char*& buffer)
+{
+	/* Reads bone transformation matrix */
+	RigBone* bone = new RigBone;
+
+	auto translation = glm::vec4(ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer), 1.0f);
+	auto rotation    = glm::eulerAngleXYZ(ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer));
+
+	bone->matrix	= rotation;
+	bone->matrix[3] = translation;
+	return bone;
+}
 
 void
 CDataBuffer::getModelBones_2_8(
@@ -69,8 +101,6 @@ CDataBuffer::getModelBones_2_8(
     uint32_t numUnks1 = ReadUInt32(buffer);
     uint32_t numBones = ReadUInt32(buffer);
     uint32_t numUnks2 = ReadUInt32(buffer);
-
-    printf("\n\tTotal Bones: %d", numBones);
     bones.resize(numBones);
 
     /* Iterate and collect all rig bones */
@@ -80,27 +110,34 @@ CDataBuffer::getModelBones_2_8(
         int16_t parentIndex = ReadInt16(buffer);
         bool isTypeJoint	= !(index == 0 && parentIndex == 0);
 
-        RigBone* bone	  = new RigBone;
-        bone->translation = Vec3{ ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) };
-        bone->quaternion  = Vec4{ ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer), 0.0 };
+		/* Get bone transformation matrix */
+		RigBone* bone = loadBoneTransform(buffer);
+		bone->index = index;
 
         int unkValueA = ReadUInt8(buffer);  /* Perhaps a flag? */
         int unkValueB = ReadUInt32(buffer); /* Unknown dword value */
 
-        if (unkValueB != -1) {
-            buffer += 0x20;  }
+        if (unkValueB != -1)
+			buffer += 0x20;
 
         /* Filter irregular joint types */
         if (isTypeJoint)
         {
             bone->name = stringTable.at(index);
             bones.at(index) = bone;
-            if (parentIndex != -1) {
+            if (parentIndex != -1) 
+			{
                 bones.at(parentIndex)->children.push_back(bone);
                 bone->parent = bones.at(parentIndex);
+
+				/* Calculate final transform matrix */
+				mapBoneToParentSpace(bone, bone->parent);
             }
         }
-        else { delete bone; }
+        else { 
+			bones.at(index) = nullptr;
+			delete bone; 
+		}
     }
 }
 
@@ -115,7 +152,6 @@ CDataBuffer::getModelBones_2_5(
     uint32_t numBones = ReadUInt32(buffer);
     uint32_t numUnks1 = ReadUInt32(buffer);
 
-    printf("\n\tTotal Bones: %d", numBones);
     numBones = (size - 0xC) / 0x20;
     bones.resize(numBones);
 
@@ -126,22 +162,29 @@ CDataBuffer::getModelBones_2_5(
         int16_t parentIndex = ReadInt16(buffer);
         bool isTypeJoint = !(index == 0 && parentIndex == 0);
 
-        RigBone* bone = new RigBone;
-        bone->translation = Vec3{ ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) };
-        bone->quaternion  = Vec4{ ReadFloat(buffer), ReadFloat(buffer),
-                                  ReadFloat(buffer), ReadFloat(buffer) };
+		/* Get bone transformation matrix */
+		RigBone* bone = loadBoneTransform(buffer);
+		bone->index = index;
+		buffer += sizeof(uint32_t);
 
         /* Filter irregular joint types */
         if (isTypeJoint)
         {
             bone->name = stringTable.at(index);
             bones.at(index) = bone;
-            if (parentIndex != -1) {
+            if (parentIndex != -1) 
+			{
                 bones.at(parentIndex)->children.push_back(bone);
                 bone->parent = bones.at(parentIndex);
+
+				/* Calculate final transform matrix */
+				mapBoneToParentSpace(bone, bone->parent);
             }
         }
-        else { delete bone; }
+        else {
+			bones.at(index) = nullptr;
+			delete bone;
+		}
     }
 }
 
@@ -185,7 +228,11 @@ void setData(char* buffer, const MeshBuffer& mBuffer, Mesh& mesh)
 			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.skin.blendindices);
 			break;
 		case TEXCOORDS:
-			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.texcoords);
+			{
+				UVMap uvChannel;
+				Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, uvChannel.map);
+				mesh.texcoords.push_back(uvChannel);
+			}
 			break;
 		case COLOR:
 			{
