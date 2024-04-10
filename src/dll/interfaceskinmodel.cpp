@@ -282,7 +282,7 @@ void* getAllSkinGroups(void* pSkinData)
             }
     }
 
-    return bones.data();
+    return bones.data(); //should not point to temp var
  }
 
 void* getAllJointWeights(void* pSkinData, const char* name)
