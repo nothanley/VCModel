@@ -185,8 +185,7 @@ CDataBuffer::getModelBones_2_8(
     bones.resize(numBones);
 
 	/* Iterate and collect all rig bones */
-	for (int i = 0; i < numBones; i++)
-	{
+	for (int i = 0; i < numBones; i++){
 		readBone2_8(buffer, stringTable, bones);
 	}
 }
@@ -206,8 +205,7 @@ CDataBuffer::getModelBones_2_5(
     bones.resize(numBones);
 
     /* Iterate and collect all rig bones */
-    for (int i = 0; i < numBones; i++)
-    {
+    for (int i = 0; i < numBones; i++){
 		readBone2_5(buffer, stringTable, bones);
     }
 }
