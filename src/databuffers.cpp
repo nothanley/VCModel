@@ -154,6 +154,42 @@ void Mesh::translateUVs(const int& index)
 	}
 }
 
+std::vector<BlendWeight>* 
+Skin::unpack(const std::vector<std::string>& stringTable)
+{
+	int numVerts = this->weights.size() / numWeights;
+
+	std::vector<BlendWeight>* skinData = new std::vector<BlendWeight>;
+	skinData->resize(numVerts);
+
+	/* Iterate through all skin vertices */
+	for (int i = 0; i < numVerts; i++)
+	{
+		BlendWeight& skinVertex = skinData->at(i);
+
+		/* Iterate through all specified weights for current vertex */
+		for (int j = 0; j < numWeights; j++)
+		{
+			int index = this->indices[i + j];
+			float influence = this->weights[i + j];
+
+			if (index < stringTable.size()) 
+			{
+				std::string boneName = stringTable.at(index);
+				skinVertex.bones.push_back(boneName);
+				skinVertex.weights.push_back(influence);
+			}
+			else {
+				printf("\nJoint index exceeded string table range");
+				skinVertex.bones.push_back("vector");
+				skinVertex.weights.push_back(0.0f);
+			}
+		}
+	}
+
+	return skinData;
+}
+
 void 
 CDataBuffer::getStringTable(char* buffer, std::vector<std::string>& stringTable)
 {
@@ -244,10 +280,10 @@ void setData(char* buffer, const MeshBuffer& mBuffer, Mesh& mesh)
 			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.tangents);
 			break;
 		case BLENDWEIGHTS:
-			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.skin.blendweights);
+			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.skin.weights);
 			break;
 		case BLENDINDICES:
-			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.skin.blendindices);
+			Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.skin.indices);
 			break;
 		case TEXCOORDS:
 			{
@@ -296,14 +332,14 @@ void getSkinData(char*& buffer, Mesh& mesh) {
 	for (int i = 0; i < mesh.numVerts; i++) {
 		for (int j = 0; j < skin.numWeights; j++) {
 			uint16_t index = ReadUInt16(buffer);
-			skin.blendindices.push_back(index);
+			skin.indices.push_back(index);
 		}
 	}
 
 	for (int i = 0; i < mesh.numVerts; i++) {
 		for (int j = 0; j < skin.numWeights; j++) {
 			float weight = ( ReadUInt8(buffer) / 255.0 );
-			skin.blendweights.push_back(weight);
+			skin.weights.push_back(weight);
 		}
 	}
 

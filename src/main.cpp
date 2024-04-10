@@ -9,6 +9,13 @@ int main()
     auto mesh = model->getMeshes().front();
     mesh->convertSplitNorms();
 
+    for (auto& mesh : model->getMeshes()) {
+        auto table = model->getStringTable();
+        auto skindata = mesh->skin.unpack(*table);
+
+        delete skindata;
+    }
+
     if (model)
         delete model;
 }

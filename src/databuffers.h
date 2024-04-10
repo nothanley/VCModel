@@ -46,9 +46,18 @@ struct BoundingBox
 	float radius;
 };
 
+struct BlendWeight {
+	std::vector<std::string> bones;
+	std::vector<float> weights;
+};
+
 struct Skin {
 	int numWeights = 0;
-	std::vector<float> blendweights, blendindices;
+	std::vector<float> weights, indices;
+
+	/* Unpacks all weights and indices into a bw struct vector */
+	std::vector<BlendWeight>* unpack(
+		const std::vector<std::string>& stringTable);
 };
 
 struct Triangle {

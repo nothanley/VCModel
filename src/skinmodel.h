@@ -22,6 +22,7 @@ class CSkinModel
 	public:
 		std::vector<Mesh*>    getMeshes() const { return m_meshes; }
 		std::vector<RigBone*> getBones() const  { return m_bones; };
+		const std::vector<std::string>* getStringTable() { return &m_stringTable; }
 		int getNumMeshes() { return m_meshes.size(); }
 		int getNumBones()  { return m_bones.size(); }
 		int getNumMats()   { return m_materials.size(); }

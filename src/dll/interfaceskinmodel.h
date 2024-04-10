@@ -37,3 +37,11 @@ extern "C" __declspec(dllexport) const char* getBoneName(void* pSkinModel, const
 extern "C" __declspec(dllexport) const float* getBoneTransformMatrix(void* pSkinModel, const int boneIndex);
 
 extern "C" __declspec(dllexport) int getBoneParentIndex(void* pSkinModel, const int boneIndex);
+
+extern "C" __declspec(dllexport) void* getMeshSkinData(void* pSkinModel, const int meshIndex);
+
+
+
+
+
+

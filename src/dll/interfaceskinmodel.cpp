@@ -245,3 +245,65 @@ void freeMemory_float32(float* data)
     if (!data) return;
     delete[] data;
 }
+
+void* getSkinData(void* pSkinModel, const int meshIndex)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh   = model->getMeshes().at(meshIndex);
+    auto sTable = model->getStringTable();
+
+    return mesh->skin.unpack(*sTable);
+}
+
+inline bool stringExistsInVector(const std::vector<std::string>& vec, const std::string& str) {
+    return std::find(vec.begin(), vec.end(), str) != vec.end();
+}
+
+void* getAllSkinGroups(void* pSkinData)
+{
+    // Convert void pointer back to CSkinModel pointer
+    std::vector<BlendWeight>* skin = static_cast<std::vector<BlendWeight>*>(pSkinData);
+    if (!skin)
+        return nullptr;
+    
+    // Iterate through skin data and get a string list of all affected groups...
+    std::vector<std::string> bones;
+
+    for (auto& bw : *skin) {
+        for (auto& bone : bw.bones)
+            if (!stringExistsInVector(bones, bone))
+            {
+                bones.push_back(bone);
+            }
+    }
+
+    return bones.data();
+ }
+
+void* getAllJointWeights(void* pSkinData, const char* name)
+{
+    // Convert void pointer back to CSkinModel pointer
+    std::vector<BlendWeight>* skin = static_cast<std::vector<BlendWeight>*>(pSkinData);
+    if (!skin)
+        return nullptr;
+
+    // Iterate through skin data and get a weight list for all verts for specified bone..
+    std::vector<float> weights;
+
+    //for (auto& bw : *skin) 
+    //{
+    //    int numBones = bw.
+    //    for (int i = 0; i < bw.bones; i++) {
+
+    //    }
+    //}
+}
+
+
+
+
