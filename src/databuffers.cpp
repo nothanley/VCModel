@@ -154,37 +154,37 @@ void Mesh::translateUVs(const int& index)
 	}
 }
 
+inline void 
+LoadVertexSkin(const Skin* skin, BlendWeight& skinVertex, 
+	const std::vector<std::string>& stringTable, int& begin, const int& numWeights)
+{
+	/* Iterate through all specified weights for current vertex */
+	for (int j = 0; j < numWeights; j++)
+	{
+		int index = skin->indices[begin];
+		float influence = skin->weights[begin];
+
+		std::string boneName = stringTable.at(index);
+		skinVertex.bones.push_back(boneName);
+		skinVertex.weights.push_back(influence);
+
+		begin++; // Update skin pointer to next index
+	}
+}
+
 std::vector<BlendWeight>* 
 Skin::unpack(const std::vector<std::string>& stringTable)
 {
 	int numVerts = this->weights.size() / numWeights;
-
 	std::vector<BlendWeight>* skinData = new std::vector<BlendWeight>;
 	skinData->resize(numVerts);
 
 	/* Iterate through all skin vertices */
 	for (int i = 0; i < numVerts; i++)
 	{
-		BlendWeight& skinVertex = skinData->at(i);
-
-		/* Iterate through all specified weights for current vertex */
-		for (int j = 0; j < numWeights; j++)
-		{
-			int index = this->indices[i + j];
-			float influence = this->weights[i + j];
-
-			if (index < stringTable.size()) 
-			{
-				std::string boneName = stringTable.at(index);
-				skinVertex.bones.push_back(boneName);
-				skinVertex.weights.push_back(influence);
-			}
-			else {
-				printf("\nJoint index exceeded string table range");
-				skinVertex.bones.push_back("vector");
-				skinVertex.weights.push_back(0.0f);
-			}
-		}
+		BlendWeight& skinVtx = skinData->at(i);
+		int skinPtr = (i * numWeights);
+		LoadVertexSkin(this, skinVtx, stringTable, skinPtr, numWeights);
 	}
 
 	return skinData;
@@ -295,7 +295,7 @@ void setData(char* buffer, const MeshBuffer& mBuffer, Mesh& mesh)
 		case COLOR:
 			{
 				VertexColorSet set;
-				Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, set.data);
+				Data::getDataSet(buffer, mesh.numVerts, mBuffer.type, mBuffer.property, set.map);
 				mesh.colors.push_back(set);
 			}
 			break;
@@ -321,8 +321,8 @@ void LoadMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& str
 	buffer += size;
 }
 
-void getSkinData(char*& buffer, Mesh& mesh) {
-
+void getSkinData(char*& buffer, Mesh& mesh)
+{
 	Skin& skin = mesh.skin;
 	uint16_t jointEndIndex = ReadUInt16(buffer);
 	skin.numWeights = ReadUInt16(buffer);
@@ -335,6 +335,7 @@ void getSkinData(char*& buffer, Mesh& mesh) {
 			skin.indices.push_back(index);
 		}
 	}
+	buffer = Data::roundPointerToNearest4(buffer);
 
 	for (int i = 0; i < mesh.numVerts; i++) {
 		for (int j = 0; j < skin.numWeights; j++) {
@@ -342,7 +343,6 @@ void getSkinData(char*& buffer, Mesh& mesh) {
 			skin.weights.push_back(weight);
 		}
 	}
-
 	buffer = Data::roundPointerToNearest4(buffer);
 }
 

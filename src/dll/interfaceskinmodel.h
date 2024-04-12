@@ -38,10 +38,18 @@ extern "C" __declspec(dllexport) const float* getBoneTransformMatrix(void* pSkin
 
 extern "C" __declspec(dllexport) int getBoneParentIndex(void* pSkinModel, const int boneIndex);
 
-extern "C" __declspec(dllexport) void* getMeshSkinData(void* pSkinModel, const int meshIndex);
+extern "C" __declspec(dllexport) void freeMemory_charArrPtr(const char** data);
 
+extern "C" __declspec(dllexport) void freeMemory_skinData(void* pSkinData);
 
+extern "C" __declspec(dllexport) void* getSkinData(void* pSkinModel, const int meshIndex);
 
+extern "C" __declspec(dllexport) const char** getAllSkinGroups(void* pSkinData, int* numBones);
 
+extern "C" __declspec(dllexport) const float* getAllJointWeights(void* pSkinData, const char* target, int* size);
+
+extern "C" __declspec(dllexport) int getNumMeshVertexColors(void* pSkinModel, const int index);
+
+extern "C" __declspec(dllexport) const float* getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, int* size);
 
 

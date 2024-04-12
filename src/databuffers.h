@@ -36,7 +36,8 @@ struct Material
 
 struct VertexColorSet 
 {
-	std::vector<float> data;
+	std::string name;
+	std::vector<float> map;
 };
 
 struct BoundingBox

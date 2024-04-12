@@ -1,5 +1,6 @@
 #include "interfaceskinmodel.h"
 #include <VCModel>
+#include <vector>
 
 void* loadModelFile(const char* filePath)
 {
@@ -240,10 +241,35 @@ const float* getBoneTransformMatrix(void* pSkinModel, const int boneIndex)
     return getGlmMatToFloatPtr(bone->matrix);
 }
 
-void freeMemory_float32(float* data) 
+inline bool stringExistsInVector(const std::vector<std::string*>& vec, const std::string* target) 
 {
-    if (!data) return;
-    delete[] data;
+    for (auto& string : vec) 
+        if (*string == *target)
+            return true;
+
+    return false;
+}
+
+void freeMemory_float32(float* set) 
+{
+    if (!set) return;
+    delete[] set;
+}
+
+void freeMemory_charArrPtr(const char** set)
+{
+    if (!set) return;
+    delete[] set;
+}
+
+void freeMemory_skinData(void* pSkinData)
+{
+    // Convert void pointer back to CSkinModel pointer
+    std::vector<BlendWeight>* skin = static_cast<std::vector<BlendWeight>*>(pSkinData);
+    if (!skin)
+        return;
+
+    delete skin;
 }
 
 void* getSkinData(void* pSkinModel, const int meshIndex)
@@ -257,14 +283,13 @@ void* getSkinData(void* pSkinModel, const int meshIndex)
     auto mesh   = model->getMeshes().at(meshIndex);
     auto sTable = model->getStringTable();
 
+    if (mesh->skin.numWeights == 0)
+        return nullptr;
+
     return mesh->skin.unpack(*sTable);
 }
 
-inline bool stringExistsInVector(const std::vector<std::string>& vec, const std::string& str) {
-    return std::find(vec.begin(), vec.end(), str) != vec.end();
-}
-
-void* getAllSkinGroups(void* pSkinData)
+const char** getAllSkinGroups(void* pSkinData, int* numBones)
 {
     // Convert void pointer back to CSkinModel pointer
     std::vector<BlendWeight>* skin = static_cast<std::vector<BlendWeight>*>(pSkinData);
@@ -272,38 +297,82 @@ void* getAllSkinGroups(void* pSkinData)
         return nullptr;
     
     // Iterate through skin data and get a string list of all affected groups...
-    std::vector<std::string> bones;
+    std::vector<std::string*> bones;
 
     for (auto& bw : *skin) {
         for (auto& bone : bw.bones)
-            if (!stringExistsInVector(bones, bone))
+            if (!stringExistsInVector(bones, &bone))
             {
-                bones.push_back(bone);
+                bones.push_back(&bone);
             }
     }
 
-    return bones.data(); //should not point to temp var
+    // Convert std::vector<std::string> to array of char pointers
+    *numBones = static_cast<int>(bones.size());
+    const char** arr = new const char* [*numBones];
+    for (size_t i = 0; i < *numBones; ++i) {
+        arr[i] = bones[i]->c_str();
+    }
+
+    return arr;
  }
 
-void* getAllJointWeights(void* pSkinData, const char* name)
+const float* getAllJointWeights(void* pSkinData, const char* target, int* size)
 {
     // Convert void pointer back to CSkinModel pointer
     std::vector<BlendWeight>* skin = static_cast<std::vector<BlendWeight>*>(pSkinData);
     if (!skin)
         return nullptr;
 
-    // Iterate through skin data and get a weight list for all verts for specified bone..
-    std::vector<float> weights;
+    int numVerts = skin->size();
+    float* vtxWeights = new float[numVerts];
 
-    //for (auto& bw : *skin) 
-    //{
-    //    int numBones = bw.
-    //    for (int i = 0; i < bw.bones; i++) {
+    // Iterate through skin data and get a weight list for all verts of specified bone..
+    for (int i = 0; i < numVerts; i++) 
+    {
+        auto& bw = skin->at(i);
+        int numVtxBones = bw.bones.size();
+        vtxWeights[i] = 0.0f;
 
-    //    }
-    //}
+        for (int j = 0; j < numVtxBones; j++)
+            if (bw.bones.at(j) == target) {
+                vtxWeights[i] = bw.weights.at(j);
+                break;
+            }
+    }
+
+    *size = numVerts;
+    return vtxWeights;
 }
 
 
+int getNumMeshVertexColors(void* pSkinModel, const int index)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return 0;
+     
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    return mesh->colors.size();
+}
 
+const float*
+getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, int* size) 
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    if (setIndex > mesh->colors.size())
+        return nullptr;
+
+    auto& colorSet = mesh->colors.at(setIndex);
+    *size = colorSet.map.size();
+    return colorSet.map.data();
+}
 
