@@ -4,7 +4,7 @@
 
 int main()
 {
-    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
+    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
     CSkinModel* model = mdlFile.getModel();
 
     auto mesh = model->getMeshes().at(2);

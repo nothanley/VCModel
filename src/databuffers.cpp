@@ -3,6 +3,7 @@
 #include "meshbuffers.h"
 #include <meshtags.h>
 #include "winsock.h"
+#include "../meshshapes.h"
 #include <glm/gtx/euler_angles.hpp>
 
 using namespace BinaryIO;
@@ -355,9 +356,9 @@ void getVertexRemap(char*& buffer, Mesh& mesh) {
 	}
 }
 
-void getMorphWeights(char*& buffer, Mesh& mesh) {
-	uint32_t numMorphs = ReadUInt32(buffer);
+void getMorphWeights(char*& buffer, Mesh& mesh, const std::vector<std::string>& stringTable) {
 	uint32_t bufferSig = 0;
+	vCMeshShapes blendshapes(buffer, stringTable, &mesh);
 
 	while (bufferSig != ENDM) {
 		bufferSig = ReadUInt32(buffer);
@@ -389,7 +390,7 @@ void getMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& stri
 
 	getSkinData(buffer, mesh);
 	getVertexRemap(buffer, mesh);
-	getMorphWeights(buffer, mesh);
+	getMorphWeights(buffer, mesh, strings);
 }
 
 void
