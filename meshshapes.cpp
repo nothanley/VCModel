@@ -7,10 +7,9 @@ using namespace MeshSerializer;
 vCMeshShapes::vCMeshShapes(char*& data, const std::vector<std::string>& table, Mesh* mesh) :
 	m_data(data),
 	m_stringTable(table),
-	m_mesh(mesh)
-{
-	this->load();
-}
+	m_mesh(mesh),
+	m_shapes(&mesh->blendshapes)
+{}
 
 inline
 void vCMeshShapes::getTransformDeltas()
@@ -63,20 +62,21 @@ vCMeshShapes::loadVertexWeights(char*& data)
 	uint16_t vtxDeltaZ = ReadUInt16(data);
 	uint16_t vtxDeltaY = ReadUInt8(data);
 	uint16_t vtxDeltaX = ReadUInt8(data);
-	uint16_t unkValue = ReadUInt16(data);
-	weights.w = ReadUInt16(data); /* Defines vertex normal delta */
+	uint16_t unkValue  = ReadUInt16(data);
+	weights.w		   = ReadUInt16(data); /* Defines vertex normal delta */
 
 	/* Calculate X weight value */
 	weights.x = m_tfmLowest.x + 8.0f * m_tfmDelta.x * vtxDeltaX;
 
 	/* Calculate Z nibble values */
-	int quotient, remainder;
-	divmod(vtxDeltaZ, 1024, &quotient, &remainder);
-	weights.z = m_tfmLowest.z + (remainder * m_tfmDelta.z);
+	int quotientZ, remainderZ;
+	divmod(vtxDeltaZ, 1024, &quotientZ, &remainderZ);
+	weights.z = m_tfmLowest.z + (remainderZ * m_tfmDelta.z);
 
 	/* Calculate Y nibble values */
-	divmod(vtxDeltaY, 32, &quotient, &remainder);
-	weights.y = m_tfmLowest.y + (quotient + (64.0f * remainder) * m_tfmDelta.y);
+	int quotientY, remainderY;
+	divmod(vtxDeltaY, 32, &quotientY, &remainderY);
+	weights.y = m_tfmLowest.y + ( (quotientZ + (64.0f * remainderY) ) * m_tfmDelta.y);
 
 	return weights;
 }
@@ -113,21 +113,19 @@ vCMeshShapes::getVertexWeights( const uint32_t& compression, char*& weightData, 
 		if (isMorphed){
 			Vec4 weights = loadVertexWeights(weightData);
 			applyVertexWeight(vtxIndex, targetShape->vertices, weights);
+			targetShape->vtxMorphs.push_back(vtxIndex);
 		}
 	}
 }
 
 void
-vCMeshShapes::getVertexDeltas( StBlendShape* targetShape )
+vCMeshShapes::getVertexDeltas( char* table, StBlendShape* targetShape )
 {
-	m_data = Data::roundPointerToNearest4(m_data);
-	char* morphsTable = m_data;
-
 	int index = 0;
 	while (index < m_numMorphVerts)
 	{
 		uint32_t compressionLevel = ReadUInt32(m_data, true);
-		char* weightsPtr 	      = morphsTable + ReadUInt32(m_data);
+		char* weightsPtr 	      = table + (ReadUInt32(m_data) * uintptr_t(4));
 
 		/* Collect and update all weighted vertices */
 		getVertexWeights(compressionLevel, weightsPtr, targetShape, index);
@@ -139,12 +137,13 @@ void
 vCMeshShapes::getMorphWeights() {
 	/* Get base deltas and lowest x,y,z positions */
 	vCMeshShapes::getTransformDeltas();
-	char* morphDataEnd  = m_data + ReadUInt32(m_data);
+	uint32_t tableSize  = ReadUInt32(m_data);
+	char* morphsTable   = m_data;
 
 	for (int i = 0; i < m_numMorphs; i++)
 	{
-		auto& blendshape = m_shapes.at(i);
-		getVertexDeltas(&blendshape);
+		auto& blendshape = m_shapes->at(i);
+		getVertexDeltas( morphsTable, &blendshape);
 	}
 }
 
@@ -160,7 +159,7 @@ vCMeshShapes::getMorphIds()
 
 		sBlendShape.name	 = m_stringTable.at(index);
 		sBlendShape.vertices = m_mesh->vertices;
-		this->m_shapes.push_back(sBlendShape);
+		m_shapes->push_back(sBlendShape);
 	}
 
 	/* Align stream */
@@ -170,6 +169,9 @@ vCMeshShapes::getMorphIds()
 void
 vCMeshShapes::load() 
 {
+	if (!m_data)
+		return;
+
 	vCMeshShapes::getMorphIds();
 	vCMeshShapes::getMorphWeights();
 }

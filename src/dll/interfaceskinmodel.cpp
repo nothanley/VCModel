@@ -250,6 +250,12 @@ inline bool stringExistsInVector(const std::vector<std::string*>& vec, const std
     return false;
 }
 
+void freeMemory_intArr(int* data)
+{
+    if (!data) return;
+    delete[] data;
+}
+
 void freeMemory_float32(float* set) 
 {
     if (!set) return;
@@ -376,3 +382,75 @@ getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, i
     return colorSet.map.data();
 }
 
+const char** getAllMeshMorphs(void* pSkinModel, const int meshIndex, int* numShapes)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+
+    /* Check if mesh has empty morphs */
+    if (mesh->blendshapes.size() == 0)
+        return nullptr;
+
+    /* Collect all object shape names */
+    std::vector<std::string*> shapeNames;
+    for (auto& shape : mesh->blendshapes) {
+        shapeNames.push_back(&shape.name); }
+
+    // Convert std::vector<std::string> to array of char pointers
+    *numShapes = static_cast<int>(shapeNames.size());
+    const char** arr = new const char* [*numShapes];
+    for (size_t i = 0; i < *numShapes; ++i) {
+        arr[i] = shapeNames[i]->c_str();
+    }
+
+    return arr;
+}
+
+
+const float* getMeshBlendShape(void* pSkinModel, const int meshIndex, const int shapeIndex, int* size) 
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    if (shapeIndex > mesh->blendshapes.size())
+        return nullptr;
+
+    /* Get all blendshape position data */
+    auto shape = &mesh->blendshapes.at(shapeIndex);
+    const float* verts = shape->vertices.data();
+
+    *size = shape->vertices.size();
+    return verts;
+}
+
+const int* getVtxMorphIndices(void* pSkinModel, const int meshIndex, const int shapeIndex, int* size)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    if (shapeIndex > mesh->blendshapes.size())
+        return nullptr;
+
+    /* Get all blendshape position data */
+    auto shape = &mesh->blendshapes.at(shapeIndex);
+    *size = shape->vtxMorphs.size();
+    if (*size == 0)
+        return nullptr;
+
+    /* Create an array of all affected vertex indices */
+    int* indices = shape->vtxMorphs.data();
+    return indices;
+}

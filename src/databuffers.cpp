@@ -358,7 +358,10 @@ void getVertexRemap(char*& buffer, Mesh& mesh) {
 
 void getMorphWeights(char*& buffer, Mesh& mesh, const std::vector<std::string>& stringTable) {
 	uint32_t bufferSig = 0;
+
+	/* Load all object morphs */
 	vCMeshShapes blendshapes(buffer, stringTable, &mesh);
+	blendshapes.load();
 
 	while (bufferSig != ENDM) {
 		bufferSig = ReadUInt32(buffer);

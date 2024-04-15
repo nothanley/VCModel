@@ -7,7 +7,7 @@ int main()
     CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
     CSkinModel* model = mdlFile.getModel();
 
-    auto mesh = model->getMeshes().at(2);
+    auto mesh = model->getMeshes().front();
     mesh->convertSplitNorms();
 
     for (auto& mesh : model->getMeshes()) {

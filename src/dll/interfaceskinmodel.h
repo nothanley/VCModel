@@ -5,8 +5,13 @@
 /* Free memory allocated during interface */
 extern "C" __declspec(dllexport) void freeMemory_float32(float* data);
 
+extern "C" __declspec(dllexport) void freeMemory_intArr(int* data);
+
 extern "C" __declspec(dllexport) void freeSkinModel(void* pSkinModel);
 
+extern "C" __declspec(dllexport) void freeMemory_charArrPtr(const char** data);
+
+extern "C" __declspec(dllexport) void freeMemory_skinData(void* pSkinData);
 
 /* Interface methods for accessing 'CSkinModel' object data */
 
@@ -38,10 +43,6 @@ extern "C" __declspec(dllexport) const float* getBoneTransformMatrix(void* pSkin
 
 extern "C" __declspec(dllexport) int getBoneParentIndex(void* pSkinModel, const int boneIndex);
 
-extern "C" __declspec(dllexport) void freeMemory_charArrPtr(const char** data);
-
-extern "C" __declspec(dllexport) void freeMemory_skinData(void* pSkinData);
-
 extern "C" __declspec(dllexport) void* getSkinData(void* pSkinModel, const int meshIndex);
 
 extern "C" __declspec(dllexport) const char** getAllSkinGroups(void* pSkinData, int* numBones);
@@ -52,4 +53,9 @@ extern "C" __declspec(dllexport) int getNumMeshVertexColors(void* pSkinModel, co
 
 extern "C" __declspec(dllexport) const float* getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, int* size);
 
+extern "C" __declspec(dllexport) const char** getAllMeshMorphs(void* pSkinModel, const int meshIndex, int* numShapes);
+
+extern "C" __declspec(dllexport) const float* getMeshBlendShape(void* pSkinModel, const int meshIndex, const int shapeIndex, int* size);
+
+extern "C" __declspec(dllexport) const int* getVtxMorphIndices(void* pSkinModel, const int meshIndex, const int shapeIndex, int* size);
 

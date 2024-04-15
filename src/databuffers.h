@@ -52,6 +52,12 @@ struct BlendWeight {
 	std::vector<float> weights;
 };
 
+struct StBlendShape {
+	std::string name;
+	std::vector<float> vertices;
+	std::vector<int>   vtxMorphs;
+};
+
 struct Skin {
 	int numWeights = 0;
 	std::vector<float> weights, indices;
@@ -84,6 +90,7 @@ struct Mesh {
 	std::vector<VertexColorSet> colors;
 	std::vector<Triangle> triangles;
 	std::vector<UVMap> texcoords;
+	std::vector<StBlendShape> blendshapes;
 
 	/* Flips all mesh triangle faces inside out. */
 	void flipNormals();
