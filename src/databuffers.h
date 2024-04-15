@@ -75,6 +75,13 @@ struct UVMap {
 	std::vector<float> map;
 };
 
+struct FaceGroup 
+{
+	Material material;
+	int faceBegin;
+	int numTriangles;
+};
+
 struct Mesh {
 	std::string name;
 	Material material;
@@ -91,6 +98,7 @@ struct Mesh {
 	std::vector<Triangle> triangles;
 	std::vector<UVMap> texcoords;
 	std::vector<StBlendShape> blendshapes;
+	std::vector<FaceGroup> groups;
 
 	/* Flips all mesh triangle faces inside out. */
 	void flipNormals();

@@ -90,7 +90,8 @@ const float* getMeshUvChannel(void* pSkinModel, const int meshIndex, const int c
     return channel.data();
 }
 
-const char* getMeshName(void* pSkinModel, const int index) {
+
+const char* getMaterialName(void* pSkinModel, const int index) {
     // Convert void pointer back to CSkinModel pointer
     CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
     if (!model || index > model->getNumMeshes())
@@ -99,6 +100,18 @@ const char* getMeshName(void* pSkinModel, const int index) {
     /* Load mesh */
     auto mesh = model->getMeshes().at(index);
     return mesh->material.name.c_str();
+}
+
+
+const char* getMeshName(void* pSkinModel, const int index) {
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return "";
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    return mesh->name.c_str();
 }
 
 const char* getMeshTriangles(void* pSkinModel, const int index) {
@@ -453,4 +466,52 @@ const int* getVtxMorphIndices(void* pSkinModel, const int meshIndex, const int s
     /* Create an array of all affected vertex indices */
     int* indices = shape->vtxMorphs.data();
     return indices;
+}
+
+const char** getAllFaceGroups(void* pSkinModel, const int meshIndex, int* size)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return nullptr;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+
+    // Collect all group names
+    std::vector<std::string*> groups;
+    for (auto& faceGrp : mesh->groups) {
+        auto name = &faceGrp.material.name;
+        groups.push_back(name);
+    }
+
+    // Convert std::vector<std::string> to array of char pointers
+    *size = static_cast<int>(groups.size());
+    const char** arr = new const char* [*size];
+    for (size_t i = 0; i < *size; ++i) {
+        arr[i] = groups[i]->c_str();
+    }
+
+    return arr;
+}
+
+void getMaterialFaceGroup(void* pSkinModel, const int meshIndex, const int groupIndex, int* faceBegin, int* faceSize) 
+{
+    /* Define default values*/
+    *faceBegin = -1;
+    *faceSize  = -1;
+
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    if (groupIndex > mesh->groups.size())
+        return;
+
+    FaceGroup& group = mesh->groups.at(groupIndex);
+    *faceBegin = group.faceBegin;
+    *faceSize  = group.numTriangles;
 }

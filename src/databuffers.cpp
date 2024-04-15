@@ -433,13 +433,16 @@ getTriangleBuffer(char*& buffer, Mesh* mesh, const std::vector<Material>& mtlTab
 	buffer = Data::roundPointerToNearest4(buffer);
 	uint32_t numMaterials = ReadUInt32(buffer);
 
-	/* Ignore face settings and assign last selected material to mesh*/
+	/* Collect all material face groups */
 	for (int i = 0; i < numMaterials; i++) 
 	{
-		uint32_t matIndex = ReadUInt32(buffer);
-		uint32_t affectedFaceIndexFirst = ReadUInt32(buffer);
-		uint32_t affectedFaceIndexSize = ReadUInt32(buffer);
-		mesh->material = mtlTable.at(matIndex);
+		FaceGroup mtlGroup;
+		uint32_t mtlIndex	  = ReadUInt32(buffer);
+		mtlGroup.faceBegin	  = ReadUInt32(buffer) / 3;
+		mtlGroup.numTriangles = ReadUInt32(buffer) / 3;
+		mtlGroup.material     = mtlTable.at(mtlIndex);
+
+		mesh->groups.push_back(mtlGroup);
 	}
 
 	buffer += 0x8;

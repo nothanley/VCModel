@@ -19,6 +19,8 @@ extern "C" __declspec(dllexport) void* loadModelFile(const char* filePath);
 
 extern "C" __declspec(dllexport) int getMeshTotal(void* pSkinModel);
 
+extern "C" __declspec(dllexport) const char* getMaterialName(void* pSkinModel, const int index);
+
 extern "C" __declspec(dllexport) const char* getMeshName(void* pSkinModel, const int index);
 
 extern "C" __declspec(dllexport) const float* getVertexData(void* pSkinModel, const int index);
@@ -59,3 +61,6 @@ extern "C" __declspec(dllexport) const float* getMeshBlendShape(void* pSkinModel
 
 extern "C" __declspec(dllexport) const int* getVtxMorphIndices(void* pSkinModel, const int meshIndex, const int shapeIndex, int* size);
 
+extern "C" __declspec(dllexport) const char** getAllFaceGroups(void* pSkinModel, const int meshIndex, int* size);
+
+extern "C" __declspec(dllexport) void getMaterialFaceGroup(void* pSkinModel, const int meshIndex, const int groupIndex, int* faceBegin, int* faceSize);
