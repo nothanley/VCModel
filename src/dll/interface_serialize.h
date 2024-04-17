@@ -78,5 +78,62 @@ void setMeshNormals(void* pMesh, float* normals, int size)
 	}
 }
 
+extern "C" __declspec(dllexport)
+void addUvMap(void* pMesh, float* texcoords, int size)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	/* Create a new uv channel */
+	UVMap channel;
+
+	channel.map.resize(size);
+	for (int i = 0; i < size; i++) {
+		channel.map.at(i) = texcoords[i];
+	}
+
+	mesh->texcoords.push_back(channel);
+}
+
+
+extern "C" __declspec(dllexport)
+void addMeshColorMap(void* pMesh, float* colors, int size)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	/* Create a new vertex color channel */
+	VertexColorSet channel;
+
+	channel.map.resize(size);
+	for (int i = 0; i < size; i++) {
+		channel.map.at(i) = colors[i];
+	}
+
+	mesh->colors.push_back(channel);
+	return;
+}
+
+
+extern "C" __declspec(dllexport)
+void setMeshSkinData(void* pMesh, int* indices, float* weights, int size, int numWeightsPerVtx)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	auto& blendindices = mesh->skin.indices;
+	auto& blendweights = mesh->skin.weights;
+	mesh->skin.numWeights = numWeightsPerVtx;
+
+	blendindices.resize(size);
+	for (int i = 0; i < size; i++) {
+		blendindices.at(i) = indices[i];
+	}
+
+	blendweights.resize(size);
+	for (int i = 0; i < size; i++) {
+		blendweights.at(i) = weights[i];
+	}
+}
 
 
