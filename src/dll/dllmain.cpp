@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "interfaceskinmodel.h"
+#include "interface_serialize.h"
 
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,

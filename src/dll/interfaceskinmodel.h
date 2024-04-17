@@ -64,3 +64,5 @@ extern "C" __declspec(dllexport) const int* getVtxMorphIndices(void* pSkinModel,
 extern "C" __declspec(dllexport) const char** getAllFaceGroups(void* pSkinModel, const int meshIndex, int* size);
 
 extern "C" __declspec(dllexport) void getMaterialFaceGroup(void* pSkinModel, const int meshIndex, const int groupIndex, int* faceBegin, int* faceSize);
+
+

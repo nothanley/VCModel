@@ -4,6 +4,13 @@
 #include "wavefront.h"
 using namespace BinaryIO;
 
+CSkinModel::CSkinModel(const int* version)
+	: m_data(nullptr),
+	m_parent(nullptr),
+	m_version(*version)
+{
+}
+
 CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
     : m_data(data),
 	  m_parent(pParent)

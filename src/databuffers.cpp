@@ -3,7 +3,7 @@
 #include "meshbuffers.h"
 #include <meshtags.h>
 #include "winsock.h"
-#include "../meshshapes.h"
+#include "meshshapes.h"
 #include <glm/gtx/euler_angles.hpp>
 
 using namespace BinaryIO;

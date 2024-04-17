@@ -66,7 +66,10 @@
     <ClInclude Include="src\dll\interfaceskinmodel.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
-    <ClInclude Include="meshshapes.h">
+    <ClInclude Include="src\dll\interface_serialize.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshshapes.h">
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,7 +110,10 @@
     <ClCompile Include="include\meshbuffers.cpp">
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="meshshapes.cpp">
+    <ClCompile Include="src\dll\interface_serialize.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshshapes.cpp">
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>

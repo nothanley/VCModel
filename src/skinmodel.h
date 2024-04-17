@@ -13,6 +13,7 @@ class CModelContainer;
 class CSkinModel
 {
 	public:
+		CSkinModel(const int* version);
 		CSkinModel(char* data, CModelContainer* pParent);
 		~CSkinModel();
 
