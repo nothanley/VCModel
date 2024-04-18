@@ -95,6 +95,12 @@ BinaryIO::WriteUInt64_CharStream(char*& buffer, const uint64_t& value) {
 }
 
 void 
+BinaryIO::WriteFloat_CharStream(char*& buffer, const float& value) {
+	*reinterpret_cast<float*>(buffer) = value;
+	buffer += sizeof(float);
+}
+
+void 
 BinaryIO::WriteString_CharStream(char*& buffer, const std::string& string)
 {
 	int characters = string.size()+1;

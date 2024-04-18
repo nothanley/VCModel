@@ -1,6 +1,7 @@
 #include "CModelSerializer.h"
 #include <skinmodel.h>
 #include "BinaryIO.h"
+#include "glm/gtx/euler_angles.hpp"
 using namespace BinaryIO;
 
 CModelSerializer::CModelSerializer(CSkinModel* target) :
@@ -60,11 +61,18 @@ void CModelSerializer::createTextBuffer()
 	m_dataBuffers.push_back(stream);
 }
 
-inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones) {
+inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones) 
+{
+	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
+	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
+	entrySize += sizeof(uint32_t) * 24;				 // translate + rotation vectors
+	entrySize += sizeof(uint8_t) + sizeof(uint32_t); // Unknown values - new
+	entrySize *= bones.size();
 
+	return tableLength + entrySize;
 }
 
-void CModelSerializer::createBoneBuffer() 
+void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 {
 	/* Initialize model buffer stream */
 	const auto& bones = m_model->getBones();
@@ -74,8 +82,33 @@ void CModelSerializer::createBoneBuffer()
 	stream.type = "BONE";
 	stream.size = getBoneBufferSize(bones);
 	stream.data = new char[stream.size];
+	
+	/* Write buffer table */
+	char* buffer;
+	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
+	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
+	WriteUInt32_CharStream(buffer, numBones); // Number of Bones
+	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
 
-	/* ... */
+	/* Write all bone data */
+	for (auto& bone : bones) {
+		float rotX, rotY, rotZ;
+
+		/* Decompose translation from bone matrix*/
+		WriteFloat_CharStream(buffer, bone->matrix[3][2]);
+		WriteFloat_CharStream(buffer, bone->matrix[3][1]);
+		WriteFloat_CharStream(buffer, bone->matrix[3][0]);
+
+		/* Decompose euler angles from bone matix */
+		glm::extractEulerAngleXYZ(bone->matrix, rotX, rotY, rotZ);
+		WriteFloat_CharStream(buffer, rotX);
+		WriteFloat_CharStream(buffer, rotY);
+		WriteFloat_CharStream(buffer, rotZ);
+
+		/* push new bone flags */
+		WriteUInt8_CharStream(buffer, 0);
+		WriteUInt32_CharStream(buffer, -1);
+	}
 }
 
 void CModelSerializer::buildStringTable()

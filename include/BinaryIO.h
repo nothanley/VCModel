@@ -32,6 +32,7 @@ namespace BinaryIO {
 	void WriteUInt32_CharStream(char*& buffer, const uint32_t& value);
 	void WriteUInt64_CharStream(char*& buffer, const uint64_t& value);
 	void WriteString_CharStream(char*& buffer, const std::string& string);
+	void WriteFloat_CharStream(char*& buffer, const float& value);
 	
     void ReadData(std::istream& fileStream, size_t size, std::stringstream& stream);
     void ReadData(istream& fileStream, size_t size, std::vector<char>& buffer);
