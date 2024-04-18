@@ -19,10 +19,13 @@ void CModelSerializer::save(const char* path)
 void CModelSerializer::serialize() 
 {
 	this->createTextBuffer();
+	this->createBoneBuffer();
+	this->createMaterialBuffer();
 	// ...
 }
 
-inline uint32_t getStringBufferSize(const std::vector<std::string>& strings) {
+inline 
+uint32_t getStringBufferSize(const std::vector<std::string>& strings) {
 	uint32_t size = sizeof(uint32_t);
 	size += (strings.size() * sizeof(uint32_t));
 
@@ -61,7 +64,8 @@ void CModelSerializer::createTextBuffer()
 	m_dataBuffers.push_back(stream);
 }
 
-inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones) 
+inline
+uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones) 
 {
 	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
 	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
@@ -70,6 +74,38 @@ inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones)
 	entrySize *= bones.size();
 
 	return tableLength + entrySize;
+}
+
+inline 
+int getStringIndex(const std::vector<std::string>& stringtable, const std::string& target)
+{
+	int index = -1;
+	int numStrings = stringtable.size();
+
+	for (int i = 0; i < numStrings; i++) {
+		const std::string& element = stringtable.at(i);
+		if (target == element)
+			return i;
+	}
+
+	return -1;
+}
+
+inline 
+void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix) 
+{
+	float rotX, rotY, rotZ;
+
+	/* Decompose translation from bone matrix*/
+	WriteFloat_CharStream(buffer, matrix[3][2]);
+	WriteFloat_CharStream(buffer, matrix[3][1]);
+	WriteFloat_CharStream(buffer, matrix[3][0]);
+
+	/* Decompose euler angles from bone matix */
+	glm::extractEulerAngleXYZ(matrix, rotX, rotY, rotZ);
+	WriteFloat_CharStream(buffer, rotX);
+	WriteFloat_CharStream(buffer, rotY);
+	WriteFloat_CharStream(buffer, rotZ);
 }
 
 void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
@@ -84,31 +120,38 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 	stream.data = new char[stream.size];
 	
 	/* Write buffer table */
-	char* buffer;
+	char* buffer = stream.data;
 	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
 	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
 	WriteUInt32_CharStream(buffer, numBones); // Number of Bones
 	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
 
 	/* Write all bone data */
-	for (auto& bone : bones) {
-		float rotX, rotY, rotZ;
+	for (auto& bone : bones) 
+	{
+		int16_t boneIndex   = getStringIndex(m_stringTable, bone->name);
+		int16_t parentIndex = (bone->parent) ? getStringIndex(m_stringTable, bone->parent->name) : -1;
 
-		/* Decompose translation from bone matrix*/
-		WriteFloat_CharStream(buffer, bone->matrix[3][2]);
-		WriteFloat_CharStream(buffer, bone->matrix[3][1]);
-		WriteFloat_CharStream(buffer, bone->matrix[3][0]);
-
-		/* Decompose euler angles from bone matix */
-		glm::extractEulerAngleXYZ(bone->matrix, rotX, rotY, rotZ);
-		WriteFloat_CharStream(buffer, rotX);
-		WriteFloat_CharStream(buffer, rotY);
-		WriteFloat_CharStream(buffer, rotZ);
+		/* Write bone index values*/
+		WriteUInt16_CharStream(buffer, boneIndex);
+		WriteUInt16_CharStream(buffer, parentIndex);
+		writeMatrixToBuffer(buffer, bone->matrix);
 
 		/* push new bone flags */
 		WriteUInt8_CharStream(buffer, 0);
 		WriteUInt32_CharStream(buffer, -1);
 	}
+}
+
+inline 
+uint32_t getMtlBufferSize(const std::vector<RigBone*>& bones)
+{
+	/* ... */
+}
+
+void CModelSerializer::createMaterialBuffer() 
+{
+	/* ... */
 }
 
 void CModelSerializer::buildStringTable()

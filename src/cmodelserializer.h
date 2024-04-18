@@ -28,6 +28,7 @@ private:
 private:
 	void createTextBuffer();
 	void createBoneBuffer();
+	void createMaterialBuffer();
 
 
 protected:

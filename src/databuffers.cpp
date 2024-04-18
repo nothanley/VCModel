@@ -219,11 +219,20 @@ CDataBuffer::getModelBones_2_8(
     uint32_t numUnks1 = ReadUInt32(buffer);
     uint32_t numBones = ReadUInt32(buffer);
     uint32_t numUnks2 = ReadUInt32(buffer);
-    bones.resize(numBones);
+
+	std::vector<RigBone*> armature = bones;
+	armature.resize(numBones);
 
 	/* Iterate and collect all rig bones */
 	for (int i = 0; i < numBones; i++){
-		readBone2_8(buffer, stringTable, bones);
+		readBone2_8(buffer, stringTable, armature);
+	}
+
+	/* Filter irregular joints */
+	for (auto& bone : armature) {
+		if (bone) {
+			bones.push_back(bone);
+		}
 	}
 }
 
@@ -237,14 +246,22 @@ CDataBuffer::getModelBones_2_5(
     uint32_t numUnks0 = ReadUInt32(buffer);
     uint32_t numBones = ReadUInt32(buffer);
     uint32_t numUnks1 = ReadUInt32(buffer);
-
     numBones = (size - 0xC) / 0x20;
-    bones.resize(numBones);
+
+	std::vector<RigBone*> armature = bones;
+	armature.resize(numBones);
 
     /* Iterate and collect all rig bones */
     for (int i = 0; i < numBones; i++){
-		readBone2_5(buffer, stringTable, bones);
+		readBone2_5(buffer, stringTable, armature);
     }
+
+	/* Filter irregular joints */
+	for (auto& bone : armature) {
+		if (bone) {
+			bones.push_back(bone);
+		}
+	}
 }
 
 void
