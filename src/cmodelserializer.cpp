@@ -141,18 +141,46 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 		WriteUInt8_CharStream(buffer, 0);
 		WriteUInt32_CharStream(buffer, -1);
 	}
+
+	m_dataBuffers.push_back(stream);
 }
 
 inline 
-uint32_t getMtlBufferSize(const std::vector<RigBone*>& bones)
+uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes)
 {
-	/* ... */
+	uint32_t size = sizeof(uint32_t);
+	size += (sizeof(uint32_t) * meshes.size());
+	/* todo: all streams must ensure 32-bit alignment */
+	return size;
 }
 
 void CModelSerializer::createMaterialBuffer() 
 {
-	/* ... */
+	/* Initialize model buffer stream */
+	const auto& meshes = m_model->getMeshes();
+	uint32_t numMeshes = meshes.size();
+
+	StModelBf stream;
+	stream.type = "MTL!";
+	stream.size = getMtlBufferSize(meshes);
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+
+	WriteUInt32_CharStream(buffer, numMeshes);
+	for (auto& mesh : meshes) {
+		int32_t index = -1;
+
+		if (mesh->groups.size() > 0) {
+			FaceGroup& group = mesh->groups.front();
+			index = getStringIndex(m_stringTable, group.material.name);}
+
+		WriteUInt32_CharStream(buffer, index);
+	}
+
+	m_dataBuffers.push_back(stream);
 }
+
+
 
 void CModelSerializer::buildStringTable()
 {
@@ -168,8 +196,9 @@ void CModelSerializer::buildStringTable()
 	auto meshes = m_model->getMeshes();
 	for (auto& mesh : meshes) {
 		m_stringTable.push_back(mesh->name);
-		m_stringTable.push_back(mesh->material.name);
 
+		for (auto& group : mesh->groups)
+			m_stringTable.push_back(group.material.name);
 	}
 
 	/* Push all blendshape ids */
