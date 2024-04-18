@@ -13,21 +13,23 @@ class CModelContainer;
 class CSkinModel
 {
 	public:
-		CSkinModel(const int* version);
+		CSkinModel();
 		CSkinModel(char* data, CModelContainer* pParent);
 		~CSkinModel();
 
 	public:
-		static void saveObjFile(Mesh* mesh, const char* path);
+		std::vector<Mesh*>    getMeshes() const { return m_meshes; }
+		std::vector<RigBone*> getBones()  const { return m_bones; };
+		const std::vector<std::string>* getStringTable() { return &m_stringTable; }
+		int  getNumMeshes() { return m_meshes.size(); }
+		int  getNumBones()  { return m_bones.size(); }
+		int  getNumMats()   { return m_materials.size(); }
+		void push_bone(RigBone* bone) { this->m_bones.push_back(bone); }
+		void push_mesh(Mesh* mesh)	{ this->m_meshes.push_back(mesh); }
 
 	public:
-		std::vector<Mesh*>    getMeshes() const { return m_meshes; }
-		std::vector<RigBone*> getBones() const  { return m_bones; };
-		const std::vector<std::string>* getStringTable() { return &m_stringTable; }
-		int getNumMeshes() { return m_meshes.size(); }
-		int getNumBones()  { return m_bones.size(); }
-		int getNumMats()   { return m_materials.size(); }
 		void saveToObjFile(const char* path, bool split = true);
+		static void saveObjFile(Mesh* mesh, const char* path);
 
 	private:
 		void loadData();

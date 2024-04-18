@@ -7,20 +7,13 @@ int main()
     CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
     CSkinModel* model = mdlFile.getModel();
 
-    auto mesh = model->getMeshes().front();
-    mesh->convertSplitNorms();
-
+    /* Format mesh data - todo: make this default */
     for (auto& mesh : model->getMeshes()) {
-        auto table    = model->getStringTable();
-        auto skindata = mesh->skin.unpack(*table);
-
-        if (mesh->colors.size() > 0) {
-            int channels = mesh->colors.front().map.size() / mesh->numVerts;
-            printf("");
-        }
-
-        delete skindata;
+        mesh->convertSplitNorms();
     }
+
+    CModelSerializer serializer(model);
+    serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
     if (model)
         delete model;

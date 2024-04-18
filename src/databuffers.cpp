@@ -59,7 +59,6 @@ void readBone2_8(char*& buffer,
 	/* Get bone transformation matrix */
 	RigBone* bone = loadBoneTransform(buffer);
 	bone->index   = index;
-	bones.at(index)   = (isTypeJoint) ? bone : nullptr;
 	int8_t  unkValueA = ReadUInt8(buffer);  /* Perhaps a flag? */
 	int32_t unkValueB = ReadUInt32(buffer); /* Unknown dword value */
 
@@ -71,6 +70,7 @@ void readBone2_8(char*& buffer,
 		delete bone;
 		return; }
 	
+	bones.at(index) = (isTypeJoint) ? bone : nullptr;
 	bone->name = stringTable.at(index);
 
 	/* Update bone transform to world-space*/
@@ -91,7 +91,6 @@ void readBone2_5(char*& buffer,
 	/* Get bone transformation matrix */
 	RigBone* bone   = loadBoneTransform(buffer);
 	bone->index     = index;
-	bones.at(index) = (isTypeJoint) ? bone : nullptr;
 	buffer += sizeof(uint32_t);
 
 	/* Filter irregular joint types */
@@ -99,6 +98,7 @@ void readBone2_5(char*& buffer,
 		delete bone;
 		return; }
 
+	bones.at(index) = (isTypeJoint) ? bone : nullptr;
 	bone->name = stringTable.at(index);
 
 	/* Update bone transform to world-space*/
@@ -466,4 +466,33 @@ CDataBuffer::getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& me
 		}
 	}
 
+}
+
+void RigBone::set_parent(RigBone* pParentBone, bool useWorldSpace)
+{
+	this->parent = pParentBone;
+	this->parent->children.push_back(this);
+
+	if (useWorldSpace) {
+		mapBoneToParentSpace(this, parent);
+	}
+}
+
+void RigBone::set_transform(float* matrices, const bool& reorder_matrix) {
+	auto& transform = this->matrix;
+
+	/* Interpret the matrices in order,
+	or arrange the matrix with respect to Blender's 'mathutils' module */
+	if (reorder_matrix) {
+		transform[0] = glm::vec4{ matrices[0],  matrices[4],  matrices[8],  matrices[12] };
+		transform[1] = glm::vec4{ matrices[1],  matrices[5],  matrices[9],  matrices[13] };
+		transform[2] = glm::vec4{ matrices[2],  matrices[6],  matrices[10], matrices[14] };
+		transform[3] = glm::vec4{ matrices[3],  matrices[7],  matrices[11], matrices[15] };
+	}
+	else {
+		transform[0] = glm::vec4{ matrices[0],  matrices[1],  matrices[2],  matrices[3] };
+		transform[1] = glm::vec4{ matrices[4],  matrices[5],  matrices[6],  matrices[7] };
+		transform[2] = glm::vec4{ matrices[8],  matrices[9],  matrices[10], matrices[11] };
+		transform[3] = glm::vec4{ matrices[12], matrices[13], matrices[14], matrices[15] };
+	}
 }

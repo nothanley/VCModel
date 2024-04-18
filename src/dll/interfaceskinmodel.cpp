@@ -15,7 +15,6 @@ void* loadModelFile(const char* filePath)
     return nullptr;
 }
 
-
 void freeSkinModel(void* pSkinModel) 
 {
     // Convert void pointer back to CSkinModel pointer

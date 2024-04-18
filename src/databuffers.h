@@ -27,6 +27,9 @@ struct RigBone
 	std::string name;
 	RigBone* parent = nullptr;
 	std::vector<RigBone*> children;
+	
+	void set_transform(float* matrices, const bool& reorder_matrix);
+	void set_parent(RigBone* parent, bool useWorldSpace=false);
 };
 
 struct Material 
@@ -131,3 +134,5 @@ public:
 	static void getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& meshTable, const std::vector<Material>& mtlTable, const std::vector<std::string>& strings);
 
 };
+
+

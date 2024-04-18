@@ -4,10 +4,10 @@
 #include "wavefront.h"
 using namespace BinaryIO;
 
-CSkinModel::CSkinModel(const int* version)
+CSkinModel::CSkinModel()
 	: m_data(nullptr),
 	m_parent(nullptr),
-	m_version(*version)
+	m_version(-1)
 {
 }
 
@@ -21,10 +21,12 @@ CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
 CSkinModel::~CSkinModel()
 {
 	for (auto& mesh : m_meshes) {
+		//printf("\n[CSkinModel] Deleting mesh: %s", mesh->material.name.c_str());
 		delete mesh;
 	}
 
 	for (auto& bone : m_bones) {
+		//printf("\n[CSkinModel] Deleting bone: %s", bone->name.c_str());
 		delete bone;
 	}
 }

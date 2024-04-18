@@ -28,6 +28,9 @@
     <Filter Include="Wrapper">
       <UniqueIdentifier>{792135d2-898a-4814-b82b-424a45bfcff6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model\Serialize">
+      <UniqueIdentifier>{cc874759-45bd-4d7f-8171-2a1c670c892f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -72,6 +75,12 @@
     <ClInclude Include="src\meshshapes.h">
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="src\cmodelserializer.h">
+      <Filter>Source\Model\Serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cmodelserializer_ver.h">
+      <Filter>Source\Model\Serialize</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -115,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="src\meshshapes.cpp">
       <Filter>Source\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cmodelserializer.cpp">
+      <Filter>Source\Model\Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cmodelserializer_ver.cpp">
+      <Filter>Source\Model\Serialize</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
