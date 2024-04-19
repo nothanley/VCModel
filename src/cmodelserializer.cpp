@@ -41,11 +41,11 @@ void CModelSerializer::createTextBuffer()
 
 	/* Format string table */
 	uint32_t offset = 0;
-	WriteUInt32_CharStream(tablePtr, numStrings);
+	WriteUInt32(tablePtr, numStrings);
 	for (auto& string : m_stringTable) 
 	{
 		size_t size = string.size() + 1; // Include null terminator
-		WriteUInt32_CharStream(tablePtr, offset);
+		WriteUInt32(tablePtr, offset);
 		memcpy(stringPtr, string.c_str(), size);
 
 		offset	  += size;
@@ -62,15 +62,15 @@ void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix)
 	float rotX, rotY, rotZ;
 
 	/* Decompose translation from bone matrix*/
-	WriteFloat_CharStream(buffer, matrix[3][2]);
-	WriteFloat_CharStream(buffer, matrix[3][1]);
-	WriteFloat_CharStream(buffer, matrix[3][0]);
+	WriteFloat(buffer, matrix[3][2]);
+	WriteFloat(buffer, matrix[3][1]);
+	WriteFloat(buffer, matrix[3][0]);
 
 	/* Decompose euler angles from bone matix */
 	glm::extractEulerAngleXYZ(matrix, rotX, rotY, rotZ);
-	WriteFloat_CharStream(buffer, rotX);
-	WriteFloat_CharStream(buffer, rotY);
-	WriteFloat_CharStream(buffer, rotZ);
+	WriteFloat(buffer, rotX);
+	WriteFloat(buffer, rotY);
+	WriteFloat(buffer, rotZ);
 }
 
 void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
@@ -86,10 +86,10 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 	
 	/* Write buffer table */
 	char* buffer = stream.data;
-	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
-	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
-	WriteUInt32_CharStream(buffer, numBones); // Number of Bones
-	WriteUInt32_CharStream(buffer, 0); // Unknown Data Enum
+	WriteUInt32(buffer, 0); // Unknown Data Enum
+	WriteUInt32(buffer, 0); // Unknown Data Enum
+	WriteUInt32(buffer, numBones); // Number of Bones
+	WriteUInt32(buffer, 0); // Unknown Data Enum
 
 	/* Write all bone data */
 	for (auto& bone : bones) 
@@ -98,13 +98,13 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 		int16_t parentIndex = (bone->parent) ? indexOf(bone->parent->name) : -1;
 
 		/* Write bone index values*/
-		WriteUInt16_CharStream(buffer, boneIndex);
-		WriteUInt16_CharStream(buffer, parentIndex);
+		WriteUInt16(buffer, boneIndex);
+		WriteUInt16(buffer, parentIndex);
 		writeMatrixToBuffer(buffer, bone->matrix);
 
 		/* push new bone flags */
-		WriteUInt8_CharStream(buffer, 0);
-		WriteUInt32_CharStream(buffer, -1);
+		WriteUInt8(buffer, 0);
+		WriteUInt32(buffer, -1);
 	}
 
 	m_dataBuffers.push_back(stream);
@@ -123,7 +123,7 @@ void CModelSerializer::createMaterialBuffer()
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 
-	WriteUInt32_CharStream(buffer, numMeshes);
+	WriteUInt32(buffer, numMeshes);
 	for (auto& mesh : meshes) {
 		int32_t index = -1;
 
@@ -131,7 +131,7 @@ void CModelSerializer::createMaterialBuffer()
 			FaceGroup& group = mesh->groups.front();
 			index = indexOf(group.material.name);}
 
-		WriteUInt32_CharStream(buffer, index);
+		WriteUInt32(buffer, index);
 	}
 
 	m_dataBuffers.push_back(stream);
@@ -163,24 +163,23 @@ void CModelSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
 void CModelSerializer::writeBoundingBox(char*& buffer, Mesh* mesh) 
 {
 	BoundingBox& box = mesh->bounds;
-	WriteFloat_CharStream(buffer, box.minX);
-	WriteFloat_CharStream(buffer, box.minY);
-	WriteFloat_CharStream(buffer, box.minZ);
-
-	WriteFloat_CharStream(buffer, box.maxX);
-	WriteFloat_CharStream(buffer, box.maxY);
-	WriteFloat_CharStream(buffer, box.maxZ);
+	WriteFloat(buffer, box.minX);
+	WriteFloat(buffer, box.minY);
+	WriteFloat(buffer, box.minZ);
+	WriteFloat(buffer, box.maxX);
+	WriteFloat(buffer, box.maxY);
+	WriteFloat(buffer, box.maxZ);
 }
 
 void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer) {
 	auto& mesh = meshBuffer.mesh;
-	WriteUInt32_CharStream(buffer, indexOf(mesh->name));
-	WriteUInt32_CharStream(buffer, mesh->sceneFlag);
-	WriteUInt16_CharStream(buffer, mesh->motionFlag);
+	WriteUInt32(buffer, indexOf(mesh->name));
+	WriteUInt32(buffer, mesh->sceneFlag);
+	WriteUInt16(buffer, mesh->motionFlag);
 
 	this->writeBoundingBox(buffer, mesh);
-	WriteUInt32_CharStream(buffer, mesh->numVerts);
-	WriteUInt32_CharStream(buffer, meshBuffer.data.size());
+	WriteUInt32(buffer, mesh->numVerts);
+	WriteUInt32(buffer, meshBuffer.data.size());
 
 	/* Write data streams */
 	for (auto& stack : meshBuffer.data) {
@@ -188,8 +187,8 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 		WriteData(buffer, (char*)dataBf.c_str(), dataBf.size());
 	}
 
-	WriteUInt32_CharStream(buffer, ENDM);
-	WriteUInt32_CharStream(buffer, 0x0);
+	WriteUInt32(buffer, ENDM);
+	WriteUInt32(buffer, 0x0);
 }
 
 void CModelSerializer::createMeshBufferDefs()
@@ -203,7 +202,7 @@ void CModelSerializer::createMeshBufferDefs()
 	stream.data = new char[stream.size];
 
 	char* buffer = stream.data;
-	WriteUInt32_CharStream(buffer, m_meshBuffers.size());
+	WriteUInt32(buffer, m_meshBuffers.size());
 
 	for (auto& mshBf : m_meshBuffers) {
 		writeMeshBuffer(buffer, mshBf);

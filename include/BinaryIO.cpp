@@ -71,19 +71,19 @@ BinaryIO::ReadUInt64(char*& buffer, bool swap) {
 }
 
 void 
-BinaryIO::WriteUInt8_CharStream(char*& buffer, const uint8_t& value) {
+BinaryIO::WriteUInt8(char*& buffer, const uint8_t& value) {
 	*reinterpret_cast<uint8_t*>(buffer) = value;
 	buffer += sizeof(uint8_t);
 }
 
 void 
-BinaryIO::WriteUInt16_CharStream(char*& buffer, const uint16_t& value) {
+BinaryIO::WriteUInt16(char*& buffer, const uint16_t& value) {
 	*reinterpret_cast<uint16_t*>(buffer) = value;
 	buffer += sizeof(uint16_t);
 }
 
 void 
-BinaryIO::WriteUInt32_CharStream(char*& buffer, const uint32_t& value) {
+BinaryIO::WriteUInt32(char*& buffer, const uint32_t& value) {
 	*reinterpret_cast<uint32_t*>(buffer) = value;
 	buffer += sizeof(uint32_t);
 }
@@ -95,7 +95,7 @@ BinaryIO::WriteUInt64_CharStream(char*& buffer, const uint64_t& value) {
 }
 
 void 
-BinaryIO::WriteFloat_CharStream(char*& buffer, const float& value) {
+BinaryIO::WriteFloat(char*& buffer, const float& value) {
 	*reinterpret_cast<float*>(buffer) = value;
 	buffer += sizeof(float);
 }
@@ -356,7 +356,7 @@ void BinaryIO::align_binary_stream(std::stringstream& stream)
 
 void BinaryIO::align_binary_stream(char*& buffer) {
 	while (uintptr_t(buffer) % 4 != 0) {
-		WriteUInt8_CharStream(buffer, 0);
+		WriteUInt8(buffer, 0);
 	}
 }
 
