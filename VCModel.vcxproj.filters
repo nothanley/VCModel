@@ -31,6 +31,12 @@
     <Filter Include="Source\Model\Serialize">
       <UniqueIdentifier>{cc874759-45bd-4d7f-8171-2a1c670c892f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{680ff92a-108c-4cdc-9979-80b019780104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Crc32C">
+      <UniqueIdentifier>{1283ea64-901d-482d-a98e-82d4bb640ddd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -45,20 +51,11 @@
     <ClInclude Include="src\meshtags.h">
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="include\meshbuffers.h">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BinaryIO.h">
-      <Filter>Source\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="src\skinmodel.h">
       <Filter>Source\Model\VC</Filter>
     </ClInclude>
     <ClInclude Include="src\skinmodelpoly.h">
       <Filter>Source\Model\VC</Filter>
-    </ClInclude>
-    <ClInclude Include="src\wavefront.h">
-      <Filter>Source\Helper</Filter>
     </ClInclude>
     <ClInclude Include="src\dll\pch.h">
       <Filter>Wrapper</Filter>
@@ -81,6 +78,18 @@
     <ClInclude Include="src\cmodelserializer_ver.h">
       <Filter>Source\Model\Serialize</Filter>
     </ClInclude>
+    <ClInclude Include="include\BinaryIO.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wavefront.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshbuffers.h">
+      <Filter>Source\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\crc32c\crc32c.h">
+      <Filter>Include\Crc32C</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -95,17 +104,11 @@
     <ClCompile Include="src\databuffers.cpp">
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="include\BinaryIO.cpp">
-      <Filter>Source\Helper</Filter>
-    </ClCompile>
     <ClCompile Include="src\skinmodel.cpp">
       <Filter>Source\Model\VC</Filter>
     </ClCompile>
     <ClCompile Include="src\skinmodelpoly.cpp">
       <Filter>Source\Model\VC</Filter>
-    </ClCompile>
-    <ClCompile Include="src\wavefront.cpp">
-      <Filter>Source\Helper</Filter>
     </ClCompile>
     <ClCompile Include="src\dll\pch.cpp">
       <Filter>Wrapper</Filter>
@@ -115,9 +118,6 @@
     </ClCompile>
     <ClCompile Include="src\dll\dllmain.cpp">
       <Filter>Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="include\meshbuffers.cpp">
-      <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\dll\interface_serialize.cpp">
       <Filter>Wrapper</Filter>
@@ -130,6 +130,15 @@
     </ClCompile>
     <ClCompile Include="src\cmodelserializer_ver.cpp">
       <Filter>Source\Model\Serialize</Filter>
+    </ClCompile>
+    <ClCompile Include="include\BinaryIO.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wavefront.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshbuffers.cpp">
+      <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

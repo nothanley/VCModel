@@ -6,6 +6,23 @@
 
 struct Vec3 {
 	float x, y, z;
+
+	void pack_values(float ceiling) {
+		x = (x > ceiling) ? ceiling : x;
+		y = (x > ceiling) ? ceiling : y;
+		z = (x > ceiling) ? ceiling : z;
+
+		float floor = -ceiling;
+		x = (x < floor) ? floor : x;
+		y = (x < floor) ? floor : y;
+		z = (x < floor) ? floor : z;
+	}
+
+	void operator*=(float value){
+		x *= value;
+		y *= value;
+		z *= value;
+	}
 };
 
 struct Vec4 {

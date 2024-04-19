@@ -1,10 +1,14 @@
 #include "CModelSerializer.h"
 #include <skinmodel.h>
-#include "BinaryIO.h"
+#include <BinaryIO.h>
+#include <meshbuffers.h>
 #include "glm/gtx/euler_angles.hpp"
-#include "meshbuffers.h"
+#include <crc32c/crc32c.h>
+#include <algorithm>
+
 using namespace BinaryIO;
 using namespace MeshSerializer;
+using namespace crc32c;
 
 CModelSerializer::CModelSerializer(CSkinModel* target) :
 	m_model(target)
@@ -23,7 +27,45 @@ void CModelSerializer::serialize()
 	this->createTextBuffer();
 	this->createBoneBuffer();
 	this->createMaterialBuffer();
+	this->createMeshBufferDefs();
 	// ...
+}
+
+inline void align_binary_stream(std::stringstream& stream) {
+	while (stream.tellp() % 4 != 0) {
+		WriteByte(stream, 0);
+	}
+}
+
+inline uint32_t CModelSerializer::getBoneBufferSize(const std::vector<RigBone*>& bones)
+{
+	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
+	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
+	entrySize += sizeof(uint32_t) * 24;				 // translate + rotation vectors
+	entrySize += sizeof(uint8_t) + sizeof(uint32_t); // Unknown values - new
+	entrySize *= bones.size();
+
+	return tableLength + entrySize;
+}
+
+inline int get_str_index(const std::vector<std::string>& table, const std::string& target)
+{
+	int index = -1;
+	int numStrings = table.size();
+
+	for (int i = 0; i < numStrings; i++) {
+		const std::string& element = table.at(i);
+		if (target == element)
+			return i;
+	}
+
+	return -1;
+}
+
+inline uint32_t crc32c_lower(std::string string) {
+	std::transform(string.begin(), string.end(), string.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+	return Crc32c(string);
 }
 
 inline 
@@ -64,32 +106,10 @@ void CModelSerializer::createTextBuffer()
 	m_dataBuffers.push_back(stream);
 }
 
-inline
-uint32_t CModelSerializer::getBoneBufferSize(const std::vector<RigBone*>& bones)
-{
-	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
-	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
-	entrySize += sizeof(uint32_t) * 24;				 // translate + rotation vectors
-	entrySize += sizeof(uint8_t) + sizeof(uint32_t); // Unknown values - new
-	entrySize *= bones.size();
-
-	return tableLength + entrySize;
+int CModelSerializer::indexOf(const std::string& target){
+	return get_str_index(m_stringTable, target);
 }
 
-inline 
-int getStringIndex(const std::vector<std::string>& stringtable, const std::string& target)
-{
-	int index = -1;
-	int numStrings = stringtable.size();
-
-	for (int i = 0; i < numStrings; i++) {
-		const std::string& element = stringtable.at(i);
-		if (target == element)
-			return i;
-	}
-
-	return -1;
-}
 
 inline 
 void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix) 
@@ -129,8 +149,8 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 	/* Write all bone data */
 	for (auto& bone : bones) 
 	{
-		int16_t boneIndex   = getStringIndex(m_stringTable, bone->name);
-		int16_t parentIndex = (bone->parent) ? getStringIndex(m_stringTable, bone->parent->name) : -1;
+		int16_t boneIndex   = indexOf(bone->name);
+		int16_t parentIndex = (bone->parent) ? indexOf(bone->parent->name) : -1;
 
 		/* Write bone index values*/
 		WriteUInt16_CharStream(buffer, boneIndex);
@@ -171,7 +191,7 @@ void CModelSerializer::createMaterialBuffer()
 
 		if (mesh->groups.size() > 0) {
 			FaceGroup& group = mesh->groups.front();
-			index = getStringIndex(m_stringTable, group.material.name);}
+			index = indexOf(group.material.name);}
 
 		WriteUInt32_CharStream(buffer, index);
 	}
@@ -191,6 +211,7 @@ uint32_t CModelSerializer::getMeshBufferDefSize(const std::vector<Mesh*>& meshes
 		size += sizeof(uint32_t) * 3; // index + flags
 		size += sizeof(uint16_t);	  // Null
 		size += sizeof(uint32_t) * 6; // mesh AABBs
+		size += sizeof(uint32_t) * 2; // numverts + blocks
 
 		//for (auto& stream : defs)
 			//size += stream.size();
@@ -199,17 +220,61 @@ uint32_t CModelSerializer::getMeshBufferDefSize(const std::vector<Mesh*>& meshes
 	return size;
 }
 
+void StDataBf::setHeader(const std::vector<std::string>& table, const char* data, const char* format, const char* type)
+{   
+	/* Define stream container */
+	this->container = data;
+	WriteUInt32(stream, ::crc32c_lower(data));
+	WriteUInt32(stream, ::crc32c_lower(format));
+	WriteUInt32(stream, ::crc32c_lower(type));
+
+	WriteUInt16( stream, ::get_str_index(table, data));
+	WriteUInt16( stream, ::get_str_index(table, format));
+	WriteUInt16( stream, ::get_str_index(table, type));
+	::align_binary_stream(stream);
+}
+
 void CModelSerializer::serializeVertices(StMeshBf& target)
 {
-	StDataBf dataBf;
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "POSITION", "R32_G32_B32", "float");
 
-	/* implementation */
-	/* ... */
+	/* Write vertex buffer */
+	std::vector<float>& vertices = target.mesh->vertices;
+	dataBf->stream.write((char*)vertices.data(), vertices.size());
+	::align_binary_stream(dataBf->stream);
 
 	target.buffers.push_back(dataBf);
 }
 
-void CModelSerializer::createMeshBfDefs()
+void CModelSerializer::serializeVertexNormals(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "NORMAL", "R8_G8_B8_A8", "snorm");
+
+	/* Write vertex normal buffer */
+	auto& stream = dataBf->stream;
+	std::vector<float>& normals = target.mesh->normals;
+	int numNormals = normals.size() / 3;
+
+	for (int i = 0; i < numNormals; i+=3) {
+		// Convert to signed normals
+		Vec3 normal{ normals[i], normals[i + 1], normals[i + 2] };
+		normal.pack_values(1.0);
+		normal *= 127;
+
+		WriteSInt8(stream, normal.x);
+		WriteSInt8(stream, normal.z);
+		WriteSInt8(stream, normal.y);
+		WriteSInt8(stream, 0);
+	}
+
+	::align_binary_stream(dataBf->stream);
+	target.buffers.push_back(dataBf);
+}
+
+
+void CModelSerializer::createMeshBufferDefs()
 {
 	/* Collect all mesh buffer data */
 	const auto& meshes = m_model->getMeshes();
@@ -220,11 +285,17 @@ void CModelSerializer::createMeshBfDefs()
 
 		/* Serialize all child data streams*/
 		serializeVertices(meshbuffer);
+		serializeVertexNormals(meshbuffer);
+
 		/* ... */
+		m_meshBuffers.push_back(meshbuffer);
 	}
+
 
 	/* Merge stream data... */
 	/* ... */
+
+	m_meshBuffers.clear();
 }
 
 

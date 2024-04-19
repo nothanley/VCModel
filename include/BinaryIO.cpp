@@ -301,10 +301,17 @@ void
 BinaryIO::WriteUInt16(std::stringstream& ss, uint16_t value) {
 	ss.write(reinterpret_cast<const char*>(&value), sizeof(uint16_t));
 }
+
 void 
 BinaryIO::WriteByte(std::stringstream& ss, uint8_t value) {
 	ss.write(reinterpret_cast<const char*>(&value), sizeof(uint8_t));
 }
+
+void
+BinaryIO::WriteSInt8(stringstream& ss, int8_t value){
+	ss.write(reinterpret_cast<const char*>(&value), sizeof(int8_t));
+}
+
 void 
 BinaryIO::WriteBool(std::stringstream& ss, bool flag) {
 	ss.write(reinterpret_cast<const char*>(&flag), sizeof(bool));

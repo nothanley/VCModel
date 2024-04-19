@@ -1,5 +1,6 @@
-#include <string>
 #include <vector>
+#include <sstream>
+#include <memory>
 #include "databuffers.h"
 #pragma once
 
@@ -10,14 +11,20 @@ struct StModelBf {
 };
 
 struct StDataBf {
-	std::string type;
-	uint32_t size;
-	std::string data; // Serialized with sstream
+	std::string container;
+	std::stringstream stream;
+
+	void setHeader(const std::vector<std::string>& stringTable, 
+		const char* data, const char* type, const char* format);
+
+	/* Debug Destructor */
+	//~StDataBf() {
+		//printf("\nBye stream: %s", container.c_str());}
 };
 
 struct StMeshBf {
 	Mesh* mesh;
-	std::vector<StDataBf> buffers;
+	std::vector< std::shared_ptr<StDataBf> > buffers;
 };
 
 const std::vector<std::string> STREAM_TABLE {
@@ -32,7 +39,7 @@ class CModelSerializer
 public:
 	CModelSerializer(CSkinModel* target);
 	void save(const char* path);
-
+	
 private:
 	void serialize();
 	void buildStringTable();
@@ -41,10 +48,12 @@ private:
 	void createTextBuffer();
 	void createBoneBuffer();
 	void createMaterialBuffer();
-	void createMeshBfDefs();
+	void createMeshBufferDefs();
 
 private:
+	int indexOf(const std::string& target);
 	void serializeVertices(StMeshBf& target);
+	void serializeVertexNormals(StMeshBf& target);
 
 private:
 	inline uint32_t getStringBufferSize(const std::vector<std::string>& strings);
