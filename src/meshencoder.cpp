@@ -1,6 +1,6 @@
 #include "meshencoder.h"
 #include <skinmodel.h>
-#include "cmodelserializer.h"
+#include "cmeshserializer.h"
 
 uint32_t MeshEncoder::getMeshBufferDefSize(std::vector<StMeshBf>& meshbuffers)
 {
@@ -12,7 +12,7 @@ uint32_t MeshEncoder::getMeshBufferDefSize(std::vector<StMeshBf>& meshbuffers)
 		size += sizeof(uint32_t) * 6; // mesh AABBs
 		size += sizeof(uint32_t) * 2; // numverts + streams
 
-		for (auto& child : mesh.buffers)
+		for (auto& child : mesh.data)
 			size += child->size();
 
 		size += sizeof(uint32_t) * 2; // ENDM magic

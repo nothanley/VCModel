@@ -28,14 +28,14 @@
     <Filter Include="Wrapper">
       <UniqueIdentifier>{792135d2-898a-4814-b82b-424a45bfcff6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Model\Serialize">
-      <UniqueIdentifier>{cc874759-45bd-4d7f-8171-2a1c670c892f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include">
       <UniqueIdentifier>{680ff92a-108c-4cdc-9979-80b019780104}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\Crc32C">
       <UniqueIdentifier>{1283ea64-901d-482d-a98e-82d4bb640ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model\Serializer">
+      <UniqueIdentifier>{cc874759-45bd-4d7f-8171-2a1c670c892f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,10 +73,10 @@
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\cmodelserializer.h">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
     <ClInclude Include="src\cmodelserializer_ver.h">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
     <ClInclude Include="include\BinaryIO.h">
       <Filter>Include</Filter>
@@ -91,10 +91,10 @@
       <Filter>Include\Crc32C</Filter>
     </ClInclude>
     <ClInclude Include="src\cmeshserializer.h">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
     <ClInclude Include="src\meshencoder.h">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,10 +132,10 @@
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\cmodelserializer.cpp">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
     <ClCompile Include="src\cmodelserializer_ver.cpp">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
     <ClCompile Include="include\BinaryIO.cpp">
       <Filter>Include</Filter>
@@ -147,10 +147,10 @@
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\cmeshserializer.cpp">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
     <ClCompile Include="src\meshencoder.cpp">
-      <Filter>Source\Model\Serialize</Filter>
+      <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

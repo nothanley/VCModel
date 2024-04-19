@@ -4,7 +4,7 @@
 
 int main()
 {
-    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
+    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
     CSkinModel* model = mdlFile.getModel();
 
     /* Format mesh data - todo: make this default */
@@ -14,6 +14,7 @@ int main()
 
     CModelSerializer serializer(model);
     serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
+
 
     if (model)
         delete model;

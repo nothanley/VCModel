@@ -26,6 +26,7 @@ namespace BinaryIO {
 	int16_t  ReadInt16(char*& buffer, bool swap = false);
 	uint32_t ReadUInt32(char*& buffer, bool swap = false);
 	uint64_t ReadUInt64(char*& buffer, bool swap = false);
+
 	float ReadFloat(char*& buffer);
 	void WriteUInt8_CharStream(char*& buffer, const uint8_t& value);
 	void WriteUInt16_CharStream(char*& buffer, const uint16_t& value);
@@ -33,6 +34,7 @@ namespace BinaryIO {
 	void WriteUInt64_CharStream(char*& buffer, const uint64_t& value);
 	void WriteString_CharStream(char*& buffer, const std::string& string);
 	void WriteFloat_CharStream(char*& buffer, const float& value);
+	void WriteData(char*& buffer, char* data, size_t size);
 	
     void ReadData(std::istream& fileStream, size_t size, std::stringstream& stream);
     void ReadData(istream& fileStream, size_t size, std::vector<char>& buffer);
@@ -75,4 +77,5 @@ namespace BinaryIO {
 	void WriteSignature(ofstream* fs, std::string value);
 
 	void align_binary_stream(std::stringstream& stream);
+	void align_binary_stream(char*& buffer);
 }

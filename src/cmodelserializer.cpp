@@ -1,24 +1,16 @@
-#include "CModelSerializer.h"
+#include <cmodelserializer.h>
 #include <skinmodel.h>
-#include <cmeshserializer.h>
 #include <meshencoder.h>
+#include <meshtags.h>
 #include <BinaryIO.h>
 #include "glm/gtx/euler_angles.hpp"
-#include <crc32c/crc32c.h>
 
 using namespace BinaryIO;
-using namespace crc32c;
 
-
-const std::vector<std::string> STREAM_TABLE{
-	"POSITION", "R32_G32_B32","float", "NORMAL", "R8_G8_B8_A8", "snorm",
-	"TANGENT","BINORMAL","R8", "COLOR","unorm","TEXCOORD",
-	"R32_G32","R16_G16_B16_A16","BLENDINDICES", "uint","BLENDWEIGHTS","R32_G32_B32_A32",""
-};
-
-CModelSerializer::CModelSerializer(CSkinModel* target) :
-	m_model(target)
-{}
+CModelSerializer::CModelSerializer(CSkinModel* target)
+{
+	this->m_model = target;
+}
 
 void CModelSerializer::save(const char* path) 
 {
@@ -61,25 +53,6 @@ void CModelSerializer::createTextBuffer()
 	}
 
 	m_dataBuffers.push_back(stream);
-}
-
-
-inline int get_str_index(const std::vector<std::string>& table, const std::string& target)
-{
-	int index = -1;
-	int numStrings = table.size();
-
-	for (int i = 0; i < numStrings; i++) {
-		const std::string& element = table.at(i);
-		if (target == element)
-			return i;
-	}
-
-	return -1;
-}
-
-int CModelSerializer::indexOf(const std::string& target){
-	return get_str_index(m_stringTable, target);
 }
 
 
@@ -164,68 +137,80 @@ void CModelSerializer::createMaterialBuffer()
 	m_dataBuffers.push_back(stream);
 }
 
-void StDataBf::setHeader(const std::vector<std::string>& table, const char* data, const char* format, const char* type)
-{   
-	/* Define stream container */
-	this->container = data;
-	WriteUInt32(stream, ::crc32c_lower(data));
-	WriteUInt32(stream, ::crc32c_lower(format));
-	WriteUInt32(stream, ::crc32c_lower(type));
+void CModelSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
+{
+	const auto& meshes = m_model->getMeshes();
 
-	WriteUInt16( stream, ::get_str_index(table, data));
-	WriteUInt16( stream, ::get_str_index(table, format));
-	WriteUInt16( stream, ::get_str_index(table, type));
-	::align_binary_stream(stream);
+	for (auto& targetMesh : meshes) {
+		StMeshBf meshbuffer;
+		meshbuffer.mesh = targetMesh;
+
+		serializeVertices(meshbuffer);
+		serializeVertexNormals(meshbuffer);
+		serializeTangents(meshbuffer);
+		serializeBinormals(meshbuffer);
+		serializeVertexColors(meshbuffer);
+		serializeTexCoords(meshbuffer);
+		serializeSkin(meshbuffer);
+		serializeVertexRemap(meshbuffer);
+		serializeBlendShapes(meshbuffer);
+		serializeColorDict(meshbuffer);
+
+		buffers.push_back(meshbuffer);
+	}
+}
+
+void CModelSerializer::writeBoundingBox(char*& buffer, Mesh* mesh) 
+{
+	BoundingBox& box = mesh->bounds;
+	WriteFloat_CharStream(buffer, box.minX);
+	WriteFloat_CharStream(buffer, box.minY);
+	WriteFloat_CharStream(buffer, box.minZ);
+
+	WriteFloat_CharStream(buffer, box.maxX);
+	WriteFloat_CharStream(buffer, box.maxY);
+	WriteFloat_CharStream(buffer, box.maxZ);
+}
+
+void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer) {
+	auto& mesh = meshBuffer.mesh;
+	WriteUInt32_CharStream(buffer, indexOf(mesh->name));
+	WriteUInt32_CharStream(buffer, mesh->sceneFlag);
+	WriteUInt16_CharStream(buffer, mesh->motionFlag);
+
+	this->writeBoundingBox(buffer, mesh);
+	WriteUInt32_CharStream(buffer, mesh->numVerts);
+	WriteUInt32_CharStream(buffer, meshBuffer.data.size());
+
+	/* Write data streams */
+	for (auto& stack : meshBuffer.data) {
+		std::string dataBf = stack->stream.str();
+		WriteData(buffer, (char*)dataBf.c_str(), dataBf.size());
+	}
+
+	WriteUInt32_CharStream(buffer, ENDM);
+	WriteUInt32_CharStream(buffer, 0x0);
 }
 
 void CModelSerializer::createMeshBufferDefs()
 {
 	/* Collect all mesh buffer data */
-	CMeshSerializer serializer(this);
-	serializer.generateMeshBuffers(m_meshBuffers);
+	this->generateMeshBuffers(m_meshBuffers);
 
-	/* Merge stream data... */
-	uint32_t size = MeshEncoder::getMeshBufferDefSize(m_meshBuffers);
+	StModelBf stream;
+	stream.type = "MBfD";
+	stream.size = MeshEncoder::getMeshBufferDefSize(m_meshBuffers);
+	stream.data = new char[stream.size];
 
-	/* ... */
+	char* buffer = stream.data;
+	WriteUInt32_CharStream(buffer, m_meshBuffers.size());
 
+	for (auto& mshBf : m_meshBuffers) {
+		writeMeshBuffer(buffer, mshBf);
+	}
 
-	/* Clear all data streams */
+	/* Update and clean data stream */
+	m_dataBuffers.push_back(stream);
 	m_meshBuffers.clear();
 }
-
-
-void CModelSerializer::generateStringTable()
-{
-	/* Push all bone names */
-	auto bones = m_model->getBones();
-	for (auto& bone : bones) {
-		if (bone) {
-			m_stringTable.push_back(bone->name);
-		}
-	}
-
-	/* Push all mesh+material names */
-	auto meshes = m_model->getMeshes();
-	for (auto& mesh : meshes) {
-		m_stringTable.push_back(mesh->name);
-
-		for (auto& group : mesh->groups)
-			m_stringTable.push_back(group.material.name);
-	}
-
-	/* Push all blendshape ids */
-	for (auto& mesh : meshes)
-		for (auto& shape : mesh->blendshapes) {
-			m_stringTable.push_back(shape.name);
-		}
-
-	/* Push all stream types */
-	for (auto& type : STREAM_TABLE) {
-		m_stringTable.push_back(type);
-	}
-}
-
-
-
 

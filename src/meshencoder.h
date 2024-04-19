@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#pragma once 
 
 struct Mesh;
 struct RigBone;

@@ -1,56 +1,67 @@
 #include "cmeshserializer.h"
-#include "cmodelserializer.h"
 #include <skinmodel.h>
 #include <BinaryIO.h>
+#include <crc32c/crc32c.h>
 
 using namespace BinaryIO;
+using namespace crc32c;
 
-CMeshSerializer::CMeshSerializer(CModelSerializer* parent)
-	: m_parent(parent)
+const std::vector<std::string> STREAM_TABLE{
+	"POSITION", "R32_G32_B32","float", "NORMAL", "R8_G8_B8_A8", "snorm",
+	"TANGENT","BINORMAL","R8", "COLOR","unorm","TEXCOORD",
+	"R32_G32","R16_G16_B16_A16","BLENDINDICES", "uint","BLENDWEIGHTS","R32_G32_B32_A32",""
+};
+
+int get_str_index(const std::vector<std::string>& table, const std::string& target)
 {
+	int index = -1;
+	int numStrings = table.size();
+
+	for (int i = 0; i < numStrings; i++) {
+		const std::string& element = table.at(i);
+		if (target == element)
+			return i;
+	}
+
+	return -1;
 }
 
-void CMeshSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
+void StDataBf::setHeader(const std::vector<std::string>& table, const char* data, const char* format, const char* type)
 {
-	const auto& meshes = m_parent->model()->getMeshes();
+	/* Define stream container */
+	this->container = data;
+	WriteUInt32(stream, ::crc32c_lower(data));
+	WriteUInt32(stream, ::crc32c_lower(format));
+	WriteUInt32(stream, ::crc32c_lower(type));
 
-	for (auto& targetMesh : meshes) {
-		StMeshBf meshbuffer;
-		meshbuffer.mesh = targetMesh;
+	WriteUInt16(stream, ::get_str_index(table, data));
+	WriteUInt16(stream, ::get_str_index(table, format));
+	WriteUInt16(stream, ::get_str_index(table, type));
+	::align_binary_stream(stream);
+}
 
-		serializeVertices(meshbuffer);
-		serializeVertexNormals(meshbuffer);
-		serializeTangents(meshbuffer);
-		serializeBinormals(meshbuffer);
-		serializeVertexColors(meshbuffer);
-		serializeTexCoords(meshbuffer);
-		serializeSkin(meshbuffer);
-		serializeVertexRemap(meshbuffer);
-		serializeBlendShapes(meshbuffer);
-		serializeColorDict(meshbuffer);
-
-		buffers.push_back(meshbuffer);
-	}
+int CMeshSerializer::indexOf(const std::string& target) {
+	return get_str_index(m_stringTable, target);
 }
 
 
 void CMeshSerializer::serializeVertices(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
-	dataBf->setHeader(m_parent->table(), "POSITION", "R32_G32_B32", "float");
+	dataBf->setHeader(m_stringTable, "POSITION", "R32_G32_B32", "float");
 
 	/* Write vertex buffer */
 	std::vector<float>& vertices = target.mesh->vertices;
 	dataBf->stream.write((char*)vertices.data(), sizeof(float) * vertices.size());
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeVertexNormals(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
-	dataBf->setHeader(m_parent->table(), "NORMAL", "R8_G8_B8_A8", "snorm");
+	dataBf->setHeader(m_stringTable, "NORMAL", "R8_G8_B8_A8", "snorm");
 
 	/* Write vertex normal buffer */
 	auto& stream = dataBf->stream;
@@ -69,13 +80,13 @@ void CMeshSerializer::serializeVertexNormals(StMeshBf& target)
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeTangents(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
-	dataBf->setHeader(m_parent->table(), "TANGENT", "R8_G8_B8_A8", "snorm");
+	dataBf->setHeader(m_stringTable, "TANGENT", "R8_G8_B8_A8", "snorm");
 
 	/* Write vertex normal buffer */
 	auto& stream = dataBf->stream;
@@ -94,13 +105,13 @@ void CMeshSerializer::serializeTangents(StMeshBf& target)
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeBinormals(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
-	dataBf->setHeader(m_parent->table(), "BINORMAL", "R8", "snorm");
+	dataBf->setHeader(m_stringTable, "BINORMAL", "R8", "snorm");
 
 	/* Write vertex normal buffer */
 	auto& stream = dataBf->stream;
@@ -115,7 +126,7 @@ void CMeshSerializer::serializeBinormals(StMeshBf& target)
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 
@@ -124,7 +135,7 @@ void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 	for (auto& colorMap : target.mesh->colors)
 	{
 		auto dataBf = std::make_shared<StDataBf>();
-		dataBf->setHeader(m_parent->table(), "COLOR", "R8_G8_B8_A8", "unorm");
+		dataBf->setHeader(m_stringTable, "COLOR", "R8_G8_B8_A8", "unorm");
 
 		/* Write vertex normal buffer */
 		auto& stream = dataBf->stream;
@@ -140,7 +151,7 @@ void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 		}
 
 		::align_binary_stream(dataBf->stream);
-		target.buffers.push_back(dataBf);
+		target.data.push_back(dataBf);
 	}
 }
 
@@ -149,14 +160,14 @@ void CMeshSerializer::serializeTexCoords(StMeshBf& target)
 	for (auto& channel : target.mesh->texcoords)
 	{
 		auto dataBf = std::make_shared<StDataBf>();
-		dataBf->setHeader(m_parent->table(), "TEXCOORD", "R32_G32", "float");
+		dataBf->setHeader(m_stringTable, "TEXCOORD", "R32_G32", "float");
 
 		/* Write vertex normal buffer */
 		auto& stream = dataBf->stream;
 		stream.write((char*)channel.map.data(), sizeof(float) * channel.map.size());
 
 		::align_binary_stream(dataBf->stream);
-		target.buffers.push_back(dataBf);
+		target.data.push_back(dataBf);
 	}
 }
 
@@ -171,7 +182,7 @@ void CMeshSerializer::serializeSkin(StMeshBf& target)
 
 	/* Write index buffer */
 	auto& skin = target.mesh->skin;
-	WriteUInt16(stream, m_parent->model()->getNumBones() + 1);
+	WriteUInt16(stream, m_model->getNumBones() + 1);
 	WriteUInt16(stream, skin.numWeights);
 
 	/* Skin blendindice buffer */
@@ -186,7 +197,7 @@ void CMeshSerializer::serializeSkin(StMeshBf& target)
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeVertexRemap(StMeshBf& target)
@@ -201,7 +212,7 @@ void CMeshSerializer::serializeVertexRemap(StMeshBf& target)
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
@@ -215,7 +226,7 @@ void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
 	WriteUInt32(stream, 0);
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
 }
 
 void CMeshSerializer::serializeColorDict(StMeshBf& target)
@@ -224,13 +235,44 @@ void CMeshSerializer::serializeColorDict(StMeshBf& target)
 	auto& stream = dataBf->stream;
 	dataBf->container = "COLOR_DICT";
 
-	WriteUInt32(stream, m_parent->indexOf("")); // Value is always const
+	WriteUInt32(stream, indexOf("")); // Value is always const
 	for (auto& colorMap : target.mesh->colors) {
 		int colorMapNameIndex = 0;
 		WriteUInt32(stream, colorMapNameIndex);
 	}
 
 	::align_binary_stream(dataBf->stream);
-	target.buffers.push_back(dataBf);
+	target.data.push_back(dataBf);
+}
+
+void CMeshSerializer::generateStringTable()
+{
+	/* Push all bone names */
+	auto bones = m_model->getBones();
+	for (auto& bone : bones) {
+		if (bone) {
+			m_stringTable.push_back(bone->name);
+		}
+	}
+
+	/* Push all mesh+material names */
+	auto meshes = m_model->getMeshes();
+	for (auto& mesh : meshes) {
+		m_stringTable.push_back(mesh->name);
+
+		for (auto& group : mesh->groups)
+			m_stringTable.push_back(group.material.name);
+	}
+
+	/* Push all blendshape ids */
+	for (auto& mesh : meshes)
+		for (auto& shape : mesh->blendshapes) {
+			m_stringTable.push_back(shape.name);
+		}
+
+	/* Push all stream types */
+	for (auto& type : STREAM_TABLE) {
+		m_stringTable.push_back(type);
+	}
 }
 
