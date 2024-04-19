@@ -17,9 +17,7 @@ struct StDataBf {
 	void setHeader(const std::vector<std::string>& stringTable, 
 		const char* data, const char* type, const char* format);
 
-	/* Debug Destructor */
-	//~StDataBf() {
-		//printf("\nBye stream: %s", container.c_str());}
+	uint32_t size() { return stream.tellp();}
 };
 
 struct StMeshBf {
@@ -43,6 +41,7 @@ public:
 private:
 	void serialize();
 	void buildStringTable();
+	void buildMeshBuffers();
 
 private:
 	void createTextBuffer();
@@ -54,12 +53,20 @@ private:
 	int indexOf(const std::string& target);
 	void serializeVertices(StMeshBf& target);
 	void serializeVertexNormals(StMeshBf& target);
+	void serializeTangents(StMeshBf& target);
+	void serializeBinormals(StMeshBf& target);
+	void serializeVertexColors(StMeshBf& target);
+	void serializeTexCoords(StMeshBf& target);
+	void serializeSkin(StMeshBf& target);
+	void serializeVertexRemap(StMeshBf& target);
+	void serializeBlendShapes(StMeshBf& target);
+	void serializeColorDict(StMeshBf& target);
 
 private:
 	inline uint32_t getStringBufferSize(const std::vector<std::string>& strings);
 	inline uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes);
 	inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones);
-	inline uint32_t getMeshBufferDefSize(const std::vector<Mesh*>& meshes);
+	inline uint32_t getMeshBufferDefSize();
 
 protected:
 	std::vector<StMeshBf>    m_meshBuffers;

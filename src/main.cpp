@@ -4,13 +4,13 @@
 
 int main()
 {
-    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
+    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel.mdl");
     CSkinModel* model = mdlFile.getModel();
 
     /* Format mesh data - todo: make this default */
-    for (auto& mesh : model->getMeshes()) {
+   /* for (auto& mesh : model->getMeshes()) {
         mesh->convertSplitNorms();
-    }
+    }*/
 
     CModelSerializer serializer(model);
     serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
