@@ -90,10 +90,10 @@
     <ClInclude Include="include\crc32c\crc32c.h">
       <Filter>Include\Crc32C</Filter>
     </ClInclude>
-    <ClInclude Include="cmeshserializer.h">
+    <ClInclude Include="src\cmeshserializer.h">
       <Filter>Source\Model\Serialize</Filter>
     </ClInclude>
-    <ClInclude Include="meshencoder.h">
+    <ClInclude Include="src\meshencoder.h">
       <Filter>Source\Model\Serialize</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,10 +146,10 @@
     <ClCompile Include="src\meshbuffers.cpp">
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="cmeshserializer.cpp">
+    <ClCompile Include="src\cmeshserializer.cpp">
       <Filter>Source\Model\Serialize</Filter>
     </ClCompile>
-    <ClCompile Include="meshencoder.cpp">
+    <ClCompile Include="src\meshencoder.cpp">
       <Filter>Source\Model\Serialize</Filter>
     </ClCompile>
   </ItemGroup>

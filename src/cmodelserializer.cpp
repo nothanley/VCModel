@@ -1,7 +1,7 @@
 #include "CModelSerializer.h"
 #include <skinmodel.h>
-#include "../cmeshserializer.h"
-#include "../meshencoder.h"
+#include <cmeshserializer.h>
+#include <meshencoder.h>
 #include <BinaryIO.h>
 #include "glm/gtx/euler_angles.hpp"
 #include <crc32c/crc32c.h>
