@@ -341,4 +341,10 @@ BinaryIO::WriteSignature(std::stringstream& ss, const std::string& value) {
 	WriteUInt32(ss, streamHeader);
 }
 
+void BinaryIO::align_binary_stream(std::stringstream& stream)
+{
+	while (stream.tellp() % 4 != 0) {
+		WriteByte(stream, 0);
+	}
+}
 

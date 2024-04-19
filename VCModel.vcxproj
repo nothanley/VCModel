@@ -43,8 +43,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cmeshserializer.h" />
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
+    <ClInclude Include="meshencoder.h" />
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
     <ClInclude Include="src\common.h" />
@@ -62,7 +64,9 @@
     <ClInclude Include="src\wavefront.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cmeshserializer.cpp" />
     <ClCompile Include="include\BinaryIO.cpp" />
+    <ClCompile Include="meshencoder.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
     <ClCompile Include="src\common.cpp" />

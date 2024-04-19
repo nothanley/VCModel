@@ -74,4 +74,5 @@ namespace BinaryIO {
     void WriteChars(ofstream* fs, std::string value);
 	void WriteSignature(ofstream* fs, std::string value);
 
+	void align_binary_stream(std::stringstream& stream);
 }

@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <algorithm>
 
 #else  /* !defined(__cplusplus) */
 
@@ -63,6 +64,12 @@ inline uint32_t Crc32c(const char* data, size_t count) {
 inline uint32_t Crc32c(const std::string& string) {
   return Crc32c(reinterpret_cast<const uint8_t*>(string.data()),
                 string.size());
+}
+
+uint32_t crc32c_lower(std::string string) {
+	std::transform(string.begin(), string.end(), string.begin(),
+		[](unsigned char c) { return std::tolower(c); });
+	return Crc32c(string);
 }
 
 }  // namespace crc32c

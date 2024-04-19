@@ -25,48 +25,26 @@ struct StMeshBf {
 	std::vector< std::shared_ptr<StDataBf> > buffers;
 };
 
-const std::vector<std::string> STREAM_TABLE {
-	"POSITION", "R32_G32_B32","float", "NORMAL", "R8_G8_B8_A8", "snorm",
-	"TANGENT","BINORMAL","R8", "COLOR","unorm","TEXCOORD",
-	"R32_G32","R16_G16_B16_A16","BLENDINDICES", "uint","BLENDWEIGHTS","R32_G32_B32_A32",""
-};
-
 class CSkinModel;
 class CModelSerializer
 {
 public:
 	CModelSerializer(CSkinModel* target);
 	void save(const char* path);
+
+	const CSkinModel* model() { return m_model; }
+	const std::vector<std::string>& table() { return m_stringTable; }
+	int indexOf(const std::string& target);
 	
 private:
 	void serialize();
-	void buildStringTable();
-	void buildMeshBuffers();
+	void generateStringTable();
 
 private:
 	void createTextBuffer();
 	void createBoneBuffer();
 	void createMaterialBuffer();
 	void createMeshBufferDefs();
-
-private:
-	int indexOf(const std::string& target);
-	void serializeVertices(StMeshBf& target);
-	void serializeVertexNormals(StMeshBf& target);
-	void serializeTangents(StMeshBf& target);
-	void serializeBinormals(StMeshBf& target);
-	void serializeVertexColors(StMeshBf& target);
-	void serializeTexCoords(StMeshBf& target);
-	void serializeSkin(StMeshBf& target);
-	void serializeVertexRemap(StMeshBf& target);
-	void serializeBlendShapes(StMeshBf& target);
-	void serializeColorDict(StMeshBf& target);
-
-private:
-	inline uint32_t getStringBufferSize(const std::vector<std::string>& strings);
-	inline uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes);
-	inline uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones);
-	inline uint32_t getMeshBufferDefSize();
 
 protected:
 	std::vector<StMeshBf>    m_meshBuffers;
