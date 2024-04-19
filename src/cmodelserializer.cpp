@@ -2,7 +2,9 @@
 #include <skinmodel.h>
 #include "BinaryIO.h"
 #include "glm/gtx/euler_angles.hpp"
+#include "meshbuffers.h"
 using namespace BinaryIO;
+using namespace MeshSerializer;
 
 CModelSerializer::CModelSerializer(CSkinModel* target) :
 	m_model(target)
@@ -25,14 +27,12 @@ void CModelSerializer::serialize()
 }
 
 inline 
-uint32_t getStringBufferSize(const std::vector<std::string>& strings) {
+uint32_t CModelSerializer::getStringBufferSize(const std::vector<std::string>& strings) {
 	uint32_t size = sizeof(uint32_t);
 	size += (strings.size() * sizeof(uint32_t));
 
 	for (auto& string : strings) {
-		size += string.size();
-		size++;
-	}
+		size += (string.size() + 1); }
 	return size;
 }
 
@@ -65,7 +65,7 @@ void CModelSerializer::createTextBuffer()
 }
 
 inline
-uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones) 
+uint32_t CModelSerializer::getBoneBufferSize(const std::vector<RigBone*>& bones)
 {
 	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
 	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
@@ -146,11 +146,10 @@ void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
 }
 
 inline 
-uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes)
+uint32_t CModelSerializer::getMtlBufferSize(const std::vector<Mesh*>& meshes)
 {
 	uint32_t size = sizeof(uint32_t);
 	size += (sizeof(uint32_t) * meshes.size());
-	/* todo: all streams must ensure 32-bit alignment */
 	return size;
 }
 
@@ -180,6 +179,53 @@ void CModelSerializer::createMaterialBuffer()
 	m_dataBuffers.push_back(stream);
 }
 
+inline
+uint32_t CModelSerializer::getMeshBufferDefSize(const std::vector<Mesh*>& meshes)
+{
+	uint32_t size = sizeof(uint32_t); // Num Meshes
+	uint32_t numMeshes = meshes.size();
+
+	for (int i = 0; i < numMeshes; i++)
+	{
+		auto& mesh	 = meshes.at(i);
+		size += sizeof(uint32_t) * 3; // index + flags
+		size += sizeof(uint16_t);	  // Null
+		size += sizeof(uint32_t) * 6; // mesh AABBs
+
+		//for (auto& stream : defs)
+			//size += stream.size();
+	}
+
+	return size;
+}
+
+void CModelSerializer::serializeVertices(StMeshBf& target)
+{
+	StDataBf dataBf;
+
+	/* implementation */
+	/* ... */
+
+	target.buffers.push_back(dataBf);
+}
+
+void CModelSerializer::createMeshBfDefs()
+{
+	/* Collect all mesh buffer data */
+	const auto& meshes = m_model->getMeshes();
+	for (auto& targetMesh : meshes)
+	{
+		StMeshBf meshbuffer;
+		meshbuffer.mesh = targetMesh;
+
+		/* Serialize all child data streams*/
+		serializeVertices(meshbuffer);
+		/* ... */
+	}
+
+	/* Merge stream data... */
+	/* ... */
+}
 
 
 void CModelSerializer::buildStringTable()
