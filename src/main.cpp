@@ -4,7 +4,7 @@
 
 int main()
 {
-    CModelContainer mdlFile("C:/Users/wauke/Desktop/baseModel_Cena_2023.mdl");
+    CModelContainer mdlFile("C:/Users/wauke/Desktop/0310_Floor_Plane.mdl");
     CSkinModel* model = mdlFile.getModel();
 
     /* Format mesh data - todo: make this default */

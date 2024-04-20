@@ -3,9 +3,16 @@
 #pragma once 
 
 struct StModelBf {
+
 	std::string type;
 	uint32_t size;
 	char* data = nullptr;
+
+	void free() {
+		if (data) 
+			delete[] data;
+	}
+
 };
 
 struct StDataBf {

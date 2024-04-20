@@ -89,7 +89,7 @@ BinaryIO::WriteUInt32(char*& buffer, const uint32_t& value) {
 }
 
 void 
-BinaryIO::WriteUInt64_CharStream(char*& buffer, const uint64_t& value) {
+BinaryIO::WriteUInt64(char*& buffer, const uint64_t& value) {
 	*reinterpret_cast<uint64_t*>(buffer) = value;
 	buffer += sizeof(uint64_t);
 }

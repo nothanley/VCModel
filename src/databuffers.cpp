@@ -112,8 +112,6 @@ void readBone2_5(char*& buffer,
 
 void getAxisAlignedBoundingBox(char*& buffer, Mesh& mesh, bool getRadius=true) {
 	BoundingBox& box = mesh.bounds;
-	if (getRadius)
-		box.radius = ReadFloat(buffer);
 
 	box.minX = ReadFloat(buffer);
 	box.minY = ReadFloat(buffer);
@@ -393,8 +391,9 @@ void getMeshData(char*& buffer, Mesh& mesh, const std::vector<std::string>& stri
 	uint32_t index, numStacks;
 	index = ReadUInt32(buffer);
 
-	mesh.sceneFlag = ReadUInt32(buffer);
-	mesh.motionFlag = ReadInt16(buffer);
+	mesh.sceneFlag  = ReadUInt32(buffer);
+	buffer += sizeof(uint16_t); // null const
+	mesh.motionFlag = ReadUInt32(buffer);
 	getAxisAlignedBoundingBox(buffer, mesh);
 
 	mesh.numVerts = ReadUInt32(buffer);
@@ -513,3 +512,31 @@ void RigBone::set_transform(float* matrices, const bool& reorder_matrix) {
 		transform[3] = glm::vec4{ matrices[12], matrices[13], matrices[14], matrices[15] };
 	}
 }
+
+void Mesh::generateAABBs()
+{
+	/* Validate coordinate vector */
+	const auto& coords = this->vertices;
+	if (coords.size() < 3) return;
+
+	// Create default bounding box
+	BoundingBox& box = this->bounds;
+	box = BoundingBox{ /* Max Coords */ coords[0], coords[1], coords[2],
+		               /* Min Coords */ coords[0], coords[1], coords[2] };
+
+	// Iterate and find highest/lowest position coord
+	int numCoords = coords.size();
+	for (int i = 0; i < numCoords; i += 3)
+	{
+		Vec3 vertex{ coords[i], coords[i + 1], coords[i + 2] };
+
+		box.maxX = (vertex.x > box.maxX) ? vertex.x : box.maxX;
+		box.maxY = (vertex.y > box.maxY) ? vertex.y : box.maxY;
+		box.maxZ = (vertex.z > box.maxZ) ? vertex.z : box.maxZ;
+
+		box.minX = (vertex.x < box.minX) ? vertex.x : box.minX;
+		box.minY = (vertex.y < box.minY) ? vertex.y : box.minY;
+		box.minZ = (vertex.z < box.minZ) ? vertex.z : box.minZ;
+	}
+}
+

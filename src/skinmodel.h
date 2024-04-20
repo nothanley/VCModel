@@ -26,6 +26,7 @@ class CSkinModel
 		const int  getNumMats()   const { return m_materials.size(); }
 		void push_bone(RigBone* bone) { this->m_bones.push_back(bone); }
 		void push_mesh(Mesh* mesh)	{ this->m_meshes.push_back(mesh); }
+		const BoundingBox getAABBs();
 
 	public:
 		void saveToObjFile(const char* path, bool split = true);

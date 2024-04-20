@@ -128,6 +128,9 @@ struct Mesh {
 
 	/* Translates and aligns UV map to Blender/MAX 3D space*/
 	void translateUVs(const int& index);
+
+	/* Generates mesh's axis aligned boundary box */
+	void generateAABBs();
 };
 
 struct MeshBuffer {

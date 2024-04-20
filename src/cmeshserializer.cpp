@@ -79,7 +79,7 @@ void CMeshSerializer::serializeVertexNormals(StMeshBf& target)
 		WriteSInt8(stream, 0);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -104,7 +104,7 @@ void CMeshSerializer::serializeTangents(StMeshBf& target)
 		WriteSInt8(stream, 0);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -125,7 +125,7 @@ void CMeshSerializer::serializeBinormals(StMeshBf& target)
 		WriteSInt8(stream, normal.x);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -150,7 +150,7 @@ void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 			WriteByte(stream, srgbColor.w);
 		}
 
-		::align_binary_stream(dataBf->stream);
+		::align_binary_stream(stream);
 		target.data.push_back(dataBf);
 	}
 }
@@ -166,7 +166,7 @@ void CMeshSerializer::serializeTexCoords(StMeshBf& target)
 		auto& stream = dataBf->stream;
 		stream.write((char*)channel.map.data(), sizeof(float) * channel.map.size());
 
-		::align_binary_stream(dataBf->stream);
+		::align_binary_stream(stream);
 		target.data.push_back(dataBf);
 	}
 }
@@ -196,7 +196,7 @@ void CMeshSerializer::serializeSkin(StMeshBf& target)
 		WriteByte(stream, unorm);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -211,7 +211,7 @@ void CMeshSerializer::serializeVertexRemap(StMeshBf& target)
 		WriteUInt32(stream, i);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -225,7 +225,7 @@ void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
 	int numMorphs = target.mesh->blendshapes.size();
 	WriteUInt32(stream, 0);
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 
@@ -241,7 +241,7 @@ void CMeshSerializer::serializeColorDict(StMeshBf& target)
 		WriteUInt32(stream, colorMapNameIndex);
 	}
 
-	::align_binary_stream(dataBf->stream);
+	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
 }
 

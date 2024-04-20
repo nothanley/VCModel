@@ -4,6 +4,7 @@
 #include <meshtags.h>
 #include <BinaryIO.h>
 #include "glm/gtx/euler_angles.hpp"
+#include "winsock.h""
 
 using namespace BinaryIO;
 
@@ -21,10 +22,14 @@ void CModelSerializer::save(const char* path)
 void CModelSerializer::serialize() 
 {
 	this->generateStringTable();
+	this->createModelBuffer();
 	this->createTextBuffer();
 	this->createBoneBuffer();
 	this->createMaterialBuffer();
 	this->createMeshBufferDefs();
+	this->createLODsBuffer();
+
+	this->formatFile();
 }
 
 void CModelSerializer::createTextBuffer() 
@@ -73,11 +78,12 @@ void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix)
 	WriteFloat(buffer, rotZ);
 }
 
-void CModelSerializer::createBoneBuffer()  // debug format is mdl v2.8
+void CModelSerializer::createBoneBuffer()
 {
 	/* Initialize model buffer stream */
 	const auto& bones = m_model->getBones();
 	uint32_t numBones = bones.size();
+	if (numBones == 0) return;
 
 	StModelBf stream;
 	stream.type = "BONE";
@@ -160,9 +166,8 @@ void CModelSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
 	}
 }
 
-void CModelSerializer::writeBoundingBox(char*& buffer, Mesh* mesh) 
+void CModelSerializer::writeBoundingBox(char*& buffer, const BoundingBox& box)
 {
-	BoundingBox& box = mesh->bounds;
 	WriteFloat(buffer, box.minX);
 	WriteFloat(buffer, box.minY);
 	WriteFloat(buffer, box.minZ);
@@ -171,13 +176,15 @@ void CModelSerializer::writeBoundingBox(char*& buffer, Mesh* mesh)
 	WriteFloat(buffer, box.maxZ);
 }
 
-void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer) {
+void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer)
+{
 	auto& mesh = meshBuffer.mesh;
 	WriteUInt32(buffer, indexOf(mesh->name));
 	WriteUInt32(buffer, mesh->sceneFlag);
-	WriteUInt16(buffer, mesh->motionFlag);
+	WriteUInt16(buffer, 0);
+	WriteUInt32(buffer, mesh->motionFlag);
 
-	this->writeBoundingBox(buffer, mesh);
+	this->writeBoundingBox(buffer, mesh->bounds);
 	WriteUInt32(buffer, mesh->numVerts);
 	WriteUInt32(buffer, meshBuffer.data.size());
 
@@ -187,13 +194,11 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 		WriteData(buffer, (char*)dataBf.c_str(), dataBf.size());
 	}
 
-	WriteUInt32(buffer, ENDM);
-	WriteUInt32(buffer, 0x0);
+	WriteUInt64(buffer, ntohl(ENDM));
 }
 
 void CModelSerializer::createMeshBufferDefs()
-{
-	/* Collect all mesh buffer data */
+{	/* Collect all mesh buffer data */
 	this->generateMeshBuffers(m_meshBuffers);
 
 	StModelBf stream;
@@ -212,4 +217,111 @@ void CModelSerializer::createMeshBufferDefs()
 	m_dataBuffers.push_back(stream);
 	m_meshBuffers.clear();
 }
+
+void CModelSerializer::writeIndexBuffer(char*& buffer, int meshIndex) 
+{
+	auto mesh = m_model->getMeshes().at(meshIndex);
+	uint32_t numTris = mesh->triangles.size();
+	WriteUInt16(buffer, meshIndex);
+	WriteUInt32(buffer, numTris);
+
+	bool use32bIndex = (mesh->numVerts > UINT16_MAX);
+	for (auto& face : mesh->triangles) {
+		(use32bIndex) ? WriteUInt32(buffer, face.x) : WriteUInt16(buffer, face.x);
+		(use32bIndex) ? WriteUInt32(buffer, face.y) : WriteUInt16(buffer, face.y);
+		(use32bIndex) ? WriteUInt32(buffer, face.z) : WriteUInt16(buffer, face.z);
+	}
+
+	::align_binary_stream(buffer);
+}
+
+void CModelSerializer::writeMaterialGroupBuffer(char*& buffer, int meshIndex)
+{
+	/* Write material groups */
+	auto mesh = m_model->getMeshes().at(meshIndex);
+	int numGroups = mesh->groups.size();
+	WriteUInt32(buffer, numGroups);
+
+	for (int i = 0; i < numGroups; i++) {
+		auto& group = mesh->groups.at(i);
+		WriteUInt32(buffer, i); // material index
+		WriteUInt32(buffer, group.faceBegin);
+		WriteUInt32(buffer, group.numTriangles);
+	}
+
+	/* Write ENDM tag */
+	WriteUInt64(buffer, ntohl(ENDM));
+}
+
+void CModelSerializer::createLODsBuffer() 
+{
+	StModelBf stream;
+	const auto& meshes = m_model->getMeshes();
+	uint32_t numLodLevels = 2;
+
+	stream.type = "LODs";
+	stream.size = MeshEncoder::getLodsBufferSize(meshes, numLodLevels);
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+	
+	/* Write high/low LOD buffers */
+	uint32_t numMeshes = meshes.size();
+	WriteUInt32(buffer, numLodLevels);
+
+	for (int i = 0; i < numLodLevels; i++) {
+		WriteUInt32(buffer, numMeshes);
+
+		for (int j = 0; j < numMeshes; j++) {
+			writeIndexBuffer(buffer, j);
+			writeMaterialGroupBuffer(buffer, j);
+		}
+	}
+
+	m_dataBuffers.push_back(stream);
+}
+
+void CModelSerializer::createModelBuffer()
+{
+	StModelBf stream;
+
+	stream.type = "MDL!";
+	stream.size = MeshEncoder::getMDLBufferSize();
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+
+	WriteUInt32(buffer, 0x28); // File format version
+	WriteUInt32(buffer, 0); // Unknown value
+	writeBoundingBox(buffer, m_model->getAABBs()); // Model bounds
+
+	m_dataBuffers.push_back(stream);
+}
+
+void CModelSerializer::writeDataBuffer(std::ofstream& fs, const StModelBf& modelBf) 
+{
+	fs.write(modelBf.type.c_str(), 0x4); // Stream Magic
+
+	/* Write stream size info */
+	if (modelBf.type != "MDL!")
+		WriteUInt32(&fs, modelBf.size);
+
+	/* Push stream binary to file stream */
+	fs.write(modelBf.data, modelBf.size);
+}
+
+void CModelSerializer::formatFile()
+{
+	std::ofstream file(m_savePath, std::ios::out);
+	if (!file.is_open())
+		return;
+
+	/* Push all data streams to disk file */
+	for (auto& dataBf : m_dataBuffers) {
+		writeDataBuffer(file, dataBf);
+		dataBf.free(); // Clean MDL data struct
+	}
+
+	WriteUInt64(&file, END); // Write END! tag
+	file.close();
+}
+
 
