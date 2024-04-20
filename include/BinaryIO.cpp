@@ -347,15 +347,16 @@ BinaryIO::WriteSignature(std::stringstream& ss, const std::string& value) {
 	WriteUInt32(ss, streamHeader);
 }
 
-void BinaryIO::align_binary_stream(std::stringstream& stream)
+void BinaryIO::align_binary_stream(std::stringstream& stream, int8_t alignment_value)
 {
-	while (stream.tellp() % 4 != 0) {
+	while (stream.tellp() % alignment_value != 0) {
 		WriteByte(stream, 0);
 	}
 }
 
-void BinaryIO::align_binary_stream(char*& buffer) {
-	while (uintptr_t(buffer) % 4 != 0) {
+void BinaryIO::align_binary_stream(char*& buffer, int8_t alignment_value) 
+{
+	while (uintptr_t(buffer) % alignment_value != 0) {
 		WriteUInt8(buffer, 0);
 	}
 }

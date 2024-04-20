@@ -228,9 +228,8 @@ CDataBuffer::getModelBones_2_8(
 
 	/* Filter irregular joints */
 	for (auto& bone : armature) {
-		if (bone) {
+		if (bone)
 			bones.push_back(bone);
-		}
 	}
 }
 
@@ -256,9 +255,8 @@ CDataBuffer::getModelBones_2_5(
 
 	/* Filter irregular joints */
 	for (auto& bone : armature) {
-		if (bone) {
+		if (bone)
 			bones.push_back(bone);
-		}
 	}
 }
 

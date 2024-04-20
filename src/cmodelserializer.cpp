@@ -57,6 +57,9 @@ void CModelSerializer::createTextBuffer()
 		stringPtr += size;
 	}
 
+	/* Align stream */
+	::align_binary_stream(stringPtr);
+
 	m_dataBuffers.push_back(stream);
 }
 
@@ -310,7 +313,7 @@ void CModelSerializer::writeDataBuffer(std::ofstream& fs, const StModelBf& model
 
 void CModelSerializer::formatFile()
 {
-	std::ofstream file(m_savePath, std::ios::out);
+	std::ofstream file(m_savePath, std::ios::binary);
 	if (!file.is_open())
 		return;
 

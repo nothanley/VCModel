@@ -51,10 +51,10 @@ void CMeshSerializer::serializeVertices(StMeshBf& target)
 	dataBf->setHeader(m_stringTable, "POSITION", "R32_G32_B32", "float");
 
 	/* Write vertex buffer */
+	::align_binary_stream(dataBf->stream, 0x16);
 	std::vector<float>& vertices = target.mesh->vertices;
 	dataBf->stream.write((char*)vertices.data(), sizeof(float) * vertices.size());
 
-	::align_binary_stream(dataBf->stream);
 	target.data.push_back(dataBf);
 }
 
@@ -74,8 +74,8 @@ void CMeshSerializer::serializeVertexNormals(StMeshBf& target)
 		normal *= 127;
 
 		WriteSInt8(stream, normal.x);
-		WriteSInt8(stream, normal.z);
 		WriteSInt8(stream, normal.y);
+		WriteSInt8(stream, normal.z);
 		WriteSInt8(stream, 0);
 	}
 
@@ -250,9 +250,7 @@ void CMeshSerializer::generateStringTable()
 	/* Push all bone names */
 	auto bones = m_model->getBones();
 	for (auto& bone : bones) {
-		if (bone) {
-			m_stringTable.push_back(bone->name);
-		}
+		m_stringTable.push_back(bone->name);
 	}
 
 	/* Push all mesh+material names */

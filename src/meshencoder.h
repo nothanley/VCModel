@@ -16,5 +16,8 @@ public:
 	static uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones);
 	static uint32_t getMeshBufferDefSize(std::vector<StMeshBf>& meshbuffers);
 	static uint32_t getLodsBufferSize(const std::vector<Mesh*>& meshes, int numLevels);
+
+private:
+	static void updateIndexBufferSize(uint32_t& size, const Mesh* mesh);
 };
 
