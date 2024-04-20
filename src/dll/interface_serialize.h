@@ -54,10 +54,12 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
 	if (!mesh) return;
 
-	/* Populate position coords*/
+	/* Populate position coords - (+X-Z+Y)*/
 	mesh->vertices.resize(numVerts);
-	for (int i = 0; i < numVerts; i++) {
-		mesh->vertices[i] = position[i];
+	for (int i = 0; i < numVerts; i+=3) {
+		mesh->vertices[i]	=  position[i];
+		mesh->vertices[i+1] = -position[i+2];
+		mesh->vertices[i+2] =  position[i+1];
 	}
 
 	/* Set triangle indices */
@@ -68,10 +70,18 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 		Triangle& face = mesh->triangles.at(i);
 		size_t index = (i * 3);
 
-		face.x = indexList[index];
-		face.y = indexList[index+1];
+		face.x = indexList[index+1];
+		face.y = indexList[index];
 		face.z = indexList[index+2];
 	}
+
+	/* Update counts */
+	mesh->numVerts = mesh->vertices.size() / 3;
+	mesh->generateAABBs();
+
+	/* Setup mesh default mtl */
+	FaceGroup faceMat{ mesh->material, 0, numFaces};
+	mesh->groups.push_back(faceMat);
 }
 
 extern "C" __declspec(dllexport)
@@ -80,11 +90,21 @@ void setMeshNormals(void* pMesh, float* normals, int size)
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
 	if (!mesh) return;
 
-	/* Populate vertex normals*/
-	mesh->normals.resize(size);
-	for (int i = 0; i < size; i++) {
-		mesh->normals[i] = normals[i];
+	int numNorms = size / 3;
+	if (numNorms != mesh->numVerts) {
+		printf("[CSkinModel] Vertex normal count mismatch.");
+		throw std::runtime_error("");
 	}
+
+	/* Populate vertex normals -- seems slow */
+	for (int i = 0; i < size; i+=3) {
+		mesh->normals.push_back(normals[i]);
+		mesh->normals.push_back(-normals[i+2]);
+		mesh->normals.push_back(normals[i+1]);
+		mesh->normals.push_back(0.0f);
+	}
+	
+	mesh->generateTangentsBinormals(); // Update TBN buffers
 }
 
 extern "C" __declspec(dllexport)
@@ -95,10 +115,10 @@ void addUvMap(void* pMesh, float* texcoords, int size)
 
 	/* Create a new uv channel */
 	UVMap channel;
-
 	channel.map.resize(size);
-	for (int i = 0; i < size; i++) {
-		channel.map.at(i) = texcoords[i];
+	for (int i = 0; i < size; i+=2) {
+		channel.map.at(i)	= texcoords[i];
+		channel.map.at(i+1) = -(-1.0 + texcoords[i+1]);
 	}
 
 	mesh->texcoords.push_back(channel);
@@ -113,7 +133,6 @@ void addMeshColorMap(void* pMesh, float* colors, int size)
 
 	/* Create a new vertex color channel */
 	VertexColorSet channel;
-
 	channel.map.resize(size);
 	for (int i = 0; i < size; i++) {
 		channel.map.at(i) = colors[i];
@@ -128,8 +147,10 @@ extern "C" __declspec(dllexport)
 void setMeshSkinData(void* pMesh, int* indices, float* weights, int size, int numWeightsPerVtx)
 {
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
-	if (!mesh) return;
+	if (!mesh)
+		return;
 
+	printf("\n[CSkinModel] Populating Skin with limit: %d\n", numWeightsPerVtx);
 	auto& blendindices = mesh->skin.indices;
 	auto& blendweights = mesh->skin.weights;
 	mesh->skin.numWeights = numWeightsPerVtx;
@@ -183,3 +204,23 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 }
 
 
+extern "C" __declspec(dllexport)
+void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target)
+{
+	// Convert void pointer back to CSkinModel pointer
+	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+	if (!model) return;
+
+	switch (compile_target) 
+	{
+		case 0x28:
+			{   /* Save MDL format v2.8*/
+				CModelSerializer serializer(model);
+				serializer.save(savePath);
+				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
+			}
+			break;
+		default:
+			break;
+	}
+}

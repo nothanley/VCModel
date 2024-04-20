@@ -40,13 +40,14 @@ struct Matrix4 {
 struct RigBone 
 {
 	int16_t index;
-	glm::mat4 matrix;
 	std::string name;
 	RigBone* parent = nullptr;
 	std::vector<RigBone*> children;
-	
+
+	glm::mat4 matrix_local; // Parent space transform
+	glm::mat4 matrix_world; // World space transform
 	void set_transform(float* matrices, const bool& reorder_matrix);
-	void set_parent(RigBone* parent, bool useWorldSpace=false);
+	void set_parent(RigBone* parent);
 };
 
 struct Material 
@@ -131,6 +132,9 @@ struct Mesh {
 
 	/* Generates mesh's axis aligned boundary box */
 	void generateAABBs();
+
+	/* Calculate tangent + binormal vertex data */
+	void generateTangentsBinormals();
 };
 
 struct MeshBuffer {

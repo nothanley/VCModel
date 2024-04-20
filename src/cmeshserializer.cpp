@@ -51,7 +51,7 @@ void CMeshSerializer::serializeVertices(StMeshBf& target)
 	dataBf->setHeader(m_stringTable, "POSITION", "R32_G32_B32", "float");
 
 	/* Write vertex buffer */
-	::align_binary_stream(dataBf->stream, 0x16);
+	WriteUInt16(dataBf->stream, 0);
 	std::vector<float>& vertices = target.mesh->vertices;
 	dataBf->stream.write((char*)vertices.data(), sizeof(float) * vertices.size());
 
@@ -129,6 +129,9 @@ void CMeshSerializer::serializeBinormals(StMeshBf& target)
 	target.data.push_back(dataBf);
 }
 
+static inline uint8_t to_unorm(const float color) {
+	return roundf(color * 255);
+}
 
 void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 {
@@ -144,10 +147,10 @@ void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 		for (int i = 0; i < map.size(); i += 4) {
 			Vec4 srgbColor{ map[i], map[i + 1], map[i + 2], map[i + 3] };
 
-			WriteByte(stream, srgbColor.x);
-			WriteByte(stream, srgbColor.y);
-			WriteByte(stream, srgbColor.z);
-			WriteByte(stream, srgbColor.w);
+			WriteByte(stream, to_unorm(srgbColor.x));
+			WriteByte(stream, to_unorm(srgbColor.y));
+			WriteByte(stream, to_unorm(srgbColor.z));
+			WriteByte(stream, to_unorm(srgbColor.w));
 		}
 
 		::align_binary_stream(stream);
@@ -173,22 +176,26 @@ void CMeshSerializer::serializeTexCoords(StMeshBf& target)
 
 void CMeshSerializer::serializeSkin(StMeshBf& target)
 {
-	if (target.mesh->skin.indices.size() == 0)
-		return;
-
 	auto dataBf = std::make_shared<StDataBf>();
 	auto& stream = dataBf->stream;
 	dataBf->container = "SKIN";
 
-	/* Write index buffer */
+	/* Check empty skin buffer */
 	auto& skin = target.mesh->skin;
-	WriteUInt16(stream, m_model->getNumBones() + 1);
+	if (skin.indices.empty()) {
+		WriteUInt32(stream, 0);
+		target.data.push_back(dataBf);
+		return;}
+
+	/* Write index buffer */
+	WriteUInt16(stream, m_model->getNumBones());
 	WriteUInt16(stream, skin.numWeights);
 
 	/* Skin blendindice buffer */
 	for (auto& index : skin.indices) {
 		WriteUInt16(stream, index);
 	}
+	::align_binary_stream(stream);
 
 	/* Skin blendweight buffer */
 	for (auto& weight : skin.weights) {

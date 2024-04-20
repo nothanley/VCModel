@@ -4,18 +4,17 @@
 
 int main()
 {
-    CModelContainer mdlFile("C:/Users/wauke/Desktop/0310_Floor_Plane.mdl");
-    CSkinModel* model = mdlFile.getModel();
+    // Scope heap memory test - 
+    {
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
+        CSkinModel* model = mdlFile.getModel();
 
-    /* Format mesh data - todo: make this default */
-   /* for (auto& mesh : model->getMeshes()) {
-        mesh->convertSplitNorms();
-    }*/
+        CModelSerializer serializer(model);
+        serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
-    CModelSerializer serializer(model);
-    serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
+        if (model)
+            delete model;
+    }
 
-
-    if (model)
-        delete model;
 }
+

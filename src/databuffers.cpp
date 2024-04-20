@@ -29,12 +29,6 @@ glm::mat4 dot_4x4(const glm::mat4x4& a, const glm::mat4x4& b)
 }
 
 inline 
-void mapBoneToParentSpace(RigBone* child, const RigBone* parent)
-{
-	child->matrix = dot_4x4(child->matrix, parent->matrix);
-}
-
-inline 
 RigBone* loadBoneTransform(char*& buffer)
 {
 	/* Reads bone transformation matrix */
@@ -42,8 +36,9 @@ RigBone* loadBoneTransform(char*& buffer)
 	glm::vec3 position( ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) );
 	glm::vec3 rotation( ReadFloat(buffer), ReadFloat(buffer), ReadFloat(buffer) );
 
-	bone->matrix     = glm::eulerAngleZYX( rotation.x, rotation.y, rotation.z );
-	bone->matrix[3]  = glm::vec4(          position.z, position.y, position.x, 1.0f);
+	bone->matrix_local     = glm::eulerAngleZYX( rotation.x, rotation.y, rotation.z );
+	bone->matrix_local[3]  = glm::vec4( position.z, position.y, position.x, 1.0f);
+	bone->matrix_world     = bone->matrix_local; // Set transform basis
 	return bone;
 }
 
@@ -73,11 +68,9 @@ void readBone2_8(char*& buffer,
 	bones.at(index) = (isTypeJoint) ? bone : nullptr;
 	bone->name = stringTable.at(index);
 
-	/* Update bone transform to world-space*/
-	if (parentIndex == -1) return;
-	bones.at(parentIndex)->children.push_back(bone);
-	bone->parent = bones.at(parentIndex);
-	mapBoneToParentSpace(bone, bone->parent);
+	/* Update bone hierarchy */
+	if (parentIndex != -1)
+		bone->set_parent(bones.at(parentIndex));
 }
 
 inline
@@ -101,11 +94,9 @@ void readBone2_5(char*& buffer,
 	bones.at(index) = (isTypeJoint) ? bone : nullptr;
 	bone->name = stringTable.at(index);
 
-	/* Update bone transform to world-space*/
-	if (parentIndex == -1) return;
-	bones.at(parentIndex)->children.push_back(bone);
-	bone->parent = bones.at(parentIndex);
-	mapBoneToParentSpace(bone, bone->parent);
+	/* Update bone hierarchy */
+	if (parentIndex != -1)
+		bone->set_parent(bones.at(parentIndex));
 }
 
 
@@ -470,11 +461,9 @@ CDataBuffer::getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& me
 	uint32_t lodCap = (true) ? 1 : numFaceBufs;
 
 	/* Iterate through face buffers and collect lods and material sets */
-	for (int i = 0; i < lodCap; i++)
-	{
-		uint32_t numLods = ReadUInt32(buffer);
-
-		for (int j = 0; j < numLods; j++) 
+	for (int i = 0; i < lodCap; i++){
+		uint32_t numIndices = ReadUInt32(buffer);
+		for (int j = 0; j < numIndices; j++)
 		{
 			getTriangleBuffer( buffer, meshTable.at(j), mtlTable, strings );
 		}
@@ -482,18 +471,17 @@ CDataBuffer::getLods(char* buffer, const uintptr_t& size, std::vector<Mesh*>& me
 
 }
 
-void RigBone::set_parent(RigBone* pParentBone, bool useWorldSpace)
+void RigBone::set_parent(RigBone* pParentBone)
 {
 	this->parent = pParentBone;
 	this->parent->children.push_back(this);
 
-	if (useWorldSpace) {
-		mapBoneToParentSpace(this, parent);
-	}
+	// update world space transform
+	this->matrix_world = dot_4x4(this->matrix_local, parent->matrix_world);
 }
 
 void RigBone::set_transform(float* matrices, const bool& reorder_matrix) {
-	auto& transform = this->matrix;
+	auto& transform = this->matrix_local;
 
 	/* Interpret the matrices in order,
 	or arrange the matrix with respect to Blender's 'mathutils' module */
@@ -538,3 +526,24 @@ void Mesh::generateAABBs()
 	}
 }
 
+void Mesh::generateTangentsBinormals() 
+{
+	/* Clear TBN data */
+	tangents.clear();
+	binormals.clear();
+
+	// Iterate and find highest/lowest position coord
+	const auto& coords = this->vertices;
+	int numCoords = coords.size();
+	for (int i = 0; i < numCoords; i += 3)
+	{
+		Vec4 tangent{ 1,1,1,0 };
+		float binormal = 1.0f;
+
+		tangents.push_back(tangent.x);
+		tangents.push_back(tangent.y);
+		tangents.push_back(tangent.z);
+		tangents.push_back(tangent.w);
+		binormals.push_back(binormal);
+	}
+}

@@ -250,7 +250,7 @@ const float* getBoneTransformMatrix(void* pSkinModel, const int boneIndex)
 
     /* Load bone matrices */
     auto bone = model->getBones().at(boneIndex);
-    return getGlmMatToFloatPtr(bone->matrix);
+    return getGlmMatToFloatPtr(bone->matrix_world);
 }
 
 inline bool stringExistsInVector(const std::vector<std::string*>& vec, const std::string* target) 

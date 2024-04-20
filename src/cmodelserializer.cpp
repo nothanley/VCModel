@@ -4,7 +4,7 @@
 #include <meshtags.h>
 #include <BinaryIO.h>
 #include "glm/gtx/euler_angles.hpp"
-#include "winsock.h""
+#include "winsock.h"
 
 using namespace BinaryIO;
 
@@ -57,9 +57,7 @@ void CModelSerializer::createTextBuffer()
 		stringPtr += size;
 	}
 
-	/* Align stream */
 	::align_binary_stream(stringPtr);
-
 	m_dataBuffers.push_back(stream);
 }
 
@@ -67,18 +65,18 @@ void CModelSerializer::createTextBuffer()
 inline 
 void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix) 
 {
-	float rotX, rotY, rotZ;
+	Vec3 rot;
 
 	/* Decompose translation from bone matrix*/
-	WriteFloat(buffer, matrix[3][2]);
-	WriteFloat(buffer, matrix[3][1]);
-	WriteFloat(buffer, matrix[3][0]);
+	WriteFloat(buffer, matrix[3].x);
+	WriteFloat(buffer, matrix[3].y);
+	WriteFloat(buffer, matrix[3].z);
 
 	/* Decompose euler angles from bone matix */
-	glm::extractEulerAngleXYZ(matrix, rotX, rotY, rotZ);
-	WriteFloat(buffer, rotX);
-	WriteFloat(buffer, rotY);
-	WriteFloat(buffer, rotZ);
+	glm::extractEulerAngleZYX(matrix, rot.z, rot.y, rot.x);
+	WriteFloat(buffer, rot.x);
+	WriteFloat(buffer, rot.y);
+	WriteFloat(buffer, rot.z);
 }
 
 void CModelSerializer::createBoneBuffer()
@@ -109,13 +107,14 @@ void CModelSerializer::createBoneBuffer()
 		/* Write bone index values*/
 		WriteUInt16(buffer, boneIndex);
 		WriteUInt16(buffer, parentIndex);
-		writeMatrixToBuffer(buffer, bone->matrix);
+		writeMatrixToBuffer(buffer, bone->matrix_local);
 
 		/* push new bone flags */
 		WriteUInt8(buffer, 0);
 		WriteUInt32(buffer, -1);
 	}
 
+	::align_binary_stream(buffer);
 	m_dataBuffers.push_back(stream);
 }
 
@@ -179,6 +178,20 @@ void CModelSerializer::writeBoundingBox(char*& buffer, const BoundingBox& box)
 	WriteFloat(buffer, box.maxZ);
 }
 
+static inline int getNumStacks(const StMeshBf& meshBuffer) {
+	int numStacks = 0;
+
+	meshBuffer.data.size();
+	for (auto& stack : meshBuffer.data)
+		if (stack->container != "COLOR_DICT" &&
+			stack->container != "VERTEX_REMAP" &&
+			stack->container != "SKIN" &&
+			stack->container != "BLENDSHAPES")
+			numStacks++;
+
+	return numStacks;
+}
+
 void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer)
 {
 	auto& mesh = meshBuffer.mesh;
@@ -187,9 +200,10 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 	WriteUInt16(buffer, 0);
 	WriteUInt32(buffer, mesh->motionFlag);
 
+	int numStacks = getNumStacks(meshBuffer);
 	this->writeBoundingBox(buffer, mesh->bounds);
 	WriteUInt32(buffer, mesh->numVerts);
-	WriteUInt32(buffer, meshBuffer.data.size());
+	WriteUInt32(buffer, numStacks);
 
 	/* Write data streams */
 	for (auto& stack : meshBuffer.data) {
@@ -226,7 +240,7 @@ void CModelSerializer::writeIndexBuffer(char*& buffer, int meshIndex)
 	auto mesh = m_model->getMeshes().at(meshIndex);
 	uint32_t numTris = mesh->triangles.size();
 	WriteUInt16(buffer, meshIndex);
-	WriteUInt32(buffer, numTris);
+	WriteUInt32(buffer, numTris * 3);
 
 	bool use32bIndex = (mesh->numVerts > UINT16_MAX);
 	for (auto& face : mesh->triangles) {
@@ -247,7 +261,7 @@ void CModelSerializer::writeMaterialGroupBuffer(char*& buffer, int meshIndex)
 
 	for (int i = 0; i < numGroups; i++) {
 		auto& group = mesh->groups.at(i);
-		WriteUInt32(buffer, i); // material index
+		WriteUInt32(buffer, meshIndex); // material index
 		WriteUInt32(buffer, group.faceBegin);
 		WriteUInt32(buffer, group.numTriangles);
 	}

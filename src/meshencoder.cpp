@@ -40,11 +40,13 @@ uint32_t MeshEncoder::getBoneBufferSize(const std::vector<RigBone*>& bones)
 {
 	uint32_t tableLength = sizeof(uint32_t) * 4;     // Varies with revision type
 	uint32_t entrySize = sizeof(uint16_t) * 2;		 // index + parent
-	entrySize += sizeof(uint32_t) * 24;				 // translate + rotation vectors
+	entrySize += sizeof(uint32_t) * 6;				 // translate + rotation vectors
 	entrySize += sizeof(uint8_t) + sizeof(uint32_t); // Unknown values - new
 	entrySize *= bones.size();
 
-	return tableLength + entrySize;
+	entrySize += tableLength;
+	::round_size(entrySize, 4); // align
+	return entrySize;
 }
 
 uint32_t MeshEncoder::getStringBufferSize(const std::vector<std::string>& strings) {
