@@ -16,9 +16,6 @@
     <Filter Include="Source\Model\Mesh">
       <UniqueIdentifier>{9180b65b-423c-4b98-9783-2cfdc526cfa0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Model\VC">
-      <UniqueIdentifier>{b39a7549-7b30-4fff-ac46-209a628d30e8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\File">
       <UniqueIdentifier>{9085ad71-3824-42e7-b46f-7ca0ad64e182}</UniqueIdentifier>
     </Filter>
@@ -37,6 +34,9 @@
     <Filter Include="Source\Model\Serializer">
       <UniqueIdentifier>{cc874759-45bd-4d7f-8171-2a1c670c892f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model\SkinModel">
+      <UniqueIdentifier>{b39a7549-7b30-4fff-ac46-209a628d30e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -52,10 +52,10 @@
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\skinmodel.h">
-      <Filter>Source\Model\VC</Filter>
+      <Filter>Source\Model\SkinModel</Filter>
     </ClInclude>
     <ClInclude Include="src\skinmodelpoly.h">
-      <Filter>Source\Model\VC</Filter>
+      <Filter>Source\Model\SkinModel</Filter>
     </ClInclude>
     <ClInclude Include="src\dll\pch.h">
       <Filter>Wrapper</Filter>
@@ -111,10 +111,10 @@
       <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\skinmodel.cpp">
-      <Filter>Source\Model\VC</Filter>
+      <Filter>Source\Model\SkinModel</Filter>
     </ClCompile>
     <ClCompile Include="src\skinmodelpoly.cpp">
-      <Filter>Source\Model\VC</Filter>
+      <Filter>Source\Model\SkinModel</Filter>
     </ClCompile>
     <ClCompile Include="src\dll\pch.cpp">
       <Filter>Wrapper</Filter>

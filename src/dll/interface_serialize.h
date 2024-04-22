@@ -150,7 +150,7 @@ void setMeshSkinData(void* pMesh, int* indices, float* weights, int size, int nu
 	if (!mesh)
 		return;
 
-	printf("\n[CSkinModel] Populating Skin with limit: %d\n", numWeightsPerVtx);
+	//printf("\n[CSkinModel] Populating Skin with limit: %d\n", numWeightsPerVtx);
 	auto& blendindices = mesh->skin.indices;
 	auto& blendweights = mesh->skin.weights;
 	mesh->skin.numWeights = numWeightsPerVtx;
@@ -201,8 +201,10 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 		RigBone* parent = bones.at(parentIndex);
 		bone->set_parent(parent);
 	}
+
 }
 
+#include <chrono>
 
 extern "C" __declspec(dllexport)
 void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target)
@@ -211,16 +213,28 @@ void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target)
 	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
 	if (!model) return;
 
-	switch (compile_target) 
-	{
-		case 0x28:
-			{   /* Save MDL format v2.8*/
+	try {
+		auto start = std::chrono::high_resolution_clock::now();
+
+		switch (compile_target)
+		{
+			case 0x28:{/* Save MDL format v2.8*/
 				CModelSerializer serializer(model);
 				serializer.save(savePath);
-				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
-			}
-			break;
-		default:
-			break;
+				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath); }
+				break;
+			default:
+				break;
+		}
+
+		// Get the current time after executing the function
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+		float seconds = duration.count() / 1'000'000.0f;
+		printf("\n[CSkinModel] Serialization Time: %f seconds.\n", seconds);
 	}
+	catch (...) {
+		printf("\n[CSkinModel] Failed to save model file.");
+	}
+	
 }
