@@ -56,6 +56,7 @@ namespace BinaryIO {
     void WriteUInt64(stringstream& ss, uint64_t value, bool swap = false);
     void WriteUInt32(std::stringstream& ss, uint32_t value, bool swap = false);
     void WriteUInt16(stringstream& ss, uint16_t value);
+	void WriteSInt16(stringstream& ss, int16_t value);
 	void WriteSInt8(stringstream& ss, int8_t value);
     void WriteByte(stringstream& ss, uint8_t value);
     void WriteBool(stringstream& ss, bool flag);

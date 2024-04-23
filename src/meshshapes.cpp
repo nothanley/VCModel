@@ -1,6 +1,7 @@
 #include "meshshapes.h"
 #include "meshbuffers.h"
 #include "BinaryIO.h"
+
 using namespace BinaryIO;
 using namespace MeshSerializer;
 
@@ -134,7 +135,8 @@ vCMeshShapes::getVertexDeltas( char* table, StBlendShape* targetShape )
 }
 
 void
-vCMeshShapes::getMorphWeights() {
+vCMeshShapes::getMorphWeights() 
+{
 	/* Get base deltas and lowest x,y,z positions */
 	vCMeshShapes::getTransformDeltas();
 	uint32_t tableSize  = ReadUInt32(m_data);
@@ -175,5 +177,4 @@ vCMeshShapes::load()
 	vCMeshShapes::getMorphIds();
 	vCMeshShapes::getMorphWeights();
 }
-
 

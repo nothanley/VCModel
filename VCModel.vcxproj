@@ -57,6 +57,7 @@
     <ClInclude Include="src\meshbuffers.h" />
     <ClInclude Include="src\meshencoder.h" />
     <ClInclude Include="src\meshshapes.h" />
+    <ClInclude Include="src\meshshapes_serialize.h" />
     <ClInclude Include="src\meshtags.h" />
     <ClInclude Include="src\modelfile.h" />
     <ClInclude Include="src\skinmodel.h" />
@@ -78,6 +79,7 @@
     <ClCompile Include="src\meshbuffers.cpp" />
     <ClCompile Include="src\meshencoder.cpp" />
     <ClCompile Include="src\meshshapes.cpp" />
+    <ClCompile Include="src\meshshapes_serialize.cpp" />
     <ClCompile Include="src\modelfile.cpp" />
     <ClCompile Include="src\skinmodel.cpp" />
     <ClCompile Include="src\skinmodelpoly.cpp" />

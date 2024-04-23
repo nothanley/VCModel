@@ -308,6 +308,11 @@ BinaryIO::WriteUInt16(std::stringstream& ss, uint16_t value) {
 	ss.write(reinterpret_cast<const char*>(&value), sizeof(uint16_t));
 }
 
+void
+BinaryIO::WriteSInt16(std::stringstream& ss, int16_t value) {
+	ss.write(reinterpret_cast<const char*>(&value), sizeof(int16_t));
+}
+
 void 
 BinaryIO::WriteByte(std::stringstream& ss, uint8_t value) {
 	ss.write(reinterpret_cast<const char*>(&value), sizeof(uint8_t));

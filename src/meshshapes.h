@@ -16,6 +16,12 @@ public:
 	void load();
 	std::vector<StBlendShape>* getBlendShapes() { return m_shapes; }
 
+protected:
+	static uint8_t reverseBits(uint8_t n);
+	static uint32_t flip32bits(uint32_t value);
+	static void divmod(int a, int b, int* quotient, int* remainder);
+
+
 private:
 	inline void getTransformDeltas();
 	void getMorphIds();
@@ -26,9 +32,6 @@ private:
 	void getVertexWeights(const uint32_t& compression, char*& weightData, StBlendShape* targetShape, const int& index);
 
 private:
-	inline uint8_t reverseBits(uint8_t n);
-	inline uint32_t flip32bits(uint32_t value);
-	inline void divmod(int a, int b, int* quotient, int* remainder);
 	Vec4 loadVertexWeights(char*& data);
 	void applyVertexWeight(const size_t vertexIndex, std::vector<float>& vertices, const Vec4& vertexWeights);
 

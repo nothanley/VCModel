@@ -50,6 +50,10 @@ protected:
 	void serializeBlendShapes(StMeshBf& target);
 	void serializeColorDict(StMeshBf& target);
 
+private:
+	void writeMeshShapes(std::stringstream& stream, Mesh* mesh);
+
+protected:
 	std::vector<StMeshBf>    m_meshBuffers;
 	std::vector<StModelBf>   m_dataBuffers;
 	std::vector<std::string> m_stringTable;

@@ -9,6 +9,7 @@ int main()
         CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
         CSkinModel* model = mdlFile.getModel();
 
+
         CModelSerializer serializer(model);
         serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 

@@ -2,9 +2,11 @@
 #include <skinmodel.h>
 #include <BinaryIO.h>
 #include <crc32c/crc32c.h>
+#include "meshshapes_serialize.h"
 
 using namespace BinaryIO;
 using namespace crc32c;
+using bscompress = vCMeshShapeSerial;
 
 const std::vector<std::string> STREAM_TABLE{
 	"POSITION", "R32_G32_B32","float", "NORMAL", "R8_G8_B8_A8", "snorm",
@@ -222,20 +224,6 @@ void CMeshSerializer::serializeVertexRemap(StMeshBf& target)
 	target.data.push_back(dataBf);
 }
 
-void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
-{
-	auto dataBf = std::make_shared<StDataBf>();
-	auto& stream = dataBf->stream;
-	dataBf->container = "BLENDSHAPES";
-
-	/* todo: ...everything */
-	int numMorphs = target.mesh->blendshapes.size();
-	WriteUInt32(stream, 0);
-
-	::align_binary_stream(stream);
-	target.data.push_back(dataBf);
-}
-
 void CMeshSerializer::serializeColorDict(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
@@ -280,4 +268,88 @@ void CMeshSerializer::generateStringTable()
 		m_stringTable.push_back(type);
 	}
 }
+
+
+static void createShapeVertexBuffer(std::stringstream& indexBuffer, std::stringstream& weightBuffer,
+	const Matrix3& deltaMatrix, Mesh* mesh, const StBlendShape& shape, uint32_t& offset)
+{
+	uint32_t indexMask = 0; // stores 'is morphed' status for 32 vertices
+	uint8_t size = 0;
+
+	for (int i = 0; i < mesh->numVerts; i++) {
+		Vec3 original_vertex   = bscompress::getVertex(i * 3, mesh->vertices);
+		Vec3 blendshape_vertex = bscompress::getVertex(i * 3, shape.vertices);
+
+		if (original_vertex != blendshape_vertex) {
+			bscompress::setBit( indexMask, (i % 0x20) ); // update index mask @ vertex index
+			bscompress::updateShapeVtxWeightBuffer(weightBuffer, deltaMatrix, original_vertex, blendshape_vertex);
+			size++;
+		}
+
+		if ((i + 1) % 0x20 == 0) // Update mask & stream every 32 indices
+			bscompress::updateShapeVtxIndexBuffer(indexBuffer, indexMask, offset, size);
+	}
+
+	/* Process remaining vertices */
+	if (mesh->numVerts % 0x20 != 0)
+		bscompress::updateShapeVtxIndexBuffer(indexBuffer, indexMask, offset, size);
+}
+
+static inline uint32_t getIndexTableSize(int numShapes, int numVerts) {
+	uint32_t completeSets	  = numVerts / 0x20;
+	uint32_t remainingIndices = numVerts % 0x20;
+	uint32_t numDataSets = completeSets + (remainingIndices > 0 ? 1 : 0);
+	return numShapes * numDataSets * 8;
+}
+
+static void createVertexMorphs(std::stringstream& stream, Mesh* mesh)
+{
+	/* Generate delta matrix for overall blendshape coords */
+	uint32_t weightOffset = getIndexTableSize(mesh->blendshapes.size(), mesh->numVerts);
+	Matrix3 shapeDeltaMat = bscompress::getBlendShapePrecisionMatrix(mesh);
+	std::stringstream indexBuffer, weightBuffer;
+	for (auto& shape : mesh->blendshapes) {
+		createShapeVertexBuffer(indexBuffer, weightBuffer, shapeDeltaMat, mesh, shape, weightOffset);
+	}
+
+	/* Write shape vertex + weight stream */
+	WriteUInt32(stream, mesh->numVerts);
+	bscompress::writeDeltaMatrix(stream, shapeDeltaMat);
+	WriteUInt32(stream, indexBuffer.str().size() + weightBuffer.str().size() ); // Index table size
+	stream.write( indexBuffer.str().data(),  indexBuffer.str().size()  );
+	stream.write( weightBuffer.str().data(), weightBuffer.str().size() );
+}
+
+void CMeshSerializer::writeMeshShapes(std::stringstream& stream, Mesh* mesh)
+{
+	for (auto& shape : mesh->blendshapes)
+		WriteUInt16(stream, indexOf(shape.name)); // Add all shape names to stream
+
+	::align_binary_stream(stream);
+	::createVertexMorphs(stream, mesh); // creates compressed blendshape stream
+}
+
+void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	auto& stream = dataBf->stream;
+	dataBf->container = "BLENDSHAPES";
+
+	/* Serialize all blendshapes */
+	Mesh* mesh = target.mesh;
+	int numMorphs = mesh->blendshapes.size();
+	WriteUInt32(stream, numMorphs);
+	printf("\nMesh '%s' has total shapes: %d", mesh->name.c_str(), mesh->blendshapes.size());
+
+	/* Create shape key weight buffer */
+	if (!mesh->blendshapes.empty())
+	{
+		writeMeshShapes(stream, mesh);
+	}
+
+	::align_binary_stream(stream);
+	target.data.push_back(dataBf);
+}
+
+
 

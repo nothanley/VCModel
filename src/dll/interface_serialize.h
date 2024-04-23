@@ -1,5 +1,6 @@
 #include <cstring>
 #include <VCModel>
+#include <chrono>
 #pragma once
 
 extern "C" __declspec(dllexport)
@@ -82,6 +83,30 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 	/* Setup mesh default mtl */
 	FaceGroup faceMat{ mesh->material, 0, numFaces};
 	mesh->groups.push_back(faceMat);
+}
+
+extern "C" __declspec(dllexport)
+void addBlendShape(void* pMesh, const char* name, float* coords, int size)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	/* Validate coordinate array*/
+	if (size != mesh->vertices.size())
+		return;
+
+	/* Push shape key to mesh struct */
+	StBlendShape shape;
+	shape.name = name;
+	shape.vertices.resize(size);
+	for (int i = 0; i < size; i += 3) {
+		/* Populate position coords - (+X-Z+Y)*/
+		shape.vertices[i]	  =  coords[i];
+		shape.vertices[i + 1] =  -coords[i+2];
+		shape.vertices[i + 2] =  coords[i+1];
+	}
+
+	mesh->blendshapes.push_back(shape);
 }
 
 extern "C" __declspec(dllexport)
@@ -204,7 +229,7 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 
 }
 
-#include <chrono>
+
 
 extern "C" __declspec(dllexport)
 void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target)
