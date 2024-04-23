@@ -120,7 +120,7 @@ vCMeshShapes::getVertexWeights( const uint32_t& compression, char*& weightData, 
 }
 
 void
-vCMeshShapes::getVertexDeltas( char* table, StBlendShape* targetShape )
+vCMeshShapes::getVertexDeltas(char* table, StBlendShape* targetShape )
 {
 	int index = 0;
 	while (index < m_numMorphVerts)
@@ -142,11 +142,12 @@ vCMeshShapes::getMorphWeights()
 	uint32_t tableSize  = ReadUInt32(m_data);
 	char* morphsTable   = m_data;
 
-	for (int i = 0; i < m_numMorphs; i++)
-	{
+	for (int i = 0; i < m_numMorphs; i++){
 		auto& blendshape = m_shapes->at(i);
-		getVertexDeltas( morphsTable, &blendshape);
+		getVertexDeltas(morphsTable, &blendshape);
 	}
+
+	m_data = morphsTable + tableSize; // seek to end
 }
 
 void
@@ -171,10 +172,14 @@ vCMeshShapes::getMorphIds()
 void
 vCMeshShapes::load() 
 {
-	if (!m_data)
+	if (!m_data) 
 		return;
 
+	/* Collect all blendshape names */
 	vCMeshShapes::getMorphIds();
-	vCMeshShapes::getMorphWeights();
+
+	/* Collect all vertex weight + coordinates */
+	if (m_numMorphs > 0)
+		vCMeshShapes::getMorphWeights();
 }
 

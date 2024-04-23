@@ -45,6 +45,7 @@
   <ItemGroup>
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
+    <ClInclude Include="meshstructs.h" />
     <ClInclude Include="src\cmeshserializer.h" />
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
@@ -66,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\BinaryIO.cpp" />
+    <ClCompile Include="meshstructs.cpp" />
     <ClCompile Include="src\cmeshserializer.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />

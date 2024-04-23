@@ -37,6 +37,12 @@
     <Filter Include="Source\Model\SkinModel">
       <UniqueIdentifier>{b39a7549-7b30-4fff-ac46-209a628d30e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model\Mesh\BufferDefs">
+      <UniqueIdentifier>{558f6f06-0829-4248-9255-6794ce04b2a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model\Mesh\GE">
+      <UniqueIdentifier>{7bd60cde-8355-4772-ad3c-ee04cc9c0996}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -44,9 +50,6 @@
     </ClInclude>
     <ClInclude Include="src\common.h">
       <Filter>Source\File</Filter>
-    </ClInclude>
-    <ClInclude Include="src\databuffers.h">
-      <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\meshtags.h">
       <Filter>Source\Model\Mesh</Filter>
@@ -84,9 +87,6 @@
     <ClInclude Include="src\wavefront.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="src\meshbuffers.h">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="include\crc32c\crc32c.h">
       <Filter>Include\Crc32C</Filter>
     </ClInclude>
@@ -99,6 +99,15 @@
     <ClInclude Include="src\meshshapes_serialize.h">
       <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="meshstructs.h">
+      <Filter>Source\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\databuffers.h">
+      <Filter>Source\Model\Mesh\BufferDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshbuffers.h">
+      <Filter>Source\Model\Mesh\GE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -109,9 +118,6 @@
     </ClCompile>
     <ClCompile Include="src\common.cpp">
       <Filter>Source\File</Filter>
-    </ClCompile>
-    <ClCompile Include="src\databuffers.cpp">
-      <Filter>Source\Model\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="src\skinmodel.cpp">
       <Filter>Source\Model\SkinModel</Filter>
@@ -146,9 +152,6 @@
     <ClCompile Include="src\wavefront.cpp">
       <Filter>Include</Filter>
     </ClCompile>
-    <ClCompile Include="src\meshbuffers.cpp">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="src\cmeshserializer.cpp">
       <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
@@ -157,6 +160,15 @@
     </ClCompile>
     <ClCompile Include="src\meshshapes_serialize.cpp">
       <Filter>Source\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="meshstructs.cpp">
+      <Filter>Source\Model\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\databuffers.cpp">
+      <Filter>Source\Model\Mesh\BufferDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshbuffers.cpp">
+      <Filter>Source\Model\Mesh\GE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

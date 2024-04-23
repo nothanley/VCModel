@@ -36,7 +36,7 @@ private:
 	void applyVertexWeight(const size_t vertexIndex, std::vector<float>& vertices, const Vec4& vertexWeights);
 
 private:
-	char* m_data;
+	char*& m_data;
 	Mesh* m_mesh;
 	uint32_t m_numMorphs = 0;
 	uint32_t m_numMorphVerts = 0;
