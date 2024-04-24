@@ -267,7 +267,7 @@ void CModelSerializer::writeMaterialGroupBuffer(char*& buffer, int meshIndex)
 		auto& group = mesh->groups.at(i);
 		WriteUInt32(buffer, meshIndex); // material index
 		WriteUInt32(buffer, group.faceBegin);
-		WriteUInt32(buffer, group.numTriangles);
+		WriteUInt32(buffer, group.numTriangles * 3);
 	}
 
 	/* Write ENDM tag */
