@@ -37,8 +37,11 @@
     <Filter Include="Source\Model\SkinModel">
       <UniqueIdentifier>{b39a7549-7b30-4fff-ac46-209a628d30e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Model\Mesh\BufferDefs">
-      <UniqueIdentifier>{558f6f06-0829-4248-9255-6794ce04b2a4}</UniqueIdentifier>
+    <Filter Include="Source\Model\Mesh\Blendshapes">
+      <UniqueIdentifier>{31b8ff0f-dd7e-4e0f-b8cb-4ae1ecb7b874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Model\Mesh\Structs">
+      <UniqueIdentifier>{b2b1f75f-86ec-4ab2-a00d-ff674e2fa528}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Model\Mesh\GE">
       <UniqueIdentifier>{7bd60cde-8355-4772-ad3c-ee04cc9c0996}</UniqueIdentifier>
@@ -50,9 +53,6 @@
     </ClInclude>
     <ClInclude Include="src\common.h">
       <Filter>Source\File</Filter>
-    </ClInclude>
-    <ClInclude Include="src\meshtags.h">
-      <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\skinmodel.h">
       <Filter>Source\Model\SkinModel</Filter>
@@ -71,9 +71,6 @@
     </ClInclude>
     <ClInclude Include="src\dll\interface_serialize.h">
       <Filter>Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="src\meshshapes.h">
-      <Filter>Source\Model\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\cmodelserializer.h">
       <Filter>Source\Model\Serializer</Filter>
@@ -96,17 +93,23 @@
     <ClInclude Include="src\meshencoder.h">
       <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
-    <ClInclude Include="src\meshshapes_serialize.h">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="meshstructs.h">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="src\databuffers.h">
-      <Filter>Source\Model\Mesh\BufferDefs</Filter>
-    </ClInclude>
     <ClInclude Include="src\meshbuffers.h">
       <Filter>Source\Model\Mesh\GE</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshshapes.h">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshshapes_serialize.h">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClInclude>
+    <ClInclude Include="meshstructs.h">
+      <Filter>Source\Model\Mesh\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshtags.h">
+      <Filter>Source\Model\Mesh\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\modelcereal.h">
+      <Filter>Source\Model\SkinModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -137,9 +140,6 @@
     <ClCompile Include="src\dll\interface_serialize.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="src\meshshapes.cpp">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="src\cmodelserializer.cpp">
       <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
@@ -158,17 +158,20 @@
     <ClCompile Include="src\meshencoder.cpp">
       <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
-    <ClCompile Include="src\meshshapes_serialize.cpp">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="meshstructs.cpp">
-      <Filter>Source\Model\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="src\databuffers.cpp">
-      <Filter>Source\Model\Mesh\BufferDefs</Filter>
-    </ClCompile>
     <ClCompile Include="src\meshbuffers.cpp">
       <Filter>Source\Model\Mesh\GE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshshapes.cpp">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshshapes_serialize.cpp">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClCompile>
+    <ClCompile Include="meshstructs.cpp">
+      <Filter>Source\Model\Mesh\Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\modelcereal.cpp">
+      <Filter>Source\Model\SkinModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

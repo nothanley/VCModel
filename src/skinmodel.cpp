@@ -5,17 +5,16 @@
 #include "meshencoder.h"
 using namespace BinaryIO;
 
-CSkinModel::CSkinModel()
-	: m_data(nullptr),
-	m_parent(nullptr),
-	m_version(-1)
+CSkinModel::CSkinModel() : CSerializedModel()
 {
+	m_parent = nullptr;
 }
 
 CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
-    : m_data(data),
-	  m_parent(pParent)
+	: CSerializedModel(),
+	m_parent(pParent)
 {
+	m_data = data;
 	this->loadData();
 }
 

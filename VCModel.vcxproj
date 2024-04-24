@@ -50,7 +50,7 @@
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
     <ClInclude Include="src\common.h" />
-    <ClInclude Include="src\databuffers.h" />
+    <ClInclude Include="src\modelcereal.h" />
     <ClInclude Include="src\dll\framework.h" />
     <ClInclude Include="src\dll\interfaceskinmodel.h" />
     <ClInclude Include="src\dll\interface_serialize.h" />
@@ -72,7 +72,7 @@
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
     <ClCompile Include="src\common.cpp" />
-    <ClCompile Include="src\databuffers.cpp" />
+    <ClCompile Include="src\modelcereal.cpp" />
     <ClCompile Include="src\dll\dllmain.cpp" />
     <ClCompile Include="src\dll\interfaceskinmodel.cpp" />
     <ClCompile Include="src\dll\interface_serialize.cpp" />

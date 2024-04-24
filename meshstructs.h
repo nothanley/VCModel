@@ -174,7 +174,7 @@ struct Mesh
 	void generateTangentsBinormals();
 };
 
-struct MeshBuffer {
+struct MeshDefBf {
 	std::string property, format, type;
 	char* stream;
 };

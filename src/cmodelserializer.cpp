@@ -163,6 +163,7 @@ void CModelSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
 		serializeVertexRemap(meshbuffer);
 		serializeBlendShapes(meshbuffer);
 		serializeColorDict(meshbuffer);
+		serializeUVDict(meshbuffer); // - 2k24 only
 
 		buffers.push_back(meshbuffer);
 	}
@@ -184,6 +185,7 @@ static inline int getNumStacks(const StMeshBf& meshBuffer) {
 	meshBuffer.data.size();
 	for (auto& stack : meshBuffer.data)
 		if (stack->container != "COLOR_DICT" &&
+			stack->container != "UV_DICT" &&
 			stack->container != "VERTEX_REMAP" &&
 			stack->container != "SKIN" &&
 			stack->container != "BLENDSHAPES")
@@ -210,6 +212,8 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 		std::string dataBf = stack->stream.str();
 		WriteData(buffer, (char*)dataBf.c_str(), dataBf.size());
 	}
+
+	/* Write */
 
 	WriteUInt64(buffer, ntohl(ENDM));
 }

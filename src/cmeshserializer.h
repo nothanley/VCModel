@@ -1,4 +1,4 @@
-#include "databuffers.h"
+#include "modelcereal.h"
 #include <sstream>
 #pragma once 
 
@@ -49,6 +49,7 @@ protected:
 	void serializeVertexRemap(StMeshBf& target);
 	void serializeBlendShapes(StMeshBf& target);
 	void serializeColorDict(StMeshBf& target);
+	void serializeUVDict(StMeshBf& target);
 
 private:
 	void writeMeshShapes(std::stringstream& stream, Mesh* mesh);

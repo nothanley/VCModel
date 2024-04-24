@@ -1,8 +1,6 @@
 #include <fstream>
 #include <istream>
-#include <vector>
-#include <string>
-#include "databuffers.h"
+#include "modelcereal.h"
 #pragma once
 
 struct RigBone;
@@ -10,7 +8,7 @@ struct Material;
 struct BoundingBox;
 
 class CModelContainer;
-class CSkinModel
+class CSkinModel : public CSerializedModel
 {
 	public:
 		CSkinModel();
@@ -35,20 +33,10 @@ class CSkinModel
 	private:
 		void loadData();
 		void loadAxisBounds();
-		virtual void loadBuffer(){}
+		virtual void loadBuffer(){};
 
 	protected:
 		CModelContainer* m_parent;
-		BoundingBox m_axisBox;
-
-		std::vector<Mesh*> m_meshes;
-		std::vector<RigBone*> m_bones;
-		std::vector<std::string> m_stringTable;
-		std::vector<Material> m_materials;
-		
-		float m_version;
-		int m_type;
-		char* m_data;
 };
 
 

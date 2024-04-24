@@ -11,6 +11,9 @@ public:
 
 private:
     void loadBuffer() override;
+    void loadModelBones(const uintptr_t& size) override;
+    void readBone() override;
+    void getMeshMapInfo(Mesh& mesh) override;
 };
 
 
@@ -24,4 +27,7 @@ public:
 
 private:
     void loadBuffer() override;
+    void loadModelBones(const uintptr_t& size) override;
+    void readBone() override;
+    void getMeshMapInfo(Mesh& mesh) override;
 };

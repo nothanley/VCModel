@@ -240,6 +240,25 @@ void CMeshSerializer::serializeColorDict(StMeshBf& target)
 	target.data.push_back(dataBf);
 }
 
+void CMeshSerializer::serializeUVDict(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	auto& stream = dataBf->stream;
+	dataBf->container = "UV_DICT";
+
+	/* Write texture uv channel names */
+	for (auto& uvMap : target.mesh->texcoords) {
+		WriteUInt32(stream, indexOf(uvMap.name));
+	}
+
+	/* Unknown 2024 values */
+	WriteFloat(stream, 0.0f);
+	WriteFloat(stream, 0.0f);
+
+	::align_binary_stream(stream);
+	target.data.push_back(dataBf);
+}
+
 void CMeshSerializer::generateStringTable()
 {
 	/* Push all bone names */
@@ -253,15 +272,18 @@ void CMeshSerializer::generateStringTable()
 	for (auto& mesh : meshes) {
 		m_stringTable.push_back(mesh->name);
 
+		for (auto& uvMap : mesh->texcoords)
+			m_stringTable.push_back(uvMap.name);
+
 		for (auto& group : mesh->groups)
 			m_stringTable.push_back(group.material.name);
 	}
 
 	/* Push all blendshape ids */
-	for (auto& mesh : meshes)
-		for (auto& shape : mesh->blendshapes) {
+	for (auto& mesh : meshes) {
+		for (auto& shape : mesh->blendshapes)
 			m_stringTable.push_back(shape.name);
-		}
+	}
 
 	/* Push all stream types */
 	for (auto& type : STREAM_TABLE) {
@@ -339,13 +361,11 @@ void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
 	Mesh* mesh = target.mesh;
 	int numMorphs = mesh->blendshapes.size();
 	WriteUInt32(stream, numMorphs);
-	printf("\nMesh '%s' has total shapes: %d", mesh->name.c_str(), mesh->blendshapes.size());
+	//printf("\nMesh '%s' has total shapes: %d", mesh->name.c_str(), mesh->blendshapes.size());
 
 	/* Create shape key weight buffer */
 	if (!mesh->blendshapes.empty())
-	{
 		writeMeshShapes(stream, mesh);
-	}
 
 	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
