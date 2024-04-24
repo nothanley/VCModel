@@ -13,6 +13,8 @@ int main()
         CModelSerializer serializer(model);
         serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
+        
+
         if (model)
             delete model;
     }
