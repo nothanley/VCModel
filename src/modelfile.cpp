@@ -45,6 +45,9 @@ CModelContainer::ReadContents()
 	printf("Opening Model File: %s\n", m_sFilePath.c_str());
 	switch (m_version)
 	{
+		case MDL_VERSION_2_0:
+			this->m_model = new CSkinModel_2_0(m_data, this);
+			break;
 		case MDL_VERSION_2_5:
 			this->m_model = new CSkinModel_2_5(m_data, this);
 			break;

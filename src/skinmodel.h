@@ -30,12 +30,10 @@ class CSkinModel : public CSerializedModel
 		void saveToObjFile(const char* path, bool split = true);
 		static void saveObjFile(Mesh* mesh, const char* path);
 
-	private:
-		void loadData();
-		void loadAxisBounds();
-		virtual void loadBuffer(){};
-
 	protected:
+		void loadAxisBounds();
+		virtual void loadData();
+		virtual void loadBuffer();
 		CModelContainer* m_parent;
 };
 

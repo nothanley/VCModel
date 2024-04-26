@@ -68,9 +68,9 @@ void CMeshSerializer::serializeVertexNormals(StMeshBf& target)
 	/* Write vertex normal buffer */
 	auto& stream = dataBf->stream;
 	std::vector<float>& normals = target.mesh->normals;
+	int array_size = (normals.size() == target.mesh->vertices.size()) ? 3 : 4;
 
-	for (int i = 0; i < normals.size(); i += 4) {
-		// Convert to signed normals
+	for (int i = 0; i < normals.size(); i += array_size) {
 		Vec3 normal{ normals[i], normals[i + 1], normals[i + 2] };
 		normal.pack_values(1.0);
 		normal *= 127;

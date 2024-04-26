@@ -3,6 +3,7 @@
 #include "modelfile.h"
 #include "wavefront.h"
 #include "meshencoder.h"
+#include <meshtags.h>
 using namespace BinaryIO;
 
 CSkinModel::CSkinModel() : CSerializedModel()
@@ -15,7 +16,6 @@ CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
 	m_parent(pParent)
 {
 	m_data = data;
-	this->loadData();
 }
 
 CSkinModel::~CSkinModel()
@@ -88,5 +88,40 @@ const BoundingBox CSkinModel::getAABBs()
 	}
 
 	return totalBox;
+}
+
+void CSkinModel::loadBuffer()
+{
+	uint32_t type = ReadUInt32(m_data);
+	uint32_t size = ReadUInt32(m_data);
+	char* nextBfPtr = m_data + size;
+
+	// Handle stream
+	switch (type)
+	{
+		case TEXT:
+			this->loadStringTable();
+			break;
+		case BONE:
+			this->loadModelBones(size);
+			break;
+		case MTL:
+			this->loadMaterials();
+			break;
+		case MBfD:
+			this->loadMeshes();
+			break;
+		case LODs:
+			this->loadLods();
+			break;
+		case END:
+			return;
+		default:
+			break;
+	}
+
+	//Iterate through model structure
+	m_data = nextBfPtr;
+	loadBuffer();
 }
 

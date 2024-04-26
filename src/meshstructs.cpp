@@ -110,10 +110,12 @@ void Mesh::flipNormals()
 
 void Mesh::convertSplitNorms()
 {
+	int array_size = (normals.size() == vertices.size()) ? 3 : 4;
 	std::vector<float> data;
+
 	for (int i = 0; i < numVerts; i++)
 	{
-		int index = (i * 4);
+		int index = (i * array_size);
 		data.push_back(normals.at(index + 0));
 		data.push_back(normals.at(index + 1));
 		data.push_back(normals.at(index + 2));

@@ -4,8 +4,9 @@
 enum enModelFormats
 {
 	MDL_MAGIC = 0x214c444d,
-	MDL_VERSION_2_5 = 0x25,
-	MDL_VERSION_2_8 = 0x28,
+	MDL_VERSION_2_8 = 0x28, // WWE 2K24 - Visual Concepts MDL v2.5
+	MDL_VERSION_2_5 = 0x25, // WWE 2K23 - Visual Concepts MDL v2.8
+	MDL_VERSION_2_0 = 0x20, // WWE 2K22 - Visual Concepts MDL v2.0
 };
 
 enum enMeshBfTags
