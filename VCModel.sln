@@ -11,12 +11,16 @@ Global
 		Debug|x86 = Debug|x86
 		Debug-EXE|x64 = Debug-EXE|x64
 		Debug-EXE|x86 = Debug-EXE|x86
+		Debug-StaticLib|x64 = Debug-StaticLib|x64
+		Debug-StaticLib|x86 = Debug-StaticLib|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 		Release-DLL|x64 = Release-DLL|x64
 		Release-DLL|x86 = Release-DLL|x86
 		Release-EXE|x64 = Release-EXE|x64
 		Release-EXE|x86 = Release-EXE|x86
+		Release-StaticLib|x64 = Release-StaticLib|x64
+		Release-StaticLib|x86 = Release-StaticLib|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug|x64.ActiveCfg = Debug|x64
@@ -27,6 +31,10 @@ Global
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x64.Build.0 = Debug-EXE|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x86.ActiveCfg = Debug-EXE|Win32
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x86.Build.0 = Debug-EXE|Win32
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x64.ActiveCfg = Debug-StaticLib|x64
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x64.Build.0 = Debug-StaticLib|x64
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x86.ActiveCfg = Debug-StaticLib|Win32
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x86.Build.0 = Debug-StaticLib|Win32
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release|x64.ActiveCfg = Release|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release|x64.Build.0 = Release|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release|x86.ActiveCfg = Release|Win32
@@ -39,6 +47,10 @@ Global
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-EXE|x64.Build.0 = Release-EXE|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-EXE|x86.ActiveCfg = Release-EXE|Win32
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-EXE|x86.Build.0 = Release-EXE|Win32
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-StaticLib|x64.ActiveCfg = Release-StaticLib|x64
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-StaticLib|x64.Build.0 = Release-StaticLib|x64
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-StaticLib|x86.ActiveCfg = Release-StaticLib|Win32
+		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Release-StaticLib|x86.Build.0 = Release-StaticLib|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,4 @@
-#include "../meshstructs.h"
+#include "meshstructs.h"
 #pragma once
 
 class CSerializedModel

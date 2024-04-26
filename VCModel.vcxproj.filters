@@ -102,14 +102,14 @@
     <ClInclude Include="src\meshshapes_serialize.h">
       <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClInclude>
-    <ClInclude Include="meshstructs.h">
-      <Filter>Source\Model\Mesh\Structs</Filter>
-    </ClInclude>
     <ClInclude Include="src\meshtags.h">
       <Filter>Source\Model\Mesh\Structs</Filter>
     </ClInclude>
     <ClInclude Include="src\modelcereal.h">
       <Filter>Source\Model\SkinModel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\meshstructs.h">
+      <Filter>Source\Model\Mesh\Structs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,11 +167,11 @@
     <ClCompile Include="src\meshshapes_serialize.cpp">
       <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClCompile>
-    <ClCompile Include="meshstructs.cpp">
-      <Filter>Source\Model\Mesh\Structs</Filter>
-    </ClCompile>
     <ClCompile Include="src\modelcereal.cpp">
       <Filter>Source\Model\SkinModel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\meshstructs.cpp">
+      <Filter>Source\Model\Mesh\Structs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
