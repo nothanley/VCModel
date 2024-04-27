@@ -199,7 +199,7 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 	auto& mesh = meshBuffer.mesh;
 	WriteUInt32(buffer, indexOf(mesh->name));
 	WriteUInt32(buffer, mesh->sceneFlag);
-	WriteUInt16(buffer, 0);
+	WriteUInt16(buffer, 0); // alignment
 	WriteUInt32(buffer, mesh->motionFlag);
 
 	int numStacks = getNumStacks(meshBuffer);
@@ -212,8 +212,6 @@ void CModelSerializer::writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer
 		std::string dataBf = stack->stream.str();
 		WriteData(buffer, (char*)dataBf.c_str(), dataBf.size());
 	}
-
-	/* Write */
 
 	WriteUInt64(buffer, ntohl(ENDM));
 }

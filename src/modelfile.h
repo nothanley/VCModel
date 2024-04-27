@@ -6,6 +6,7 @@ class CSkinModel;
 class CModelContainer {
 
 public:
+	CModelContainer(char* data, bool use_lightweight_loader);
 	CModelContainer(const char* path);
 	~CModelContainer();
 

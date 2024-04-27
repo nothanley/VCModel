@@ -17,11 +17,12 @@ void writeNorms(std::ofstream& myfile, Mesh* mesh)
 {
 	myfile << "\n";
 	int numNorms = mesh->normals.size();
-	for (int i = 0; i < numNorms; i += 4) {
+	int array_size = numNorms / mesh->numVerts;
+
+	for (int i = 0; i < numNorms; i += array_size) {
 		auto x = mesh->normals.at(i);
 		auto y = mesh->normals.at(i + 1);
 		auto z = mesh->normals.at(i + 2);
-		auto w = mesh->normals.at(i + 3);
 		myfile << "\nvn " << std::to_string(x) << " " << std::to_string(-y) << " " << std::to_string(-z);
 	}
 }

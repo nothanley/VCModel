@@ -26,13 +26,15 @@ namespace BinaryIO {
 	int16_t  ReadInt16(char*& buffer, bool swap = false);
 	uint32_t ReadUInt32(char*& buffer, bool swap = false);
 	uint64_t ReadUInt64(char*& buffer, bool swap = false);
+	std::string ReadString(char*& data);
+	std::string ReadString(char*& data, int size);
 
 	float ReadFloat(char*& buffer);
 	void WriteUInt8(char*& buffer, const uint8_t& value);
 	void WriteUInt16(char*& buffer, const uint16_t& value);
 	void WriteUInt32(char*& buffer, const uint32_t& value);
 	void WriteUInt64(char*& buffer, const uint64_t& value);
-	void WriteString_CharStream(char*& buffer, const std::string& string);
+	void WriteString(char*& buffer, const std::string& string);
 	void WriteFloat(char*& buffer, const float& value);
 	void WriteData(char*& buffer, char* data, size_t size);
 	
@@ -62,7 +64,7 @@ namespace BinaryIO {
     void WriteBool(stringstream& ss, bool flag);
     void WriteInt32(stringstream& ss, int32_t value);
     void WriteFloat(stringstream& ss, float value);
-    void WriteString(stringstream& ss, const std::string& string);
+    void WriteString(stringstream& ss, const std::string& string, bool add_size_tag=false);
     void WriteChars(stringstream& ss, const std::string& value);
     void WriteSignature(stringstream& ss, const std::string& value);
 
@@ -79,4 +81,5 @@ namespace BinaryIO {
 
 	void align_binary_stream(std::stringstream& stream, int8_t alignment_value = 4);
 	void align_binary_stream(char*& buffer, int8_t alignment_value=4);
+	void round_size(uint32_t& size, const int8_t value);
 }

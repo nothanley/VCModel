@@ -15,6 +15,16 @@ CModelContainer::CModelContainer(const char* path)
 	LoadFile();
 }
 
+CModelContainer::CModelContainer(char* data, bool use_lightweight_loader)
+  : m_sFilePath(""),
+	m_data(nullptr),
+	m_fileBf(data),
+	m_isReady(false),
+	m_model(nullptr)
+{
+	LoadFile();
+}
+
 CModelContainer::~CModelContainer() 
 {
 	if (m_fileBf)
@@ -22,8 +32,10 @@ CModelContainer::~CModelContainer()
 }
 
 void
-CModelContainer::LoadFile() {
-	m_fileBf = VCFile::Common::readBinaryFile(m_sFilePath);
+CModelContainer::LoadFile() 
+{
+	this->m_fileBf = (m_fileBf) ? m_fileBf : SysCommon::readBinaryFile(m_sFilePath);
+
 	if (!m_fileBf)
 		throw std::runtime_error("Cannot read MDL file.");
 

@@ -51,9 +51,6 @@
     <ClInclude Include="src\modelfile.h">
       <Filter>Source\Container</Filter>
     </ClInclude>
-    <ClInclude Include="src\common.h">
-      <Filter>Source\File</Filter>
-    </ClInclude>
     <ClInclude Include="src\skinmodel.h">
       <Filter>Source\Model\SkinModel</Filter>
     </ClInclude>
@@ -111,6 +108,12 @@
     <ClInclude Include="src\meshstructs.h">
       <Filter>Source\Model\Mesh\Structs</Filter>
     </ClInclude>
+    <ClInclude Include="src\common.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="include\hash.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -118,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="src\modelfile.cpp">
       <Filter>Source\Container</Filter>
-    </ClCompile>
-    <ClCompile Include="src\common.cpp">
-      <Filter>Source\File</Filter>
     </ClCompile>
     <ClCompile Include="src\skinmodel.cpp">
       <Filter>Source\Model\SkinModel</Filter>
@@ -172,6 +172,12 @@
     </ClCompile>
     <ClCompile Include="src\meshstructs.cpp">
       <Filter>Source\Model\Mesh\Structs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="include\hash.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

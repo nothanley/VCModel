@@ -271,6 +271,6 @@ void CSerializedModel::loadMeshes()
 
 		this->buildMesh(*mesh);
 		m_meshes.push_back(mesh);
-		printf("\n\tRead Model: %s\n", mesh->name.c_str());
+		//printf("\n\tRead Model: %s\n", mesh->name.c_str());
 	}
 }

@@ -210,6 +210,9 @@ void CSkinModel_2_0::buildMesh(Mesh& mesh)
 		this->loadMeshData(mesh);
 	}
 
+	if (!mesh.skin.weights.empty())
+		mesh.skin.numWeights = 4; // 2022 weights adhere to RGBA order or 4 indices per vtx
+
 	this->getVertexRemap(mesh);
 	this->getMorphWeights(mesh);
 	this->getMeshMapInfo(mesh);

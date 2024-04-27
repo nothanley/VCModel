@@ -21,6 +21,20 @@ BinaryIO::swapLongEndian(const uint64_t& X) {
 	return _byteswap_uint64(X);
 }
 
+std::string 
+BinaryIO::ReadString(char*& data) {
+	std::string str(data);
+	data += str.size() + sizeof(char);
+	return str;
+}
+
+std::string
+BinaryIO::ReadString(char*& data, int size) {
+	std::string value = reinterpret_cast<const char*>(data);
+	data += sizeof(size);
+	return value;
+}
+
 int8_t
 BinaryIO::ReadInt8(char*& buffer) {
 	int8_t value = *reinterpret_cast<const int8_t*>(buffer);
@@ -107,7 +121,7 @@ BinaryIO::WriteData(char*& buffer, char* data, size_t size) {
 }
 
 void 
-BinaryIO::WriteString_CharStream(char*& buffer, const std::string& string)
+BinaryIO::WriteString(char*& buffer, const std::string& string)
 {
 	int characters = string.size()+1;
 	memcpy(buffer, string.c_str(), characters);
@@ -337,9 +351,15 @@ BinaryIO::WriteFloat(std::stringstream& ss, float value) {
 }
 
 void 
-BinaryIO::WriteString(std::stringstream& ss, const std::string& str) {
-	WriteChars(ss, str);
+BinaryIO::WriteString(std::stringstream& ss, const std::string& str, bool add_size_tag) {
+	if (add_size_tag) {
+		WriteChars(ss, str);
+		return;
+	}
+
+	ss.write(str.c_str(), str.size() + 1);
 }
+
 void 
 BinaryIO::WriteChars(std::stringstream& ss, const std::string& value) {
 	WriteUInt32(ss, value.size() + 1);
@@ -366,3 +386,8 @@ void BinaryIO::align_binary_stream(char*& buffer, int8_t alignment_value)
 	}
 }
 
+void BinaryIO::round_size(uint32_t& size, const int8_t value) {
+	while (size % value != 0) {
+		size++;
+	}
+}
