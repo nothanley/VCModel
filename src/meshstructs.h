@@ -24,6 +24,35 @@ struct Vec3 {
 		z *= value;
 	}
 
+	void operator/=(float value) {
+		x /= value;
+		y /= value;
+		z /= value;
+	}
+
+	void operator+=(const Vec3& value) {
+		x += value.x;
+		y += value.y;
+		z += value.z;
+	}
+
+	Vec3 operator*(float value) {
+		x *= value;
+		y *= value;
+		z *= value;
+		return *this;
+	}
+
+	Vec3 operator*(float s) const
+	{
+		Vec3 v = *this;
+		return v * s;
+	}
+
+	Vec3 operator+(const Vec3& other) const {
+		return Vec3{ x + other.x, y + other.y, z + other.z };
+	}
+
 	Vec3 operator-(const Vec3& other) const {
 		return Vec3{ x - other.x, y - other.y, z - other.z };
 	}
@@ -35,6 +64,7 @@ struct Vec3 {
 	bool operator!=(const Vec3& other) const {
 		return (x != other.x) || (y != other.y) || (z != other.z);
 	}
+
 
 	static void min(Vec3& result, const Vec3& a, const Vec3& b)
 	{
@@ -56,6 +86,41 @@ struct Vec3 {
 		if (std::isnan(z)) z = value;
 	}
 
+	void normalize() {
+		float length = std::sqrt(x * x + y * y + z * z);
+		if (length != 0.0f) {
+			x /= length;
+			y /= length;
+			z /= length;
+		}
+	}
+
+	bool null() const {
+		return x == 0 && y == 0 && z == 0;
+	}
+
+	static Vec3 cross(const Vec3& a, const Vec3& b){
+		return  Vec3{ a.y * b.z - a.z * b.y, 
+                  a.z * b.x - a.x * b.z,
+                  a.x * b.y - a.y * b.x };
+	}
+
+	static float dot(const Vec3& a, const Vec3& b) {
+		return a.x * b.x + a.y * b.y + a.z * b.z;
+	}
+};
+
+struct Vec2 {
+	float x, y;
+
+	Vec2 operator-(const Vec2& other) const {
+		return Vec2{ x - other.x, y - other.y};
+	}
+
+	operator Vec3() const
+	{
+		return Vec3{ x, y, 0.0f };
+	}
 };
 
 struct Vec4 {
@@ -64,6 +129,10 @@ struct Vec4 {
 
 struct Matrix3 {
 	Vec3 x, y, z;
+};
+
+struct Matrix4x3 {
+	Vec3 x, y, z, w;
 };
 
 struct Matrix4 {
@@ -110,6 +179,8 @@ struct StBlendShape {
 	std::string name;
 	std::vector<float> vertices;
 	std::vector<int>   vtxMorphs;
+
+	Vec3 vertex(const int index) const;
 };
 
 struct Skin {
@@ -127,8 +198,10 @@ struct Triangle {
 
 struct UVMap {
 	std::string name;
-	float baseU, baseV;
 	std::vector<float> map;
+
+	Vec2 texcoord(const int index) const;
+	float baseU, baseV;
 };
 
 struct FaceGroup
@@ -154,24 +227,17 @@ struct Mesh
 	std::vector<float> binormals, tangents;
 	std::vector<VertexColorSet> colors;
 	std::vector<Triangle> triangles;
-	std::vector<UVMap> texcoords;
+	std::vector<UVMap> uvs;
 	std::vector<StBlendShape> blendshapes;
 	std::vector<FaceGroup> groups;
 
-	/* Flips all mesh triangle faces inside out. */
-	void flipNormals();
-
-	/* Re-arrange normals for blender import/interface */
-	void convertSplitNorms();
-
-	/* Translates and aligns UV map to Blender/MAX 3D space*/
-	void translateUVs(const int& index);
-
-	/* Generates mesh's axis aligned boundary box */
-	void generateAABBs();
-
-	/* Calculate tangent + binormal vertex data */
-	void generateTangentsBinormals();
+	void flipNormals(); /* Flips all mesh triangle faces inside out. */
+	void convertSplitNorms(); /* Re-arrange normals for blender import/interface */
+	void translateUVs(const int& index); /* Translates and aligns UV map to Blender/MAX 3D space*/
+	void generateAABBs(); /* Generates mesh's axis aligned boundary box */
+	void calculateTangentsBinormals(); /* Calculate tangent + binormal vertex data */
+	Vec3 vertex(const int index) const; /* Extracts position vector of coord array */
+	Vec3 normal(const int index) const; /* Extracts normal vector of coord array */
 };
 
 struct MeshDefBf {

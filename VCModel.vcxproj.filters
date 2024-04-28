@@ -179,6 +179,9 @@
     <ClCompile Include="include\hash.cpp">
       <Filter>Include</Filter>
     </ClCompile>
+    <ClCompile Include="tangents.cpp">
+      <Filter>Source\Model\Mesh\GE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\VCModel">

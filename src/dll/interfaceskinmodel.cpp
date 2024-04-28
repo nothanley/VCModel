@@ -65,7 +65,7 @@ int getNumUvChannels(void* pSkinModel, const int index)
 
     /* Load mesh */
     auto mesh = model->getMeshes().at(index);
-    return mesh->texcoords.size();
+    return mesh->uvs.size();
 }
 
 const float* getMeshUvChannel(void* pSkinModel, const int meshIndex, const int channelIndex)
@@ -77,7 +77,7 @@ const float* getMeshUvChannel(void* pSkinModel, const int meshIndex, const int c
 
     /* Load mesh */
     auto mesh = model->getMeshes().at(meshIndex);
-    auto uvs = &mesh->texcoords;
+    auto uvs = &mesh->uvs;
 
     if (channelIndex > uvs->size())
         return nullptr;

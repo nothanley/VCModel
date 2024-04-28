@@ -48,6 +48,15 @@ void setMeshNameInfo(void* pMesh, const char* meshName, const char* mtlName)
 	return;
 }
 
+extern "C" __declspec(dllexport)
+void calculateMeshTangents(void* pMesh)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	mesh->calculateTangentsBinormals();
+	return;
+}
 
 extern "C" __declspec(dllexport)
 void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int numFaces)
@@ -128,12 +137,10 @@ void setMeshNormals(void* pMesh, float* normals, int size)
 		mesh->normals.push_back(normals[i+1]);
 		mesh->normals.push_back(0.0f);
 	}
-	
-	mesh->generateTangentsBinormals(); // Update TBN buffers
 }
 
 extern "C" __declspec(dllexport)
-void addUvMap(void* pMesh, float* texcoords, int size)
+void addUvMap(void* pMesh, float* uvs, int size)
 {
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
 	if (!mesh) return;
@@ -142,11 +149,11 @@ void addUvMap(void* pMesh, float* texcoords, int size)
 	UVMap channel;
 	channel.map.resize(size);
 	for (int i = 0; i < size; i+=2) {
-		channel.map.at(i)	= texcoords[i];
-		channel.map.at(i+1) = -(-1.0 + texcoords[i+1]);
+		channel.map.at(i)	= uvs[i];
+		channel.map.at(i+1) = -(-1.0 + uvs[i+1]);
 	}
 
-	mesh->texcoords.push_back(channel);
+	mesh->uvs.push_back(channel);
 }
 
 

@@ -6,14 +6,17 @@ int main()
 {
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/123_Attire.mdl");
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/6389_CABriefcase.mdl");
         CSkinModel* model = mdlFile.getModel();
 
 
         CModelSerializer serializer(model);
         serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
-        
+        for (auto& mesh : model->getMeshes())
+        {
+            mesh->calculateTangentsBinormals();
+        }
 
         if (model)
             delete model;

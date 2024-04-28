@@ -1,6 +1,7 @@
 #include "meshstructs.h"
 #include "BinaryIO.h"
 #include <glm/gtx/euler_angles.hpp>
+#include "meshshapes_serialize.h"
 
 using namespace BinaryIO;
 //using namespace MeshSerializer;
@@ -79,28 +80,6 @@ void Mesh::generateAABBs()
 	}
 }
 
-void Mesh::generateTangentsBinormals()
-{
-	/* Clear TBN data */
-	tangents.clear();
-	binormals.clear();
-
-	// Iterate and find highest/lowest position coord
-	const auto& coords = this->vertices;
-	int numCoords = coords.size();
-	for (int i = 0; i < numCoords; i += 3)
-	{
-		Vec4 tangent{ 1,1,1,0 };
-		float binormal = 1.0f;
-
-		tangents.push_back(tangent.x);
-		tangents.push_back(tangent.y);
-		tangents.push_back(tangent.z);
-		tangents.push_back(tangent.w);
-		binormals.push_back(binormal);
-	}
-}
-
 
 void Mesh::flipNormals()
 {
@@ -126,10 +105,10 @@ void Mesh::convertSplitNorms()
 
 void Mesh::translateUVs(const int& index)
 {
-	if (index > texcoords.size())
+	if (index > uvs.size())
 		return;
 
-	auto& map = this->texcoords.at(index).map;
+	auto& map = this->uvs.at(index).map;
 	/* Flip Y axis and translate up by one unit */
 	for (int i = 0; i < map.size(); i += 2) {
 		map[i + 1] = -(map[i + 1] - 1.0f);
@@ -171,4 +150,31 @@ Skin::unpack(const std::vector<std::string>& stringTable)
 
 	return skinData;
 }
+
+Vec2 UVMap::texcoord(const int index) const
+{
+	int offset = (index * 2);
+	return Vec2{ map[offset],  map[offset + 1]};
+}
+
+Vec3 Mesh::vertex(const int index) const 
+{
+	int offset = (index * 3);
+	return Vec3{ vertices[index],  vertices[index + 1],  vertices[index + 2] };
+}
+
+Vec3 StBlendShape::vertex(const int index) const 
+{
+	int offset = (index * 3);
+	return Vec3{ vertices[index],  vertices[index + 1],  vertices[index + 2] };
+}
+
+Vec3 Mesh::normal(const int index) const
+{
+	int array_width = normals.size() / numVerts;
+	int offset = (index * array_width);
+	return Vec3{ normals[index],  normals[index + 1],  normals[index + 2] };
+}
+
+
 

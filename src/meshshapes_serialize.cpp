@@ -9,10 +9,6 @@ using namespace BinaryIO;
 using namespace MeshSerializer;
 
 
-Vec3 vCMeshShapeSerial::getVertex(int index, const std::vector<float>& coords) {
-	return Vec3{ coords[index],  coords[index + 1],  coords[index + 2] };
-}
-
 void vCMeshShapeSerial::updateShapeVtxIndexBuffer(std::stringstream& stream, uint32_t& indexMask, uint32_t& offset, uint8_t& size)
 {
 	WriteUInt32(stream, indexMask);
@@ -29,11 +25,10 @@ void vCMeshShapeSerial::updateMinMaxDeltas(Matrix3& deltaMat, Mesh* mesh, const 
 {
 	Vec3& mins = deltaMat.x;
 	Vec3& maxs = deltaMat.y;
-	int numCoords = shape.vertices.size();
 
-	for (int i = 0; i < numCoords; i += 3) {
-		Vec3 originalVertex   = getVertex(i, mesh->vertices);
-		Vec3 blendShapeVertex = getVertex(i, shape.vertices);
+	for (int i = 0; i < mesh->numVerts; ++i) {
+		Vec3 originalVertex   = mesh->vertex(i);
+		Vec3 blendShapeVertex = shape.vertex(i);
 
 		Vec3 delta{ blendShapeVertex.x - originalVertex.x,
 					blendShapeVertex.y - originalVertex.y,

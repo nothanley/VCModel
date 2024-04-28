@@ -104,6 +104,7 @@
     <ClCompile Include="src\skinmodel.cpp" />
     <ClCompile Include="src\skinmodelpoly.cpp" />
     <ClCompile Include="src\wavefront.cpp" />
+    <ClCompile Include="tangents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\VCModel" />

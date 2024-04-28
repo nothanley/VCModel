@@ -96,7 +96,7 @@ void CSerializedModel::loadMeshDef(char* data, const MeshDefBf& mBuffer, Mesh& m
 		case TEXCOORDS:{
 				UVMap uvChannel;
 				Data::getDataSet(data, mesh.numVerts, mBuffer.type, mBuffer.property, uvChannel.map);
-				mesh.texcoords.push_back(uvChannel);
+				mesh.uvs.push_back(uvChannel);
 			}
 			break;
 		case COLOR:{
@@ -221,7 +221,7 @@ void CSerializedModel::loadColorMapInfo(Mesh& mesh)
 
 void CSerializedModel::loadUVInfo(Mesh& mesh)
 {
-	for (auto& map : mesh.texcoords) {
+	for (auto& map : mesh.uvs) {
 		int index = ReadUInt32(m_data);
 		map.name = m_stringTable.at(index);
 	}

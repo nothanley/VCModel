@@ -7,8 +7,6 @@ class vCMeshShapeSerial : public vCMeshShapes
 public:
 	static Matrix3 getBlendShapePrecisionMatrix(Mesh* mesh);
 
-	static Vec3 getVertex(int index, const std::vector<float>& coords);
-
 	static void updateMinMaxDeltas(Matrix3& deltaMat, Mesh* mesh, const StBlendShape& shape);
 
 	static void calculatePrecisionValues(Matrix3& delta_matrix);

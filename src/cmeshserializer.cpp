@@ -162,7 +162,7 @@ void CMeshSerializer::serializeVertexColors(StMeshBf& target)
 
 void CMeshSerializer::serializeTexCoords(StMeshBf& target)
 {
-	for (auto& channel : target.mesh->texcoords)
+	for (auto& channel : target.mesh->uvs)
 	{
 		auto dataBf = std::make_shared<StDataBf>();
 		dataBf->setHeader(m_stringTable, "TEXCOORD", "R32_G32", "float");
@@ -230,7 +230,7 @@ void CMeshSerializer::serializeColorDict(StMeshBf& target)
 	auto& stream = dataBf->stream;
 	dataBf->container = "COLOR_DICT";
 
-	WriteUInt32(stream, indexOf("")); // Value is always const
+	WriteUInt32(stream, indexOf("")); // always points to be empty string
 	for (auto& colorMap : target.mesh->colors) {
 		int colorMapNameIndex = 0;
 		WriteUInt32(stream, colorMapNameIndex);
@@ -247,7 +247,7 @@ void CMeshSerializer::serializeUVDict(StMeshBf& target)
 	dataBf->container = "UV_DICT";
 
 	/* Write texture uv channel names */
-	for (auto& uvMap : target.mesh->texcoords) {
+	for (auto& uvMap : target.mesh->uvs) {
 		WriteUInt32(stream, indexOf(uvMap.name));
 	}
 
@@ -272,7 +272,7 @@ void CMeshSerializer::generateStringTable()
 	for (auto& mesh : meshes) {
 		m_stringTable.push_back(mesh->name);
 
-		for (auto& uvMap : mesh->texcoords)
+		for (auto& uvMap : mesh->uvs)
 			m_stringTable.push_back(uvMap.name);
 
 		for (auto& group : mesh->groups)
@@ -299,8 +299,8 @@ static void createShapeVertexBuffer(std::stringstream& indexBuffer, std::strings
 	uint8_t size = 0;
 
 	for (int i = 0; i < mesh->numVerts; i++) {
-		Vec3 original_vertex   = bscompress::getVertex(i * 3, mesh->vertices);
-		Vec3 blendshape_vertex = bscompress::getVertex(i * 3, shape.vertices);
+		Vec3 original_vertex   = mesh->vertex(i);
+		Vec3 blendshape_vertex = shape.vertex(i);
 
 		if (original_vertex != blendshape_vertex) {
 			bscompress::setBit( indexMask, (i % 0x20) ); // update index mask @ vertex index
