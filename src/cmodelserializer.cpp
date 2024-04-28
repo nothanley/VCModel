@@ -307,9 +307,10 @@ void CModelSerializer::createModelBuffer()
 	stream.size = MeshEncoder::getMDLBufferSize();
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
+	bool use_rig = m_model->getNumBones();
 
 	WriteUInt32(buffer, 0x28); // File format version
-	WriteUInt32(buffer, 0); // Unknown value
+	WriteUInt32(buffer, use_rig); // Unknown value
 	writeBoundingBox(buffer, m_model->getAABBs()); // Model bounds
 
 	m_dataBuffers.push_back(stream);
