@@ -96,7 +96,7 @@
     <ClInclude Include="src\meshbuffers.h">
       <Filter>Source\Model\Mesh\GE</Filter>
     </ClInclude>
-    <ClInclude Include="src\meshshapes.h">
+    <ClInclude Include="src\blendshapes.h">
       <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClInclude>
     <ClInclude Include="src\meshshapes_serialize.h">
@@ -122,6 +122,9 @@
     </ClInclude>
     <ClInclude Include="MikkGen.h">
       <Filter>MikkT</Filter>
+    </ClInclude>
+    <ClInclude Include="blendshapes_legacy.h">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,7 +173,7 @@
     <ClCompile Include="src\meshbuffers.cpp">
       <Filter>Source\Model\Mesh\GE</Filter>
     </ClCompile>
-    <ClCompile Include="src\meshshapes.cpp">
+    <ClCompile Include="src\blendshapes.cpp">
       <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClCompile>
     <ClCompile Include="src\meshshapes_serialize.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="MikkGen.cpp">
       <Filter>MikkT</Filter>
+    </ClCompile>
+    <ClCompile Include="blendshapes_legacy.cpp">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

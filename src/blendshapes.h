@@ -13,29 +13,24 @@ public:
 	vCMeshShapes(char*& data, const std::vector<std::string>& stringTable, Mesh* mesh);
 
 public:
-	void load();
+	virtual void load();
 	std::vector<StBlendShape>* getBlendShapes() { return m_shapes; }
 
 protected:
 	static uint8_t reverseBits(uint8_t n);
 	static uint32_t flip32bits(uint32_t value);
 	static void divmod(int a, int b, int* quotient, int* remainder);
-
+	virtual void getMorphIds();
+	virtual void getMorphWeights();
 
 private:
 	inline void getTransformDeltas();
-	void getMorphIds();
-	void getMorphWeights();
-
-private:
 	void getVertexDeltas(char* tablePtr, StBlendShape* targetShape);
 	void getVertexWeights(const uint32_t& compression, char*& weightData, StBlendShape* targetShape, const int& index);
-
-private:
 	Vec4 loadVertexWeights(char*& data);
 	void applyVertexWeight(const size_t vertexIndex, std::vector<float>& vertices, const Vec4& vertexWeights);
 
-private:
+protected:
 	char*& m_data;
 	Mesh* m_mesh;
 	uint32_t m_numMorphs = 0;

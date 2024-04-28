@@ -27,7 +27,7 @@ protected:
 	void getTriangleBuffer(Mesh& mesh);
 	void loadColorMapInfo(Mesh& mesh);
 	void loadUVInfo(Mesh& mesh);
-	void getMorphWeights(Mesh& mesh);
+	virtual void getMorphWeights(Mesh& mesh);
 
 protected:
 	char* m_data;

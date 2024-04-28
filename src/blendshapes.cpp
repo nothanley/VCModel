@@ -1,4 +1,4 @@
-#include "meshshapes.h"
+#include "blendshapes.h"
 #include "meshbuffers.h"
 #include "BinaryIO.h"
 
@@ -176,10 +176,10 @@ vCMeshShapes::load()
 		return;
 
 	/* Collect all blendshape names */
-	vCMeshShapes::getMorphIds();
+	this->getMorphIds();
 
 	/* Collect all vertex weight + coordinates */
 	if (m_numMorphs > 0)
-		vCMeshShapes::getMorphWeights();
+		this->getMorphWeights();
 }
 

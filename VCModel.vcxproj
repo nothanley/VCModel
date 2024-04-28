@@ -59,6 +59,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="blendshapes_legacy.h" />
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
@@ -76,7 +77,7 @@
     <ClInclude Include="src\dll\pch.h" />
     <ClInclude Include="src\meshbuffers.h" />
     <ClInclude Include="src\meshencoder.h" />
-    <ClInclude Include="src\meshshapes.h" />
+    <ClInclude Include="src\blendshapes.h" />
     <ClInclude Include="src\meshshapes_serialize.h" />
     <ClInclude Include="src\meshtags.h" />
     <ClInclude Include="src\modelfile.h" />
@@ -85,6 +86,7 @@
     <ClInclude Include="src\wavefront.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="blendshapes_legacy.cpp" />
     <ClCompile Include="include\BinaryIO.cpp" />
     <ClCompile Include="include\hash.cpp" />
     <ClCompile Include="include\mikktspace.c" />
@@ -102,7 +104,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\meshbuffers.cpp" />
     <ClCompile Include="src\meshencoder.cpp" />
-    <ClCompile Include="src\meshshapes.cpp" />
+    <ClCompile Include="src\blendshapes.cpp" />
     <ClCompile Include="src\meshshapes_serialize.cpp" />
     <ClCompile Include="src\modelfile.cpp" />
     <ClCompile Include="src\skinmodel.cpp" />

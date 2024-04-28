@@ -1,5 +1,5 @@
 /* Extends mesh shapes class with serialization and compression functionality */
-#include "meshshapes.h"
+#include "blendshapes.h"
 #pragma once
 
 class vCMeshShapeSerial : public vCMeshShapes

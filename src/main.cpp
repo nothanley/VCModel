@@ -13,8 +13,8 @@ int main()
         CModelSerializer serializer(model);
         serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
-        for (auto& mesh : model->getMeshes())
-            mesh->calculateTangentsBinormals();
+        //for (auto& mesh : model->getMeshes())
+            //mesh->calculateTangentsBinormals();
 
         if (model)
             delete model;

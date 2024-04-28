@@ -3,7 +3,7 @@
 #include "meshbuffers.h"
 #include <meshtags.h>
 #include "winsock.h"
-#include "meshshapes.h"
+#include "blendshapes.h"
 #include <glm/gtx/euler_angles.hpp>
 
 using namespace BinaryIO;
@@ -116,7 +116,7 @@ void CSerializedModel::loadMeshData(Mesh& mesh)
 	MeshDefBf mBuffer;
 	mBuffer.format   = m_stringTable.at(ReadUInt16(m_data));
 	mBuffer.property = m_stringTable.at(ReadUInt16(m_data));
-	mBuffer.type	 = m_stringTable.at(ReadUInt32(m_data));
+	mBuffer.type	 = m_stringTable.at(ReadUInt16(m_data));
 	m_data = Data::roundPointerToNearest4(m_data);
 
 	/* Load mesh buffer charptr */
