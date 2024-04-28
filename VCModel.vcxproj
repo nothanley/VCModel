@@ -62,6 +62,8 @@
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
+    <ClInclude Include="include\mikktspace.h" />
+    <ClInclude Include="MikkGen.h" />
     <ClInclude Include="src\cmeshserializer.h" />
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
@@ -85,6 +87,8 @@
   <ItemGroup>
     <ClCompile Include="include\BinaryIO.cpp" />
     <ClCompile Include="include\hash.cpp" />
+    <ClCompile Include="include\mikktspace.c" />
+    <ClCompile Include="MikkGen.cpp" />
     <ClCompile Include="src\cmeshserializer.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />

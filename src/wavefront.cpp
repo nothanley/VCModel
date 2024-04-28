@@ -53,9 +53,9 @@ void writeFaces(std::ofstream& myfile, Mesh* mesh)
 	myfile << "\n";
 	myfile << "\ng " << mesh->name;
 	for (auto& triangle : mesh->triangles) {
-		int x = triangle.x + 1;
-		int y = triangle.y + 1;
-		int z = triangle.z + 1;
+		int x = triangle[0] + 1;
+		int y = triangle[1] + 1;
+		int z = triangle[2]+ 1;
 
 		myfile << "\nf " << std::to_string(y) << "/" << std::to_string(y) << "/" << std::to_string(y);
 		myfile << " " << std::to_string(x) << "/" << std::to_string(x) << "/" << std::to_string(x);

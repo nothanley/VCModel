@@ -56,6 +56,30 @@ int getNumVerts(void* pSkinModel, const int index) {
     return mesh->numVerts;
 }
 
+int getMeshSceneFlag(void* pSkinModel, const int index)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return 0;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    return mesh->sceneFlag;
+}
+
+int getMeshMotionFlag(void* pSkinModel, const int index)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || index > model->getNumMeshes())
+        return 0;
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(index);
+    return mesh->motionFlag;
+}
+
 int getNumUvChannels(void* pSkinModel, const int index) 
 {
     // Convert void pointer back to CSkinModel pointer
@@ -113,17 +137,6 @@ const char* getMeshName(void* pSkinModel, const int index) {
     return mesh->name.c_str();
 }
 
-const char* getMeshTriangles(void* pSkinModel, const int index) {
-    // Convert void pointer back to CSkinModel pointer
-    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
-    if (!model || index > model->getNumMeshes())
-        return "";
-
-    /* Load mesh */
-    auto mesh = model->getMeshes().at(index);
-    return mesh->material.name.c_str();
-}
-
 int getNumTriangles(void* pSkinModel, const int index) {
     // Convert void pointer back to CSkinModel pointer
     CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
@@ -145,11 +158,9 @@ const uint32_t* getMeshTriangleList(void* pSkinModel, const int index) {
     auto mesh = model->getMeshes().at(index);
     mesh->flipNormals();
 
-    /* Cast triangle vector to index list */  
-    /* todo: this is hacky, if we alter the triangle struct we cannot use a cast */
-    auto tris = reinterpret_cast< std::vector<uint32_t>* >( &mesh->triangles );
-
-    return tris->data();
+    /* Cast triangle vector to index list */
+    auto& tris = mesh->triangles;
+    return (uint32_t*)tris.data();
 }
 
 

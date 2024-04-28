@@ -246,9 +246,9 @@ void CModelSerializer::writeIndexBuffer(char*& buffer, int meshIndex)
 
 	bool use32bIndex = (mesh->numVerts > UINT16_MAX);
 	for (auto& face : mesh->triangles) {
-		(use32bIndex) ? WriteUInt32(buffer, face.x) : WriteUInt16(buffer, face.x);
-		(use32bIndex) ? WriteUInt32(buffer, face.y) : WriteUInt16(buffer, face.y);
-		(use32bIndex) ? WriteUInt32(buffer, face.z) : WriteUInt16(buffer, face.z);
+		(use32bIndex) ? WriteUInt32(buffer, face[0]) : WriteUInt16(buffer, face[0]);
+		(use32bIndex) ? WriteUInt32(buffer, face[1]) : WriteUInt16(buffer, face[1]);
+		(use32bIndex) ? WriteUInt32(buffer, face[2]) : WriteUInt16(buffer, face[2]);
 	}
 
 	::align_binary_stream(buffer);

@@ -84,7 +84,7 @@ void Mesh::generateAABBs()
 void Mesh::flipNormals()
 {
 	for (auto& tri : triangles)
-		tri = Triangle{ tri.y, tri.x, tri.z };
+		tri = Triangle{ tri[1], tri[0], tri[2] };
 }
 
 void Mesh::convertSplitNorms()
@@ -160,20 +160,20 @@ Vec2 UVMap::texcoord(const int index) const
 Vec3 Mesh::vertex(const int index) const 
 {
 	int offset = (index * 3);
-	return Vec3{ vertices[index],  vertices[index + 1],  vertices[index + 2] };
+	return Vec3{ vertices[offset],  vertices[offset + 1],  vertices[offset + 2] };
 }
 
 Vec3 StBlendShape::vertex(const int index) const 
 {
 	int offset = (index * 3);
-	return Vec3{ vertices[index],  vertices[index + 1],  vertices[index + 2] };
+	return Vec3{ vertices[offset],  vertices[offset + 1],  vertices[offset + 2] };
 }
 
 Vec3 Mesh::normal(const int index) const
 {
 	int array_width = normals.size() / numVerts;
 	int offset = (index * array_width);
-	return Vec3{ normals[index],  normals[index + 1],  normals[index + 2] };
+	return Vec3{ normals[offset],  normals[offset + 1],  normals[offset + 2] };
 }
 
 

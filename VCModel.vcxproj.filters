@@ -46,6 +46,9 @@
     <Filter Include="Source\Model\Mesh\GE">
       <UniqueIdentifier>{7bd60cde-8355-4772-ad3c-ee04cc9c0996}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MikkT">
+      <UniqueIdentifier>{2e33cb2d-f266-4e9e-a0e3-9b18a37f4beb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -114,6 +117,12 @@
     <ClInclude Include="include\hash.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="include\mikktspace.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="MikkGen.h">
+      <Filter>MikkT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -181,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="tangents.cpp">
       <Filter>Source\Model\Mesh\GE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\mikktspace.c">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="MikkGen.cpp">
+      <Filter>MikkT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

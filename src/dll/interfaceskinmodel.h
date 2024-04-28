@@ -28,6 +28,10 @@ extern "C" __declspec(dllexport) const float* getMeshNormals(void* pSkinModel, c
 
 extern "C" __declspec(dllexport) int getNumVerts(void* pSkinModel, const int index);
 
+extern "C" __declspec(dllexport) int getMeshSceneFlag(void* pSkinModel, const int index);
+
+extern "C" __declspec(dllexport) int getMeshMotionFlag(void* pSkinModel, const int index);
+
 extern "C" __declspec(dllexport) int getNumUvChannels(void* pSkinModel, const int index);
 
 extern "C" __declspec(dllexport) const uint32_t* getMeshTriangleList(void* pSkinModel, const int index);

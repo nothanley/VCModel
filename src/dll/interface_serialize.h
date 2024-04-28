@@ -59,6 +59,18 @@ void calculateMeshTangents(void* pMesh)
 }
 
 extern "C" __declspec(dllexport)
+void setModelGameFlags(void* pMesh, const int scene_flag, const int motion_flag)
+{
+	Mesh* mesh = static_cast<Mesh*>(pMesh);
+	if (!mesh) return;
+
+	mesh->sceneFlag = scene_flag;
+	mesh->motionFlag = motion_flag;
+	return;
+}
+
+
+extern "C" __declspec(dllexport)
 void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int numFaces)
 {
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
@@ -80,9 +92,9 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 		Triangle& face = mesh->triangles.at(i);
 		size_t index = (i * 3);
 
-		face.x = indexList[index+1];
-		face.y = indexList[index];
-		face.z = indexList[index+2];
+		face[0] = indexList[index+1];
+		face[1] = indexList[index];
+		face[2] = indexList[index+2];
 	}
 
 	/* Update counts */

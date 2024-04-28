@@ -2,7 +2,12 @@
 #include <string>
 #include <iostream>
 #include <glm/glm.hpp>
+#include <array>
 #pragma once
+
+
+typedef std::array<uint32_t, 3> Triangle;
+
 
 struct Vec3 {
 	float x, y, z;
@@ -190,10 +195,6 @@ struct Skin {
 	/* Unpacks all weights and indices into a bw struct vector */
 	std::vector<BlendWeight>* unpack(
 		const std::vector<std::string>& stringTable);
-};
-
-struct Triangle {
-	uint32_t x, y, z;
 };
 
 struct UVMap {
