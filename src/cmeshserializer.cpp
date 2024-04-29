@@ -359,12 +359,10 @@ void CMeshSerializer::serializeBlendShapes(StMeshBf& target)
 
 	/* Serialize all blendshapes */
 	Mesh* mesh = target.mesh;
-	int numMorphs = mesh->blendshapes.size();
+	int numMorphs = (m_exportBlendshapes) ? mesh->blendshapes.size() : 0;
 	WriteUInt32(stream, numMorphs);
-	//printf("\nMesh '%s' has total shapes: %d", mesh->name.c_str(), mesh->blendshapes.size());
 
-	/* Create shape key weight buffer */
-	if (!mesh->blendshapes.empty())
+	if (m_exportBlendshapes && !mesh->blendshapes.empty())
 		writeMeshShapes(stream, mesh);
 
 	::align_binary_stream(stream);

@@ -236,7 +236,7 @@ struct Mesh
 	void convertSplitNorms(); /* Re-arrange normals for blender import/interface */
 	void translateUVs(const int& index); /* Translates and aligns UV map to Blender/MAX 3D space*/
 	void generateAABBs(); /* Generates mesh's axis aligned boundary box */
-	void calculateTangentsBinormals(); /* Calculate tangent + binormal vertex data */
+	void calculateTangentsBinormals(const bool use_dummy_tangents=false); /* Calculate tangent + binormal vertex data */
 	Vec3 vertex(const int index) const; /* Extracts position vector of coord array */
 	Vec3 normal(const int index) const; /* Extracts normal vector of coord array */
 };

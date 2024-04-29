@@ -6,7 +6,7 @@ int main()
 {
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/123_Attire.mdl");
         CSkinModel* model = mdlFile.getModel();
 
 

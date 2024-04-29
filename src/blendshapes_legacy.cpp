@@ -57,3 +57,5 @@ vCMeshShapes_2020::loadBlendshapeData(StBlendShape& shape)
 		delta.y = ReadUInt32(m_data);
 	}
 }
+
+

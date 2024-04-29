@@ -59,17 +59,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="blendshapes_legacy.h" />
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
     <ClInclude Include="include\mikktspace.h" />
-    <ClInclude Include="MikkGen.h" />
+    <ClInclude Include="src\blendshapes_legacy.h" />
     <ClInclude Include="src\cmeshserializer.h" />
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\meshstructs.h" />
+    <ClInclude Include="src\MikkGen.h" />
     <ClInclude Include="src\modelcereal.h" />
     <ClInclude Include="src\dll\framework.h" />
     <ClInclude Include="src\dll\interfaceskinmodel.h" />
@@ -86,16 +86,16 @@
     <ClInclude Include="src\wavefront.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="blendshapes_legacy.cpp" />
     <ClCompile Include="include\BinaryIO.cpp" />
     <ClCompile Include="include\hash.cpp" />
     <ClCompile Include="include\mikktspace.c" />
-    <ClCompile Include="MikkGen.cpp" />
+    <ClCompile Include="src\blendshapes_legacy.cpp" />
     <ClCompile Include="src\cmeshserializer.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\meshstructs.cpp" />
+    <ClCompile Include="src\MikkGen.cpp" />
     <ClCompile Include="src\modelcereal.cpp" />
     <ClCompile Include="src\dll\dllmain.cpp" />
     <ClCompile Include="src\dll\interfaceskinmodel.cpp" />
@@ -109,8 +109,8 @@
     <ClCompile Include="src\modelfile.cpp" />
     <ClCompile Include="src\skinmodel.cpp" />
     <ClCompile Include="src\skinmodelpoly.cpp" />
+    <ClCompile Include="src\tangents.cpp" />
     <ClCompile Include="src\wavefront.cpp" />
-    <ClCompile Include="tangents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\VCModel" />

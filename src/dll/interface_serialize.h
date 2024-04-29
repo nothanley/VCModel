@@ -49,16 +49,6 @@ void setMeshNameInfo(void* pMesh, const char* meshName, const char* mtlName)
 }
 
 extern "C" __declspec(dllexport)
-void calculateMeshTangents(void* pMesh)
-{
-	Mesh* mesh = static_cast<Mesh*>(pMesh);
-	if (!mesh) return;
-
-	mesh->calculateTangentsBinormals();
-	return;
-}
-
-extern "C" __declspec(dllexport)
 void setModelGameFlags(void* pMesh, const int scene_flag, const int motion_flag)
 {
 	Mesh* mesh = static_cast<Mesh*>(pMesh);
@@ -251,19 +241,24 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 
 
 extern "C" __declspec(dllexport)
-void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target)
+void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target, bool use_shape_keys, bool use_tangents)
 {
 	// Convert void pointer back to CSkinModel pointer
 	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
 	if (!model) return;
+
+	/* Update dummy tangents if user specified */
+	for (auto& mesh : model->getMeshes())
+		mesh->calculateTangentsBinormals(use_tangents);
 
 	try {
 		auto start = std::chrono::high_resolution_clock::now();
 
 		switch (compile_target)
 		{
-			case 0x28:{/* Save MDL format v2.8*/
+			case 0x28:{ /* Save MDL format v2.8*/
 				CModelSerializer serializer(model);
+				serializer.setUseBlendshapes(use_shape_keys);
 				serializer.save(savePath);
 				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath); }
 				break;

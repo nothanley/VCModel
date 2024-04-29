@@ -13,16 +13,16 @@ static void setFlatTangentBinormals(Mesh& mesh)
 }
 
 
-void Mesh::calculateTangentsBinormals()
+void Mesh::calculateTangentsBinormals(const bool use_tangents)
 {
-	tangents.clear();
-	binormals.clear();
+	this->tangents.clear();
+	this->binormals.clear();
 
-	if (uvs.empty()) {
+	if (!use_tangents || uvs.empty()) {
 		::setFlatTangentBinormals(*this);
 		return;
 	}
-	
+
 	MikkTCalc mikkcalculator(this);
 	mikkcalculator.generate();
 }

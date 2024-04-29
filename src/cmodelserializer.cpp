@@ -8,8 +8,9 @@
 
 using namespace BinaryIO;
 
-CModelSerializer::CModelSerializer(CSkinModel* target)
+CModelSerializer::CModelSerializer(CSkinModel* target)	
 {
+	this->m_exportBlendshapes = true;
 	this->m_model = target;
 }
 
@@ -17,6 +18,11 @@ void CModelSerializer::save(const char* path)
 {
 	m_savePath = path;
 	this->serialize();
+}
+
+void CModelSerializer::setUseBlendshapes(const bool use_blendshapes)
+{
+	this->m_exportBlendshapes = use_blendshapes;
 }
 
 void CModelSerializer::serialize() 

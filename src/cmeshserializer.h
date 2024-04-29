@@ -55,10 +55,13 @@ private:
 	void writeMeshShapes(std::stringstream& stream, Mesh* mesh);
 
 protected:
+	bool m_exportBlendshapes;
+	bool m_exportCalcTangents;
 	std::vector<StMeshBf>    m_meshBuffers;
 	std::vector<StModelBf>   m_dataBuffers;
 	std::vector<std::string> m_stringTable;
 	CSkinModel* m_model;
+
 };
 
 

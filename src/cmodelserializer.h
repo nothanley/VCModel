@@ -7,7 +7,9 @@ class CModelSerializer : public CMeshSerializer
 {
 public:
 	CModelSerializer(CSkinModel* target);
+
 	void save(const char* path);
+	void setUseBlendshapes(const bool use_blendshapes);
 
 private:
 	void formatFile();

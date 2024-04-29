@@ -120,11 +120,11 @@
     <ClInclude Include="include\mikktspace.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="MikkGen.h">
-      <Filter>MikkT</Filter>
-    </ClInclude>
-    <ClInclude Include="blendshapes_legacy.h">
+    <ClInclude Include="src\blendshapes_legacy.h">
       <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MikkGen.h">
+      <Filter>MikkT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -191,17 +191,17 @@
     <ClCompile Include="include\hash.cpp">
       <Filter>Include</Filter>
     </ClCompile>
-    <ClCompile Include="tangents.cpp">
-      <Filter>Source\Model\Mesh\GE</Filter>
-    </ClCompile>
     <ClCompile Include="include\mikktspace.c">
       <Filter>Include</Filter>
     </ClCompile>
-    <ClCompile Include="MikkGen.cpp">
+    <ClCompile Include="src\blendshapes_legacy.cpp">
+      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MikkGen.cpp">
       <Filter>MikkT</Filter>
     </ClCompile>
-    <ClCompile Include="blendshapes_legacy.cpp">
-      <Filter>Source\Model\Mesh\Blendshapes</Filter>
+    <ClCompile Include="src\tangents.cpp">
+      <Filter>MikkT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
