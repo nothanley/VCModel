@@ -2,11 +2,16 @@
 #include <VCModel>
 #include <vector>
 
-void* loadModelFile(const char* filePath)
+void* loadModelFile(const char* filePath, const bool use_materials)
 {
     try {
         CModelContainer mdlFile(filePath);
-        return mdlFile.getModel();
+        auto skinmodel = mdlFile.getModel();
+
+        if (use_materials)
+            skinmodel->linkMaterialsFile(filePath);
+
+        return skinmodel;
     }
     catch (...) {
         printf("[CSkinModel] Failed to read user model file.\n");
@@ -400,6 +405,9 @@ getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, i
     if (setIndex > mesh->colors.size())
         return nullptr;
 
+    /* Convert color format */
+    mesh->linearToSrgbVCols();
+
     auto& colorSet = mesh->colors.at(setIndex);
     *size = colorSet.map.size();
     return colorSet.map.data();
@@ -525,3 +533,21 @@ void getMaterialFaceGroup(void* pSkinModel, const int meshIndex, const int group
     *faceBegin = group.faceBegin;
     *faceSize  = group.numTriangles;
 }
+
+const char* getMaterialDiffuseMap(void* pSkinModel, const int meshIndex, const int groupIndex)
+{
+    // Convert void pointer back to CSkinModel pointer
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model || meshIndex > model->getNumMeshes())
+        return "";
+
+    /* Load mesh */
+    auto mesh = model->getMeshes().at(meshIndex);
+    if (groupIndex > mesh->groups.size())
+        return "";
+
+    FaceGroup& group = mesh->groups.at(groupIndex);
+    return group.material.color_map.c_str();
+}
+
+

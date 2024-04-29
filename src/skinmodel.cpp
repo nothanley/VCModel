@@ -4,6 +4,12 @@
 #include "wavefront.h"
 #include "meshencoder.h"
 #include <meshtags.h>
+
+#include "VCMaterials/materialfile.h"
+#include "materialgen.h"
+#include "materiallibrary.h"
+#include "common.h"
+
 using namespace BinaryIO;
 
 CSkinModel::CSkinModel() : CSerializedModel()
@@ -105,7 +111,7 @@ void CSkinModel::loadBuffer()
 		case BONE:
 			this->loadModelBones(size);
 			break;
-		case MTL:
+		case MTL_:
 			this->loadMaterials();
 			break;
 		case MBfD:
@@ -124,4 +130,50 @@ void CSkinModel::loadBuffer()
 	m_data = nextBfPtr;
 	loadBuffer();
 }
+
+static StPropertyNode* get_color_node(StMaterial* mat)
+{
+	if (!mat)
+		return nullptr;
+
+	for (auto& node : mat->nodes){
+		if (node.name == "colorMap")
+			return &node;
+	}
+	return nullptr;
+}
+
+
+void CSkinModel::linkMaterialsFile(const char* model_path)
+{
+	std::string mtlsPath = CMaterialGen::get_mtls_path(model_path);
+	CMaterialFile mtlsFile( mtlsPath.c_str() );
+
+	try {
+		mtlsFile.load();
+	}
+	catch (...) {
+		return;
+	}
+
+	auto library = mtlsFile.getLibrary();
+	if (library->numMaterials() == 0) return;
+
+	for (auto& mesh : m_meshes)
+		for (auto& group : mesh->groups)
+		{
+			auto& group_id = group.material.name;
+			int index = library->indexOf( group_id.c_str() );
+
+			if (index == -1) {
+				std::string prefix = SysCommon::split(group_id, ":").front();
+				index = library->indexOf( prefix.c_str() );
+			}
+
+			StMaterial* mat = (index != -1) ? library->at(index) : nullptr;
+			StPropertyNode* node = get_color_node(mat);
+			group.material.color_map = (node) ? variant_string(node->value) : "";
+		}
+}
+
 

@@ -14,7 +14,7 @@ extern "C" __declspec(dllexport) void freeMemory_charArrPtr(const char** data);
 extern "C" __declspec(dllexport) void freeMemory_skinData(void* pSkinData);
 
 /* Interface methods for accessing 'CSkinModel' object data */
-extern "C" __declspec(dllexport) void* loadModelFile(const char* filePath);
+extern "C" __declspec(dllexport) void* loadModelFile(const char* filePath, const bool use_materials);
 
 extern "C" __declspec(dllexport) int getMeshTotal(void* pSkinModel);
 
@@ -67,5 +67,8 @@ extern "C" __declspec(dllexport) const int* getVtxMorphIndices(void* pSkinModel,
 extern "C" __declspec(dllexport) const char** getAllFaceGroups(void* pSkinModel, const int meshIndex, int* size);
 
 extern "C" __declspec(dllexport) void getMaterialFaceGroup(void* pSkinModel, const int meshIndex, const int groupIndex, int* faceBegin, int* faceSize);
+
+extern "C" __declspec(dllexport) const char* getMaterialDiffuseMap( void* pSkinModel, const int meshIndex, const int groupIndex );
+
 
 

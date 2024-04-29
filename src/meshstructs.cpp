@@ -177,4 +177,48 @@ Vec3 Mesh::normal(const int index) const
 }
 
 
+static void convertSetToLinear( std::vector<float>& map )
+{
+	int numColors = map.size();
+	for (int i = 0; i < numColors; i += 4) { // Increment i by 4 to skip alpha channel
+		float& r = map[i];
+		float& g = map[i + 1];
+		float& b = map[i + 2];
+
+		r = (r <= 0.04045f) ? (r / 12.92f) : glm::pow((r + 0.055f) / 1.055f, 2.4f);
+		g = (g <= 0.04045f) ? (g / 12.92f) : glm::pow((g + 0.055f) / 1.055f, 2.4f);
+		b = (b <= 0.04045f) ? (b / 12.92f) : glm::pow((b + 0.055f) / 1.055f, 2.4f);
+	}
+}
+
+static void ConvertSetToSrgb(std::vector<float>& map)
+{
+	int numColors = map.size();
+	for (int i = 0; i < numColors; i += 4) {  // Increment i by 4 to skip alpha channel
+		float& r = map[i];
+		float& g = map[i + 1];
+		float& b = map[i + 2];
+
+		r = (r <= 0.0031308f) ? (r / 12.92f) : (1.055f * std::pow(r, 1.0f / 2.4f) - 0.055f);
+		g = (g <= 0.0031308f) ? (g / 12.92f) : (1.055f * std::pow(g, 1.0f / 2.4f) - 0.055f);
+		b = (b <= 0.0031308f) ? (b / 12.92f) : (1.055f * std::pow(b, 1.0f / 2.4f) - 0.055f);
+	}
+}
+
+void Mesh::srgbToLinearVCols()
+{
+	if (colors.empty()) return;
+
+	for (auto& set : colors)
+		convertSetToLinear(set.map);
+}
+
+void Mesh::linearToSrgbVCols()
+{
+	if (colors.empty()) return;
+
+	for (auto& set : colors)
+		ConvertSetToSrgb(set.map);
+}
+
 

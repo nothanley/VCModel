@@ -174,6 +174,9 @@ void addMeshColorMap(void* pMesh, float* colors, int size)
 	}
 
 	mesh->colors.push_back(channel);
+
+	/* Convert color format */
+	mesh->srgbToLinearVCols();
 	return;
 }
 

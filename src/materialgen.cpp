@@ -17,7 +17,6 @@ void CMaterialGen::save(const char* path)
 	std::string full_path = CMaterialGen::get_mtls_path(path);
 	this->setup_library();
 
-	printf( "\nPresets path is: %s" , m_presetsPath.c_str() );
 	if (!m_materials || m_materials->numMaterials() == 0)
 		return;
 
@@ -63,5 +62,5 @@ static std::string GetDllDirectory()
 
 std::string CMaterialGen::expand_path(const std::string& relativePath)
 {
-	return  GetDllDirectory() + "/" + relativePath;
+	return  GetDllDirectory() + "\\" + relativePath;
 }
