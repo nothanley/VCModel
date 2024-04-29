@@ -1,6 +1,7 @@
 #include <cstring>
 #include <VCModel>
 #include <chrono>
+#include "materialgen.h"
 #pragma once
 
 extern "C" __declspec(dllexport)
@@ -241,7 +242,10 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 
 
 extern "C" __declspec(dllexport)
-void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target, bool use_shape_keys, bool use_tangents)
+void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target, 
+	bool use_shape_keys, 
+	bool use_tangents, 
+	bool generate_materials)
 {
 	// Convert void pointer back to CSkinModel pointer
 	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
@@ -250,6 +254,12 @@ void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target,
 	/* Update dummy tangents if user specified */
 	for (auto& mesh : model->getMeshes())
 		mesh->calculateTangentsBinormals(use_tangents);
+
+	/* Create auto-gen .mtls file */
+	if (generate_materials){
+		CMaterialGen mtlGen(model, "material_presets.json");
+		mtlGen.save(savePath);
+	}
 
 	try {
 		auto start = std::chrono::high_resolution_clock::now();

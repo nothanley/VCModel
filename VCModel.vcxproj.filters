@@ -49,6 +49,9 @@
     <Filter Include="MikkT">
       <UniqueIdentifier>{2e33cb2d-f266-4e9e-a0e3-9b18a37f4beb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Addon">
+      <UniqueIdentifier>{6f324277-5b1c-4bea-b707-33cf9a96c88c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -126,6 +129,9 @@
     <ClInclude Include="src\MikkGen.h">
       <Filter>MikkT</Filter>
     </ClInclude>
+    <ClInclude Include="src\materialgen.h">
+      <Filter>Addon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -202,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="src\tangents.cpp">
       <Filter>MikkT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\materialgen.cpp">
+      <Filter>Addon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

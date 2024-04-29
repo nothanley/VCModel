@@ -9,7 +9,7 @@ void* loadModelFile(const char* filePath)
         return mdlFile.getModel();
     }
     catch (...) {
-        printf("Failed to read user model file.\n");
+        printf("[CSkinModel] Failed to read user model file.\n");
     }
 
     return nullptr;
