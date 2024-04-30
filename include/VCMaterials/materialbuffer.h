@@ -2,29 +2,30 @@
 #pragma once
 
 class CMaterialFile;
+
 class CMaterialBuffer
 {
 public:
 	CMaterialBuffer(char* data, CMaterialFile* parent);
 
 protected:
-	void loadMaterialBuffer(StMaterial& material);
+	std::string getString();
+	virtual void readPropertyNode(StMaterial& material);
+
+protected:
+	virtual void loadMaterialBuffer(StMaterial& material);
+	virtual void loadMaterialData(StMaterial& material);
+	virtual void getMaterialInfo(StMaterial& material);
+	static inline std::vector<int16_t> getListParams(char*& stream);
 
 private:
 	void validateBuffer();
 	void loadStringTable();
-	std::string getString();
-
-private:
-	void loadMaterialData(StMaterial& material);
-	void getMaterialInfo(StMaterial& material);
-	void readPropertyNode(StMaterial& material);
-
-private:
-	char* m_pStringTable;
 
 protected:
+	char* m_pStringTable;
 	char* m_data;
 	CMaterialFile* m_parent;
 	std::vector<StMaterial> m_materials;
 };
+

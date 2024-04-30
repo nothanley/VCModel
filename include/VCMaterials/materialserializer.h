@@ -1,6 +1,7 @@
 #include <sstream>
 #include <memory>
 #include "materialstructs.h"
+#include <unordered_map>
 #pragma once
 
 struct StMtlDataBf
@@ -21,8 +22,10 @@ private:
 	void writeMaterialHeader(std::stringstream& stream);
 	void serializeMaterialNodes(StMtlDataBf& data, const StMaterial& material);
 	void serializeInfoBuffer(std::stringstream& stream, const StMaterial& material);
+	void clear_table();
 
 private:
-	std::stringstream m_stringtable;
+	std::unordered_map<std::string, uint32_t> m_stringmap;
+	std::stringstream m_stringstream;
 };
 

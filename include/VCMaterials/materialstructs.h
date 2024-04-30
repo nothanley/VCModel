@@ -46,9 +46,10 @@ struct StMaterial {
 	std::string type;
 
 	int16_t flag0;
-	int8_t flag1;
-	int8_t flag2;
-	int8_t flag3;
+	int8_t  flag1;
+	int8_t  flag2;
+	int8_t  flag3;
+	int16_t flag4;
 
 	std::vector<StPropertyNode> nodes;
 };

@@ -394,7 +394,7 @@ int getNumMeshVertexColors(void* pSkinModel, const int index)
 
 const float*
 getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, int* size) 
-{
+{ 
     // Convert void pointer back to CSkinModel pointer
     CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
     if (!model || meshIndex > model->getNumMeshes())

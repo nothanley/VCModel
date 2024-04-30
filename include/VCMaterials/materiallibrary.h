@@ -4,7 +4,7 @@
 class CSkinModel;
 class CMaterialFile;
 
-class CMaterialLibrary : CMaterialBuffer
+class CMaterialLibrary : public CMaterialBuffer
 {
 public:
     CMaterialLibrary() : CMaterialBuffer(nullptr, nullptr){}
@@ -13,7 +13,7 @@ public:
 
 public:
 	void fromModel(CSkinModel* model, const char* presets_json);
-	void loadlibrary();
+	virtual void loadlibrary();
 	void updateLinks(const char* material_path);
 
 public:
@@ -25,12 +25,13 @@ public:
     const int numMaterials() const { return  m_materials.size(); }
 	void retarget(const StMaterial& material);
 	void removeDuplicates();
+	void clear_materials();
 
 public:
 	static int indexOf(const std::vector<StMaterial>& materials, const StMaterial& material);
 
-private:
-	void loadMaterialTable();
-	void loadMaterials();
+protected:
+	virtual void loadMaterialTable();
+	virtual void loadMaterials();
 };
 

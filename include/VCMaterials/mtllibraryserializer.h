@@ -15,6 +15,6 @@ private:
 	void serialize(char*& dst, uint32_t& size);
 
 private:
-	std::shared_ptr<CMaterialLibrary> m_materialLibrary;
+	std::shared_ptr<CMaterialLibrary>& m_materialLibrary;
 };
 
