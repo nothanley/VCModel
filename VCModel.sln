@@ -9,8 +9,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Debug-EXE|x64 = Debug-EXE|x64
-		Debug-EXE|x86 = Debug-EXE|x86
 		Debug-StaticLib|x64 = Debug-StaticLib|x64
 		Debug-StaticLib|x86 = Debug-StaticLib|x86
 		Release|x64 = Release|x64
@@ -27,10 +25,6 @@ Global
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug|x64.Build.0 = Debug|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug|x86.ActiveCfg = Debug|Win32
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug|x86.Build.0 = Debug|Win32
-		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x64.ActiveCfg = Debug-EXE|x64
-		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x64.Build.0 = Debug-EXE|x64
-		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x86.ActiveCfg = Debug-EXE|Win32
-		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-EXE|x86.Build.0 = Debug-EXE|Win32
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x64.ActiveCfg = Debug-StaticLib|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x64.Build.0 = Debug-StaticLib|x64
 		{2E893CBF-6E85-4D21-9332-E7BBC41DB7E1}.Debug-StaticLib|x86.ActiveCfg = Debug-StaticLib|Win32

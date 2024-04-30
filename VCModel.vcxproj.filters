@@ -52,6 +52,9 @@
     <Filter Include="Addon">
       <UniqueIdentifier>{6f324277-5b1c-4bea-b707-33cf9a96c88c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LOCAL_MATERIALS_DIR">
+      <UniqueIdentifier>{bfc9c95d-4522-4576-b041-a8e983bdf26c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -132,6 +135,39 @@
     <ClInclude Include="src\materialgen.h">
       <Filter>Addon</Filter>
     </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialconversion.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialfile.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallink.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialserializer.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialstructs.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialtemplates.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\usersettings.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -211,6 +247,36 @@
     </ClCompile>
     <ClCompile Include="src\materialgen.cpp">
       <Filter>Addon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\usersettings.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialconversion.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialfile.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallink.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialserializer.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialtemplates.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -551,3 +551,41 @@ const char* getMaterialDiffuseMap(void* pSkinModel, const int meshIndex, const i
 }
 
 
+int getNumAttachPoints(void* pSkinModel)
+{
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model) {
+        return 0;
+    }
+
+    auto& points = model->getAttachPoints();
+    return  points.size();
+}
+
+void getAttachmentPointData(void* pSkinModel,
+    const int pointIndex,
+    int* no_1,
+    int* no_2,
+    int* bone_index,
+    float* x,
+    float* y,
+    float* z)
+{
+    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    if (!model)
+        return;
+
+    auto& points = model->getAttachPoints();
+    if (pointIndex > points.size())
+        return;
+
+    auto& point = points.at(pointIndex);
+    *no_1 = point.no_1;
+    *no_2 = point.no_2;
+    *bone_index = point.bone_index;
+
+    *x = point.coord.x;
+    *y = point.coord.y;
+    *z = point.coord.z;
+}
+

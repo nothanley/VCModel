@@ -56,17 +56,31 @@ BinaryIO::ReadUInt16(char*& buffer, bool swap) {
 	return swap ? ntohs(value) : value;
 }
 
-int16_t
-BinaryIO::ReadInt16(char*& buffer, bool swap) {
+uint32_t
+BinaryIO::ReadUInt32(char*& buffer, bool swap) {
+	uint32_t value = *reinterpret_cast<const uint32_t*>(buffer);
+	buffer += sizeof(uint32_t);
+	return swap ? ntohl(value) : value;
+}
+
+int16_t BinaryIO::ReadInt16(char*& buffer, bool swap)
+{
 	int16_t value = *reinterpret_cast<const int16_t*>(buffer);
 	buffer += sizeof(int16_t);
 	return swap ? ntohs(value) : value;
 }
 
-uint32_t
-BinaryIO::ReadUInt32(char*& buffer, bool swap) {
-	uint32_t value = *reinterpret_cast<const uint32_t*>(buffer);
-	buffer += sizeof(uint32_t);
+int32_t BinaryIO::ReadInt32(char*& buffer, bool swap)
+{
+	int32_t value = *reinterpret_cast<const int32_t*>(buffer);
+	buffer += sizeof(int32_t);
+	return swap ? ntohl(value) : value;
+}
+
+int64_t BinaryIO::ReadInt64(char*& buffer, bool swap)
+{
+	int64_t value = *reinterpret_cast<const int64_t*>(buffer);
+	buffer += sizeof(int64_t);
 	return swap ? ntohl(value) : value;
 }
 

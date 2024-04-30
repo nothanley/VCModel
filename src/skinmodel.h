@@ -16,6 +16,7 @@ public:
 	~CSkinModel();
 
 public:
+	const std::vector<StAttachPoint>& getAttachPoints() const { return m_attachpoints; }
 	std::vector<Mesh*>    getMeshes() const { return m_meshes; }
 	std::vector<RigBone*> getBones()  const { return m_bones; };
 	const std::vector<std::string>* getStringTable() { return &m_stringTable; }

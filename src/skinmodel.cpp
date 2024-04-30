@@ -5,7 +5,7 @@
 #include "meshencoder.h"
 #include <meshtags.h>
 
-#include "VCMaterials/materialfile.h"
+#include "materialfile.h"
 #include "materialgen.h"
 #include "materiallibrary.h"
 #include "common.h"
@@ -110,6 +110,9 @@ void CSkinModel::loadBuffer()
 			break;
 		case BONE:
 			this->loadModelBones(size);
+			break;
+		case AtPt:
+			this->loadAttachPtData();
 			break;
 		case MTL_:
 			this->loadMaterials();

@@ -27,6 +27,7 @@ protected:
 	void getTriangleBuffer(Mesh& mesh);
 	void loadColorMapInfo(Mesh& mesh);
 	void loadUVInfo(Mesh& mesh);
+	virtual void loadAttachPtData();
 	virtual void getMorphWeights(Mesh& mesh);
 
 protected:
@@ -37,6 +38,7 @@ protected:
 	std::vector<Mesh*> m_meshes;
 	std::vector<RigBone*> m_bones;
 	std::vector<Material> m_materials;
+	std::vector<StAttachPoint> m_attachpoints;
 };
 
 

@@ -7,15 +7,15 @@ int main()
 {
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/test.mdl");
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
         CSkinModel* model = mdlFile.getModel();
 
         //model->linkMaterialsFile("C:/Users/wauke/Desktop/123_Attire.mdl");
 
-        CMaterialGen mtlGen(model, "material_presets.json");
-        mtlGen.save(
-            CMaterialGen::get_mtls_path("C:/Users/wauke/Desktop/123_Attire.mdl").c_str()
-        );
+        //CMaterialGen mtlGen(model, "material_presets.json");
+        //mtlGen.save(
+        //    CMaterialGen::get_mtls_path("C:/Users/wauke/Desktop/123_Attire.mdl").c_str()
+        //);
 
         //CModelSerializer serializer(model);
         //serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");

@@ -1,7 +1,7 @@
 #include "materialgen.h"
 #include "skinmodel.h"
-#include <VCMaterials/mtllibraryserializer.h>
-#include <VCMaterials/materiallink.h>
+#include <mtllibraryserializer.h>
+#include <materiallink.h>
 #include <Windows.h>
 #include "common.h"
 

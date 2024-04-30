@@ -43,7 +43,7 @@ void CSerializedModel::getAxisAlignedBoundingBox(Mesh& mesh, bool getRadius) {
 void CSerializedModel::loadStringTable()
 {
 	uint32_t numStrings = ReadUInt32(m_data);
-	printf("\n\tStringTable size: %d", numStrings);
+	//printf("\n\tStringTable size: %d", numStrings);
 
 	/* Iterate and collect all string values */
 	char* tablePointer = m_data + (numStrings * 0x4);
@@ -274,3 +274,38 @@ void CSerializedModel::loadMeshes()
 		//printf("\n\tRead Model: %s\n", mesh->name.c_str());
 	}
 }
+
+static void modelApToWorldSpace(const int boneIndex, const std::vector<RigBone*>& bones, glm::vec4& translate)
+{
+	if (boneIndex > bones.size())
+		return;
+
+	auto& bone = bones[boneIndex];
+	translate = bone->matrix_world * translate;
+}
+
+void CSerializedModel::loadAttachPtData()
+{
+	int32_t numPoints = ReadInt32(m_data);
+	this->m_attachpoints.resize(numPoints);
+
+	for (auto& point : m_attachpoints)
+	{
+		point.no_1         = ReadInt16(m_data);
+		point.no_2		   = ReadInt16(m_data);
+		point.bone_index   = ReadInt16(m_data);
+		::align_binary_stream(m_data);
+
+		point.coord =
+		{ ReadFloat(m_data), -1.0 * ReadFloat(m_data), -1.0 * ReadFloat(m_data), 1.0 };
+
+		::modelApToWorldSpace(point.bone_index, m_bones, point.coord);
+
+		point.flag = ReadInt8(m_data);
+		::align_binary_stream(m_data);
+	}
+	//printf("\nRead %d attachment points.", numPoints);
+}
+
+
+

@@ -70,5 +70,8 @@ extern "C" __declspec(dllexport) void getMaterialFaceGroup(void* pSkinModel, con
 
 extern "C" __declspec(dllexport) const char* getMaterialDiffuseMap( void* pSkinModel, const int meshIndex, const int groupIndex );
 
+extern "C" __declspec(dllexport) int getNumAttachPoints(void* pSkinModel);
 
+extern "C" __declspec(dllexport) void getAttachmentPointData(void* pSkinModel,
+	const int pointIndex, int* no_1, int* no_2,int* bone_index, float* x,float* y, float* z);
 

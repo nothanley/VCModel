@@ -59,6 +59,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialconversion.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialfile.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallink.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialserializer.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialstructs.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialtemplates.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\usersettings.h" />
     <ClInclude Include="include\BinaryIO.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
@@ -87,6 +98,16 @@
     <ClInclude Include="src\wavefront.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialconversion.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialfile.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallink.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialserializer.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialtemplates.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\usersettings.cpp" />
     <ClCompile Include="include\BinaryIO.cpp" />
     <ClCompile Include="include\hash.cpp" />
     <ClCompile Include="include\mikktspace.c" />
@@ -172,7 +193,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -434,7 +455,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include;$(SolutionDir)src;$(SolutionDir)include\crc32c;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -453,26 +474,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;$(SOLUTIONDIR)lib\VCMaterials-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreBuildEvent>
-      <Command>
-      </Command>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-StaticLib|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;$(SOLUTIONDIR)lib\vcmaterials.lib;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -485,6 +487,30 @@
       </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug-StaticLib|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(ProjectName).lib" "$(SolutionDir)LIBRARY_BUILDS_OUT\$(ProjectName)-d.lib"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -493,7 +519,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include;$(SolutionDir)src;$(SolutionDir)include\crc32c;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include;$(SolutionDir)src;$(SolutionDir)include\crc32c;$(SolutionDir)include\VCMaterials;C:\Users\wauke\source\repos\VCMaterials\VCMaterials</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -519,7 +545,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include;$(SolutionDir)src;$(SolutionDir)include\crc32c;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -527,7 +553,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c.lib;$(SOLUTIONDIR)lib\vcmaterials.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -545,7 +571,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;$(SOLUTIONDIR)lib\vcmaterials.lib;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -572,7 +598,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;$(SOLUTIONDIR)lib\vcmaterials.lib;$(SolutionDir)include\VCMaterials</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)src;%(AdditionalIncludeDirectories);$(SolutionDir)include\crc32c;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\include;C:\Users\wauke\source\repos\VCMaterials\VCMaterials\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -587,8 +613,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>copy /Y "$(TargetDir)$(ProjectName).lib" "$(SolutionDir)LIBRARY_BUILDS_OUT\$(ProjectName).lib"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

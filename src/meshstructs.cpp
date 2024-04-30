@@ -32,6 +32,7 @@ void RigBone::set_parent(RigBone* pParentBone)
 
 	// update world space transform
 	this->matrix_world = dot_4x4(this->matrix_local, parent->matrix_world);
+	//printf("\nModel World Translate '%s': %.4f %.4f %.4f", name.c_str(), matrix_world[3][0], matrix_world[3][1], matrix_world[3][2] );
 }
 
 void RigBone::set_transform(float* matrices, const bool& reorder_matrix) {

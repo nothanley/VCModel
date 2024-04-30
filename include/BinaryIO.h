@@ -20,12 +20,16 @@ namespace BinaryIO {
 	uint8_t extractValue_64(uint64_t value, uint8_t place);
 	uint64_t swapLongEndian(const uint64_t& X);
 
-	int8_t ReadInt8(char*& buffer);
 	uint8_t  ReadUInt8(char*& buffer);
 	uint16_t ReadUInt16(char*& buffer, bool swap = false);
-	int16_t  ReadInt16(char*& buffer, bool swap = false);
 	uint32_t ReadUInt32(char*& buffer, bool swap = false);
 	uint64_t ReadUInt64(char*& buffer, bool swap = false);
+
+	int8_t ReadInt8(char*& buffer);
+	int16_t ReadInt16(char*& buffer, bool swap = false);
+	int32_t ReadInt32(char*& buffer, bool swap = false);
+	int64_t ReadInt64(char*& buffer, bool swap = false);
+
 	std::string ReadString(char*& data);
 	std::string ReadString(char*& data, int size);
 
