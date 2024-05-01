@@ -31,6 +31,7 @@ void CModelSerializer::serialize()
 	this->createModelBuffer();
 	this->createTextBuffer();
 	this->createBoneBuffer();
+	this->createAtPtBuffer();
 	this->createMaterialBuffer();
 	this->createMeshBufferDefs();
 	this->createLODsBuffer();
@@ -146,6 +147,44 @@ void CModelSerializer::createMaterialBuffer()
 			index = indexOf(group.material.name);}
 
 		WriteUInt32(buffer, index);
+	}
+
+	m_dataBuffers.push_back(stream);
+}
+
+void CModelSerializer::serializePoint(char*& buffer, const StAttachPoint& point)
+{
+	const Vec3 local = m_model->getAttachPointLocalPos(point);
+
+	WriteSInt16(buffer, point.no_1);
+	WriteSInt16(buffer, point.no_2);
+	WriteSInt16(buffer, point.bone_index);
+	::align_binary_stream(buffer);
+
+	WriteFloat(buffer, local.x);
+	WriteFloat(buffer, local.y);
+	WriteFloat(buffer, local.z);
+	WriteSInt8(buffer, point.flag);
+	::align_binary_stream(buffer);
+}
+
+void CModelSerializer::createAtPtBuffer()
+{
+	const auto& points = m_model->getAttachPoints();
+	if (points.empty()) return;
+
+	/* Initialize model buffer stream */
+	StModelBf stream;
+	stream.type = "AtPt";
+	stream.size = MeshEncoder::getAtPtBufferSize(points);
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+	int numPoints = points.size();
+
+	/* Serialize all point data */
+	WriteUInt32(buffer, numPoints);
+	for (auto& point : points){
+		serializePoint(buffer, point);
 	}
 
 	m_dataBuffers.push_back(stream);

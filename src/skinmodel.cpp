@@ -74,28 +74,6 @@ CSkinModel::saveToObjFile(const char* path, bool split)
 	return;
 }
 
-const BoundingBox CSkinModel::getAABBs() 
-{
-	if (m_meshes.empty())
-		return BoundingBox();
-
-	/* Iterate and compare each box for the highest/lowest coordinate values */
-	BoundingBox totalBox = m_meshes.front()->bounds;
-	for (auto& mesh : m_meshes) {
-
-		BoundingBox& box = mesh->bounds;
-		totalBox.maxX = (box.maxX > totalBox.maxX) ? box.maxX : totalBox.maxX;
-		totalBox.maxY = (box.maxY > totalBox.maxY) ? box.maxY : totalBox.maxY;
-		totalBox.maxZ = (box.maxZ > totalBox.maxZ) ? box.maxZ : totalBox.maxZ;
-
-		totalBox.minX = (box.minX < totalBox.minX) ? box.minX : totalBox.minX;
-		totalBox.minY = (box.minY < totalBox.minY) ? box.minY : totalBox.minY;
-		totalBox.minZ = (box.minZ < totalBox.minZ) ? box.minZ : totalBox.minZ;
-	}
-
-	return totalBox;
-}
-
 void CSkinModel::loadBuffer()
 {
 	uint32_t type = ReadUInt32(m_data);
@@ -114,6 +92,9 @@ void CSkinModel::loadBuffer()
 		case AtPt:
 			this->loadAttachPtData();
 			break;
+		//case GtPt:
+			//this->loadGtPtData();
+			//break;
 		case MTL_:
 			this->loadMaterials();
 			break;
@@ -178,5 +159,4 @@ void CSkinModel::linkMaterialsFile(const char* model_path)
 			group.material.color_map = (node) ? variant_string(node->value) : "";
 		}
 }
-
 

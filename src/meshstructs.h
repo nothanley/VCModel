@@ -144,15 +144,6 @@ struct Matrix4 {
 	Vec4 x, y, z, w;
 };
 
-struct StAttachPoint
-{
-	int16_t no_1;
-	int16_t no_2;
-	int16_t bone_index;
-	glm::vec4 coord;
-	int8_t flag;
-};
-
 struct RigBone
 {
 	int16_t index;
@@ -164,6 +155,23 @@ struct RigBone
 	glm::mat4 matrix_world; // World space transform
 	void set_transform(float* matrices, const bool& reorder_matrix);
 	void set_parent(RigBone* parent);
+};
+
+struct StGotoPoint
+{
+	int16_t no_0;
+	int16_t no_1;
+	int16_t no_2;
+	int16_t no_3;
+};
+
+struct StAttachPoint
+{
+	int16_t no_1;
+	int16_t no_2;
+	int16_t bone_index;
+	glm::vec4 coord;
+	int8_t flag;
 };
 
 struct Material

@@ -221,5 +221,3 @@ void Mesh::linearToSrgbVCols()
 	for (auto& set : colors)
 		ConvertSetToSrgb(set.map);
 }
-
-

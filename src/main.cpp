@@ -17,8 +17,8 @@ int main()
         //    CMaterialGen::get_mtls_path("C:/Users/wauke/Desktop/123_Attire.mdl").c_str()
         //);
 
-        //CModelSerializer serializer(model);
-        //serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
+        CModelSerializer serializer(model);
+        serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
 
         //for (auto& mesh : model->getMeshes())
             //mesh->calculateTangentsBinormals();

@@ -122,6 +122,31 @@ BinaryIO::WriteUInt64(char*& buffer, const uint64_t& value) {
 	buffer += sizeof(uint64_t);
 }
 
+void
+BinaryIO::WriteSInt8(char*& buffer, const int8_t& value) {
+	*reinterpret_cast<int8_t*>(buffer) = value;
+	buffer += sizeof(int8_t);
+}
+
+void
+BinaryIO::WriteSInt16(char*& buffer, const int16_t& value) {
+	*reinterpret_cast<int16_t*>(buffer) = value;
+	buffer += sizeof(int16_t);
+}
+
+void
+BinaryIO::WriteSInt32(char*& buffer, const int32_t& value) {
+	*reinterpret_cast<int32_t*>(buffer) = value;
+	buffer += sizeof(int32_t);
+}
+
+void
+BinaryIO::WriteSInt64(char*& buffer, const int64_t& value) {
+	*reinterpret_cast<int64_t*>(buffer) = value;
+	buffer += sizeof(int64_t);
+}
+
+
 void 
 BinaryIO::WriteFloat(char*& buffer, const float& value) {
 	*reinterpret_cast<float*>(buffer) = value;

@@ -29,6 +29,24 @@ uint32_t MeshEncoder::getMeshBufferDefSize(std::vector<StMeshBf>& meshbuffers)
 	return size;
 }
 
+uint32_t MeshEncoder::getAtPtBufferSize(const std::vector<StAttachPoint>& points)
+{
+	uint32_t size = sizeof(uint32_t);
+	
+	for (auto& point : points) {
+		size += sizeof(int16_t); // index a
+		size += sizeof(int16_t); // index b
+		size += sizeof(int16_t); // bone target
+		::round_size(size, 4); // align
+
+		size += (sizeof(float) * 3); // local space coordinates
+		size += sizeof(int8_t); // point flag
+		::round_size(size, 4); // align
+	}
+
+	return size;
+}
+
 uint32_t MeshEncoder::getMtlBufferSize(const std::vector<Mesh*>& meshes)
 {
 	uint32_t size = sizeof(uint32_t);

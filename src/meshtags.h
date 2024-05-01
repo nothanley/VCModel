@@ -16,6 +16,7 @@ enum enMeshBfTags
 	TEXT = 0x54584554,
 	BONE = 0x454e4f42,
 	AtPt = 0x74507441,
+	GtPt = 0x74507447,
 	MTL_  = 0x214c544d,
 	MBfD = 0x4466424d,
 	LODs = 0x73444f4c,

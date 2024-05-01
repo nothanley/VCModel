@@ -19,12 +19,14 @@ private:
 	void generateMeshBuffers(std::vector<StMeshBf>& buffers) override;
 	void createTextBuffer();
 	void createBoneBuffer();
+	void createAtPtBuffer();
 	void createMaterialBuffer();
 	void createMeshBufferDefs();
 	void createLODsBuffer();
 	void createModelBuffer();
 
 private:
+	void serializePoint(char*& buffer, const StAttachPoint& point);
 	void writeBoundingBox(char*& buffer, const BoundingBox& box);
 	void writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer);
 	void writeIndexBuffer(char*& buffer, int meshIndex);
@@ -34,4 +36,6 @@ protected:
 	void serialize();
 	std::string m_savePath;
 };
+
+
 

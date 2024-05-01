@@ -271,7 +271,6 @@ void CSerializedModel::loadMeshes()
 
 		this->buildMesh(*mesh);
 		m_meshes.push_back(mesh);
-		//printf("\n\tRead Model: %s\n", mesh->name.c_str());
 	}
 }
 
@@ -281,7 +280,7 @@ static void modelApToWorldSpace(const int boneIndex, const std::vector<RigBone*>
 		return;
 
 	auto& bone = bones[boneIndex];
-	translate = bone->matrix_world * translate;
+	translate = bone->matrix_world * glm::vec4{ translate.x, -translate.y, -translate.z, 1.0 };
 }
 
 void CSerializedModel::loadAttachPtData()
@@ -296,9 +295,7 @@ void CSerializedModel::loadAttachPtData()
 		point.bone_index   = ReadInt16(m_data);
 		::align_binary_stream(m_data);
 
-		point.coord =
-		{ ReadFloat(m_data), -1.0 * ReadFloat(m_data), -1.0 * ReadFloat(m_data), 1.0 };
-
+		point.coord = { ReadFloat(m_data), ReadFloat(m_data), ReadFloat(m_data), 1.0 };
 		::modelApToWorldSpace(point.bone_index, m_bones, point.coord);
 
 		point.flag = ReadInt8(m_data);
@@ -307,5 +304,53 @@ void CSerializedModel::loadAttachPtData()
 	//printf("\nRead %d attachment points.", numPoints);
 }
 
+void CSerializedModel::loadGtPtData()
+{
+	int32_t numPoints = ReadInt32(m_data);
+	this->m_gtpoints.resize(numPoints);
+
+	for (auto& point : m_gtpoints)
+	{
+		point.no_0 = ReadInt16(m_data);
+		point.no_1 = ReadInt16(m_data);
+		point.no_2 = ReadInt16(m_data);
+		point.no_3 = ReadInt16(m_data);
+	}
+
+	//printf("\nRead %d gt points.", numPoints);
+}
+
+const BoundingBox CSerializedModel::getAABBs()
+{
+	if (m_meshes.empty())
+		return BoundingBox();
+
+	/* Iterate and compare each box for the highest/lowest coordinate values */
+	BoundingBox totalBox = m_meshes.front()->bounds;
+	for (auto& mesh : m_meshes) {
+
+		BoundingBox& box = mesh->bounds;
+		totalBox.maxX = (box.maxX > totalBox.maxX) ? box.maxX : totalBox.maxX;
+		totalBox.maxY = (box.maxY > totalBox.maxY) ? box.maxY : totalBox.maxY;
+		totalBox.maxZ = (box.maxZ > totalBox.maxZ) ? box.maxZ : totalBox.maxZ;
+
+		totalBox.minX = (box.minX < totalBox.minX) ? box.minX : totalBox.minX;
+		totalBox.minY = (box.minY < totalBox.minY) ? box.minY : totalBox.minY;
+		totalBox.minZ = (box.minZ < totalBox.minZ) ? box.minZ : totalBox.minZ;
+	}
+
+	return totalBox;
+}
+
+
+const Vec3 CSerializedModel::getAttachPointLocalPos(const StAttachPoint& point) const
+{
+	if (point.bone_index > m_bones.size()) return Vec3();
+
+	auto& bone = m_bones.at(point.bone_index);
+	glm::vec4 localSpaceCo = glm::inverse(bone->matrix_world) * point.coord;
+
+	return Vec3{ localSpaceCo.x, -localSpaceCo.y, -localSpaceCo.z };
+}
 
 

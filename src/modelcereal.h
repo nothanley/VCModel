@@ -6,6 +6,11 @@ class CSerializedModel
 public:
 	CSerializedModel();
 
+
+public:
+	const BoundingBox getAABBs();
+	const Vec3 getAttachPointLocalPos(const StAttachPoint& point) const;
+
 protected:
 	void loadMeshes();
 	void loadStringTable();
@@ -27,7 +32,9 @@ protected:
 	void getTriangleBuffer(Mesh& mesh);
 	void loadColorMapInfo(Mesh& mesh);
 	void loadUVInfo(Mesh& mesh);
+
 	virtual void loadAttachPtData();
+	virtual void loadGtPtData();
 	virtual void getMorphWeights(Mesh& mesh);
 
 protected:
@@ -39,6 +46,7 @@ protected:
 	std::vector<RigBone*> m_bones;
 	std::vector<Material> m_materials;
 	std::vector<StAttachPoint> m_attachpoints;
+	std::vector<StGotoPoint> m_gtpoints;
 };
 
 

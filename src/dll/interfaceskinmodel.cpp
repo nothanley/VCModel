@@ -567,6 +567,7 @@ void getAttachmentPointData(void* pSkinModel,
     int* no_1,
     int* no_2,
     int* bone_index,
+    int* flag,
     float* x,
     float* y,
     float* z)
@@ -583,9 +584,12 @@ void getAttachmentPointData(void* pSkinModel,
     *no_1 = point.no_1;
     *no_2 = point.no_2;
     *bone_index = point.bone_index;
-
+    *flag = point.flag;
     *x = point.coord.x;
-    *y = point.coord.y;
-    *z = point.coord.z;
+    *y = point.coord.z;
+    *z = -point.coord.y;
+    //printf("\nLoading new attach point at coord {%f %f %f}",
+    //point.coord.x, point.coord.y, point.coord.z);
 }
+
 

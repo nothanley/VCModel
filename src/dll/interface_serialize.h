@@ -239,9 +239,30 @@ void setNewModelBone(void* pSkinModel, const char* name, float* matrices,
 		RigBone* parent = bones.at(parentIndex);
 		bone->set_parent(parent);
 	}
+	else {
+		bone->matrix_world = bone->matrix_local;
+	}
 
 }
 
+extern "C" __declspec(dllexport)
+void setNewAttachPoint(void* pSkinModel, int bone_index, int id1, int id2, int flag, float x, float y, float z)
+{
+	// Convert void pointer back to CSkinModel pointer
+	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+	if (!model) return;
+
+	if (bone_index > model->getNumBones())
+		return;
+
+	StAttachPoint point;
+	point.bone_index = bone_index;
+	point.no_1 = id1;
+	point.no_2 = id2;
+	point.flag = flag;
+	point.coord = glm::vec4{ x, -z, y, 1.0 };
+	model->push_point(point);
+}
 
 
 extern "C" __declspec(dllexport)

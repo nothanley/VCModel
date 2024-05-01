@@ -38,6 +38,12 @@ namespace BinaryIO {
 	void WriteUInt16(char*& buffer, const uint16_t& value);
 	void WriteUInt32(char*& buffer, const uint32_t& value);
 	void WriteUInt64(char*& buffer, const uint64_t& value);
+
+	void WriteSInt8(char*& buffer,  const int8_t& value);
+	void WriteSInt16(char*& buffer, const int16_t& value);
+	void WriteSInt32(char*& buffer, const int32_t& value);
+	void WriteSInt64(char*& buffer, const int64_t& value);
+
 	void WriteString(char*& buffer, const std::string& string);
 	void WriteFloat(char*& buffer, const float& value);
 	void WriteData(char*& buffer, char* data, size_t size);
