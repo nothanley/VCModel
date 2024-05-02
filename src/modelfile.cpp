@@ -70,7 +70,7 @@ CModelContainer::ReadContents()
 			this->m_model = new CSkinModel_2_8(m_data, this);
 			break;
 		default:
-			printf("Unsupported MDL version.\n");
+			throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
 			break;
 	}
 }

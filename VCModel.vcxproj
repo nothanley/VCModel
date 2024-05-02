@@ -59,6 +59,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\common.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialconversion.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialfile.h" />
@@ -78,7 +79,6 @@
     <ClInclude Include="src\cmeshserializer.h" />
     <ClInclude Include="src\cmodelserializer.h" />
     <ClInclude Include="src\cmodelserializer_ver.h" />
-    <ClInclude Include="src\common.h" />
     <ClInclude Include="src\materialgen.h" />
     <ClInclude Include="src\meshstructs.h" />
     <ClInclude Include="src\MikkGen.h" />
@@ -98,6 +98,7 @@
     <ClInclude Include="src\wavefront.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\common.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialconversion.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialfile.cpp" />
@@ -115,7 +116,6 @@
     <ClCompile Include="src\cmeshserializer.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
-    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\materialgen.cpp" />
     <ClCompile Include="src\meshstructs.cpp" />
     <ClCompile Include="src\MikkGen.cpp" />

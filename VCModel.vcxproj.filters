@@ -117,9 +117,6 @@
     <ClInclude Include="src\meshstructs.h">
       <Filter>Source\Model\Mesh\Structs</Filter>
     </ClInclude>
-    <ClInclude Include="src\common.h">
-      <Filter>Source\File</Filter>
-    </ClInclude>
     <ClInclude Include="include\hash.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -166,6 +163,9 @@
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClInclude>
     <ClInclude Include="..\VCMaterials\VCMaterials\src\usersettings.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\common.h">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClInclude>
   </ItemGroup>
@@ -227,9 +227,6 @@
     <ClCompile Include="src\meshstructs.cpp">
       <Filter>Source\Model\Mesh\Structs</Filter>
     </ClCompile>
-    <ClCompile Include="src\common.cpp">
-      <Filter>Source\File</Filter>
-    </ClCompile>
     <ClCompile Include="include\hash.cpp">
       <Filter>Include</Filter>
     </ClCompile>
@@ -276,6 +273,9 @@
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialtemplates.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\common.cpp">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
   </ItemGroup>
