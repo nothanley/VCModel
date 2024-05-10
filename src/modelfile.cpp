@@ -15,12 +15,13 @@ CModelContainer::CModelContainer(const char* path)
 	LoadFile();
 }
 
-CModelContainer::CModelContainer(char* data, bool use_lightweight_loader)
+CModelContainer::CModelContainer(char* data, const size_t size, bool use_lightweight_loader)
   : m_sFilePath(""),
 	m_data(nullptr),
 	m_fileBf(data),
 	m_isReady(false),
-	m_model(nullptr)
+	m_model(nullptr),
+	m_fileSize(size)
 {
 	LoadFile();
 }
@@ -32,16 +33,48 @@ CModelContainer::~CModelContainer()
 }
 
 void
+CModelContainer::free_model()
+{
+	if (this->m_model) {
+		delete m_model;
+		m_model = nullptr;
+	}
+}
+
+static const size_t getDiskFileSize(const std::string& filePath) 
+{
+	std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+	if (!file.is_open()) {
+		std::cerr << "Error opening file: " << filePath << std::endl;
+		return -1; // Return -1 to indicate error
+	}
+
+	std::streamsize fileSize = file.tellg();
+	file.close();
+
+	return fileSize;
+}
+
+void
 CModelContainer::LoadFile() 
 {
-	this->m_fileBf = (m_fileBf) ? m_fileBf : SysCommon::readBinaryFile(m_sFilePath);
+	if (!m_fileBf){
+		this->m_fileBf   = SysCommon::readBinaryFile(m_sFilePath);
+		this->m_fileSize = ::getDiskFileSize(m_sFilePath);
+	}
 
 	if (!m_fileBf)
-		throw std::runtime_error("Cannot read MDL file.");
+		throw std::runtime_error("Could not read MDL file.");
 
 	/* load skin model object */
 	CModelContainer::ValidateContainer();
-	CModelContainer::ReadContents();
+
+	try {
+		CModelContainer::ReadContents();
+	}
+	catch(...){
+		throw std::runtime_error("Could not read MDL file.");
+	}
 
 	/* free memory */
 	delete[] m_fileBf;

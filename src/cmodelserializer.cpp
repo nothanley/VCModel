@@ -327,7 +327,7 @@ void CModelSerializer::createLODsBuffer()
 	stream.size = MeshEncoder::getLodsBufferSize(meshes, numLodLevels);
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
-	
+	 
 	/* Write high/low LOD buffers */
 	uint32_t numMeshes = meshes.size();
 	WriteUInt32(buffer, numLodLevels);

@@ -406,7 +406,7 @@ getMeshVertexColors(void* pSkinModel, const int meshIndex, const int setIndex, i
         return nullptr;
 
     /* Convert color format */
-    mesh->linearToSrgbVCols();
+    mesh->linearToSrgbVCols(setIndex);
 
     auto& colorSet = mesh->colors.at(setIndex);
     *size = colorSet.map.size();

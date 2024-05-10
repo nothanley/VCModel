@@ -58,7 +58,9 @@ BinaryIO::ReadUInt16(char*& buffer, bool swap) {
 
 uint32_t
 BinaryIO::ReadUInt32(char*& buffer, bool swap) {
-	uint32_t value = *reinterpret_cast<const uint32_t*>(buffer);
+	uint32_t value;
+
+	value = *reinterpret_cast<const uint32_t*>(buffer);
 	buffer += sizeof(uint32_t);
 	return swap ? ntohl(value) : value;
 }

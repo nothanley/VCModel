@@ -206,18 +206,18 @@ static void ConvertSetToSrgb(std::vector<float>& map)
 	}
 }
 
-void Mesh::srgbToLinearVCols()
+void Mesh::srgbToLinearVCols(const int index)
 {
-	if (colors.empty()) return;
+	if (index > colors.size()) return;
 
-	for (auto& set : colors)
-		convertSetToLinear(set.map);
+	auto& set = colors[index];
+	::convertSetToLinear(set.map);
 }
 
-void Mesh::linearToSrgbVCols()
+void Mesh::linearToSrgbVCols(const int index)
 {
-	if (colors.empty()) return;
+	if (index > colors.size()) return;
 
-	for (auto& set : colors)
-		ConvertSetToSrgb(set.map);
+	auto& set = colors[index];
+	::ConvertSetToSrgb(set.map);
 }

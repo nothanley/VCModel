@@ -173,10 +173,10 @@ void addMeshColorMap(void* pMesh, float* colors, int size)
 		channel.map.at(i) = colors[i];
 	}
 
+	int index = mesh->colors.size();
 	mesh->colors.push_back(channel);
 
-	/* Convert color format */
-	mesh->srgbToLinearVCols();
+	mesh->srgbToLinearVCols(index); // Convert color format
 	return;
 }
 

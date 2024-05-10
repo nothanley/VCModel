@@ -76,6 +76,9 @@ CSkinModel::saveToObjFile(const char* path, bool split)
 
 void CSkinModel::loadBuffer()
 {
+	if (m_data > m_parent->end() )
+		throw std::runtime_error("Failed to parse mdl contents");
+
 	uint32_t type = ReadUInt32(m_data);
 	uint32_t size = ReadUInt32(m_data);
 	char* nextBfPtr = m_data + size;

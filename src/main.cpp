@@ -7,7 +7,7 @@ int main()
 {
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/stress_1m.mdl");
         CSkinModel* model = mdlFile.getModel();
 
         //model->linkMaterialsFile("C:/Users/wauke/Desktop/123_Attire.mdl");

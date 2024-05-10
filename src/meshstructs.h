@@ -258,9 +258,8 @@ struct Mesh
 	void calculateTangentsBinormals(const bool use_dummy_tangents=false); /* Calculate tangent + binormal vertex data */
 	Vec3 vertex(const int index) const; /* Extracts position vector of coord array */
 	Vec3 normal(const int index) const; /* Extracts normal vector of coord array */
-
-	void srgbToLinearVCols();
-	void linearToSrgbVCols();
+	void srgbToLinearVCols(const int index);
+	void linearToSrgbVCols(const int index);
 };
 
 struct MeshDefBf {
