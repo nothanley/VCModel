@@ -73,16 +73,16 @@ struct Vec3 {
 
 	static void min(Vec3& result, const Vec3& a, const Vec3& b)
 	{
-		result.x = std::min(a.x, b.x);
-		result.y = std::min(a.y, b.y);
-		result.z = std::min(a.z, b.z);
+		result.x = std::isnan(a.x) || std::isnan(b.x) ? result.x : std::min(a.x, b.x);
+		result.y = std::isnan(a.y) || std::isnan(b.y) ? result.y : std::min(a.y, b.y);
+		result.z = std::isnan(a.z) || std::isnan(b.z) ? result.z : std::min(a.z, b.z);
 	};
 
 	static void max(Vec3& result, const Vec3& a, const Vec3& b)
 	{
-		result.x = std::max(a.x, b.x);
-		result.y = std::max(a.y, b.y);
-		result.z = std::max(a.z, b.z);
+		result.x = std::isnan(a.x) || std::isnan(b.x) ? result.x : std::max(a.x, b.x);
+		result.y = std::isnan(a.y) || std::isnan(b.y) ? result.y : std::max(a.y, b.y);
+		result.z = std::isnan(a.z) || std::isnan(b.z) ? result.z : std::max(a.z, b.z);
 	};
 
 	void handleNaN(float value = 0.00001f) {

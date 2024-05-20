@@ -560,7 +560,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\WWE2K_MDL\Link\$(TargetName).dll"</Command>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender Foundation\Blender\2.93\scripts\addons\WWE2K_MDL\Link\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender Foundation\Blender\4.1\scripts\addons\WWE2K_MDL\Link\$(TargetName).dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release-EXE|x64'">

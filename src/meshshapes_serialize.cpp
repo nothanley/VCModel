@@ -119,3 +119,4 @@ void vCMeshShapeSerial::vCMeshShapeSerial::updateShapeVtxWeightBuffer(std::strin
 	WriteUInt32( stream, 0		 ); // normal delta
 }
 
+  
