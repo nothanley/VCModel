@@ -2,21 +2,36 @@
 #include <VCModel>
 #include <vector>
 
-void* loadModelFile(const char* filePath, const bool use_materials)
+class ModelWrapper 
 {
+public:
+    ModelWrapper() {};
+    void setModel(std::shared_ptr<CSkinModel> model) { m_model = model; }
+    CSkinModel* model() { return m_model.get(); }
+
+private:
+    std::shared_ptr<CSkinModel> m_model;
+};
+
+void* loadModelFile(const char* filePath, void* modelWrapperPtr, const bool use_materials)
+{
+    ModelWrapper* wrapper = new ModelWrapper(); // Manually delete this after successful load 
+    modelWrapperPtr = (void*)wrapper;           // Update Blender Wrapper Link
+
     try {
         CModelContainer mdlFile(filePath);
         auto skinmodel = mdlFile.getModel();
+        wrapper->setModel(skinmodel);
 
         if (use_materials)
             skinmodel->linkMaterialsFile(filePath);
 
-        return skinmodel;
+        return wrapper->model();
     }
-    catch (...) {
-        printf("[CSkinModel] Failed to read user model file.\n");
-    }
+    catch (...) {}
 
+    printf("[CSkinModel] Failed to read user model file.\n");
+    delete wrapper;
     return nullptr;
 }
 

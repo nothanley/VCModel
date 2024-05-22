@@ -12,14 +12,12 @@
 
 using namespace BinaryIO;
 
-CSkinModel::CSkinModel() : CSerializedModel()
+CSkinModel::CSkinModel() : CSerializedModel(nullptr)
 {
-	m_parent = nullptr;
 }
 
-CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
-	: CSerializedModel(),
-	m_parent(pParent)
+CSkinModel::CSkinModel(char* data, CModelContainer* parent)
+	: CSerializedModel(parent)
 {
 	m_data = data;
 }
@@ -27,7 +25,7 @@ CSkinModel::CSkinModel(char* data, CModelContainer* pParent)
 CSkinModel::~CSkinModel()
 {
 	for (auto& mesh : m_meshes) {
-		//printf("\n[CSkinModel] Deleting mesh: %s", mesh->material.name.c_str());
+		//printf("\n[CSkinModel] Deleting mesh: %s", mesh->name.c_str());
 		delete mesh;
 	}
 
@@ -161,5 +159,75 @@ void CSkinModel::linkMaterialsFile(const char* model_path)
 			StPropertyNode* node = get_color_node(mat);
 			group.material.color_map = (node) ? variant_string(node->value) : "";
 		}
+}
+
+static StMdlDataRef* findDataRef(std::vector<StMdlDataRef>& refs, const char* format, const Mesh* target_mesh)
+{
+	for (auto& ref : refs)
+	{
+		Mesh* mesh = ref.mesh;
+		if (!mesh) continue;
+
+		if (ref.format == format && mesh->numVerts == target_mesh->numVerts)
+			return &ref;
+	}
+
+	return nullptr;
+}
+
+void CSkinModel::injectNormalBuffer(const std::vector<float>& normals, StMdlDataRef* dataRef)
+{
+	if (!dataRef || dataRef->data != "snorm" || dataRef->type != "R8_G8_B8_A8")
+		return;
+
+	const int array_width = 3;
+	char* normalBf = (char*)dataRef->address;
+
+	if (normals.size() / array_width != dataRef->mesh->numVerts) 
+		return;
+
+	for (int i = 0; i < normals.size(); i+=array_width)
+	{
+		Vec3 normal{ normals[i], normals[i+1], normals[i+2] };
+		normal *= 128.0f;
+
+		WriteSInt8(normalBf, normal.x);
+		WriteSInt8(normalBf, normal.y);
+		WriteSInt8(normalBf, normal.z);
+		WriteSInt8(normalBf, 0);
+	}
+}
+
+void CSkinModel::injectVertexBuffer(const std::vector<float>& verts, StMdlDataRef* dataRef)
+{
+	if (!dataRef || dataRef->data != "float" || dataRef->type != "R32_G32_B32")
+		return;
+
+	const char* address = (char*)dataRef->address;
+	char* positionBf    = (char*)dataRef->address;
+
+	for (auto& vert : verts){
+		WriteFloat(positionBf, vert);
+	}
+}
+
+bool
+CSkinModel::injectObj(const char* path, const int index)
+{
+	if (index > m_meshes.size())
+		return false;
+
+	const auto& source_mesh = m_meshes[index];
+
+	Wavefront::ObjFile file(path);
+	if (!file.load() || file.meshes().empty())
+		return false;
+
+	Mesh* new_mesh = file.getMeshByGeo(source_mesh->numVerts);
+	if (!new_mesh) return false;
+
+	this->injectVertexBuffer( new_mesh->vertices, ::findDataRef(m_dataRefs, "POSITION", source_mesh) );
+	this->injectNormalBuffer( new_mesh->normals,  ::findDataRef(m_dataRefs, "NORMAL",  source_mesh) );
+	return true;
 }
 

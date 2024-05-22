@@ -1,11 +1,21 @@
 #include "meshstructs.h"
 #pragma once
 
+struct StMdlDataRef
+{
+	Mesh* mesh = nullptr;
+	std::string data;   // eg. POSITION, NORMALS, TANGENTS...
+	std::string type;   // eg. FLOAT, INT, UINT, etc...
+	std::string format; // eg. R8, R32G32, etc..
+	uintptr_t address;
+};
+
+class CModelContainer;
+
 class CSerializedModel
 {
 public:
-	CSerializedModel();
-
+	CSerializedModel(CModelContainer* parent);
 
 public:
 	const BoundingBox getAABBs();
@@ -32,6 +42,7 @@ protected:
 	void getTriangleBuffer(Mesh& mesh);
 	void loadColorMapInfo(Mesh& mesh);
 	void loadUVInfo(Mesh& mesh);
+	static inline void seekToEnd(char*& buffer);
 
 	virtual void loadAttachPtData();
 	virtual void loadGtPtData();
@@ -40,6 +51,9 @@ protected:
 protected:
 	char* m_data;
 	float m_version;
+	CModelContainer* m_parent;
+
+protected:
 	BoundingBox m_axisBox;
 	std::vector<std::string> m_stringTable;
 	std::vector<Mesh*> m_meshes;
@@ -47,6 +61,7 @@ protected:
 	std::vector<Material> m_materials;
 	std::vector<StAttachPoint> m_attachpoints;
 	std::vector<StGotoPoint> m_gtpoints;
+	std::vector<StMdlDataRef> m_dataRefs;
 };
 
 

@@ -142,16 +142,6 @@ CSkinModel_2_0::loadModelBones(const uintptr_t& size)
 	m_bones = filtered_bones;
 }
 
-static inline void seekToEnd(char*& buffer) 
-{
-	uint32_t bufferSig = 0;
-	while (bufferSig != ENDM) {
-		bufferSig = ReadUInt32(buffer);
-		bufferSig = ntohl(bufferSig);
-	}
-	buffer += 0x4;
-}
-
 void CSkinModel_2_8::getMeshMapInfo(Mesh& mesh)
 {
 	int index = ReadUInt32(m_data);
@@ -160,7 +150,7 @@ void CSkinModel_2_8::getMeshMapInfo(Mesh& mesh)
 	/* Load detail map info */
 	loadColorMapInfo(mesh);
 	loadUVInfo(mesh);
-	::seekToEnd(m_data);
+	seekToEnd(m_data);
 }
 
 void CSkinModel_2_5::getMeshMapInfo(Mesh& mesh)
@@ -170,7 +160,7 @@ void CSkinModel_2_5::getMeshMapInfo(Mesh& mesh)
 
 	/* Load detail map info */
 	loadColorMapInfo(mesh);
-	::seekToEnd(m_data);
+	seekToEnd(m_data);
 }
 
 
@@ -181,7 +171,7 @@ void CSkinModel_2_0::getMeshMapInfo(Mesh& mesh)
 
 	/* Load detail map info */
 	loadColorMapInfo(mesh);
-	::seekToEnd(m_data);
+	seekToEnd(m_data);
 }
 
 void CSkinModel_2_0::loadData()
@@ -220,6 +210,13 @@ void CSkinModel_2_0::buildMesh(Mesh& mesh)
 	if (!mesh.skin.weights.empty())
 		mesh.skin.numWeights = 4; // 2022 weights adhere to RGBA order or 4 indices per vtx
 
+	/* Ignore data stream if using lightweight loader */
+	if (m_parent->getLoadType() == enModelDefs::LoadLightWeight)
+	{
+		seekToEnd(m_data);
+		return;
+	}
+
 	this->getVertexRemap(mesh);
 	this->getMorphWeights(mesh);
 	this->getMeshMapInfo(mesh);
@@ -249,9 +246,15 @@ void CSkinModel_1_1::buildMesh(Mesh& mesh)
 	if (!mesh.skin.weights.empty())
 		mesh.skin.numWeights = 4; // 2022 weights adhere to RGBA order or 4 indices per vtx
 
-	this->getVertexRemap(mesh);
+	/* Ignore data stream if using lightweight loader */
+	if (m_parent->getLoadType() == enModelDefs::LoadLightWeight)
+	{
+		seekToEnd(m_data);
+		return;
+	}
 
-	::seekToEnd(m_data);
+	this->getVertexRemap(mesh);
+	seekToEnd(m_data);
 	//this->getMorphWeights(mesh);
 	//this->getMeshMapInfo(mesh);
 }
@@ -298,7 +301,7 @@ void CSkinModel_1_1::getMeshMapInfo(Mesh& mesh)
 
 	/* Load detail map info */
 	loadColorMapInfo(mesh);
-	::seekToEnd(m_data);
+	seekToEnd(m_data);
 }
 
 void CSkinModel_1_1::getMorphWeights(Mesh& mesh)

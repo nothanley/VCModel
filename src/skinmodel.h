@@ -12,7 +12,7 @@ class CSkinModel : public CSerializedModel
 {
 public:
 	CSkinModel();
-	CSkinModel(char* data, CModelContainer* pParent);
+	CSkinModel(char* data, CModelContainer* parent);
 	~CSkinModel();
 
 public:
@@ -28,17 +28,21 @@ public:
 	void push_point(StAttachPoint& point) { this->m_attachpoints.push_back(point); }
 
 public:
+	bool injectObj(const char* path, const int index);
 	void saveToObjFile(const char* path, bool split = true);
 	static void saveObjFile(Mesh* mesh, const char* path);
 
 public:
 	void linkMaterialsFile(const char* path);
 
+private:
+	void injectVertexBuffer(const std::vector<float>& data, StMdlDataRef* dataRef);
+	void injectNormalBuffer(const std::vector<float>& data, StMdlDataRef* dataRef);
+
 protected:
 	void loadAxisBounds();
 	virtual void loadData();
 	virtual void loadBuffer();
-	CModelContainer* m_parent;
 };
 
 

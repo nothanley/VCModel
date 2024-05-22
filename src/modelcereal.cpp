@@ -5,11 +5,13 @@
 #include "winsock.h"
 #include "blendshapes.h"
 #include <glm/gtx/euler_angles.hpp>
+#include "modelfile.h"
 
 using namespace BinaryIO;
 using namespace MeshSerializer;
 
-CSerializedModel::CSerializedModel()
+CSerializedModel::CSerializedModel(CModelContainer* parent)
+	: m_parent(parent)
 {
 	m_data = nullptr;
 	m_version = -1;
@@ -71,15 +73,18 @@ void CSerializedModel::loadMaterials()
 
 void CSerializedModel::loadMeshDef(char* data, const MeshDefBf& mBuffer, Mesh& mesh)
 {
+	StMdlDataRef dataRef{ &mesh, mBuffer.type, mBuffer.property, mBuffer.format, (uintptr_t)data };
 	unsigned int hash = Data::hash(mBuffer.format.c_str());
 
 	switch (hash)
 	{
 		case POSITION:
 			Data::getDataSet(data, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.vertices);
+			m_dataRefs.push_back(dataRef); // Store POSITION data stream reference
 			break;
 		case NORMALS:
 			Data::getDataSet(data, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.normals);
+			m_dataRefs.push_back(dataRef); // Store NORMALS data stream reference
 			break;
 		case BINORMALS:
 			Data::getDataSet(data, mesh.numVerts, mBuffer.type, mBuffer.property, mesh.binormals);
@@ -234,6 +239,16 @@ void CSerializedModel::getMorphWeights(Mesh& mesh)
 	blendshapes.load();
 }
 
+void CSerializedModel::seekToEnd(char*& buffer)
+{
+	uint32_t bufferSig = 0;
+	while (bufferSig != ENDM) {
+		bufferSig = ReadUInt32(buffer);
+		bufferSig = ntohl(bufferSig);
+	}
+	buffer += 0x4;
+}
+
 void CSerializedModel::buildMesh(Mesh& mesh)
 {
 	uint32_t index, numStacks;
@@ -253,6 +268,12 @@ void CSerializedModel::buildMesh(Mesh& mesh)
 		uint32_t typeMagic = ReadUInt32(m_data);
 		uint32_t formatMagic = ReadUInt32(m_data);
 		this->loadMeshData(mesh);
+	}
+
+	/* Ignore data stream if using lightweight loader */
+	if (m_parent->getLoadType() == enModelDefs::LoadLightWeight){
+		seekToEnd(m_data);
+		return;
 	}
 
 	this->getSkinData(mesh);

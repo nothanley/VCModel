@@ -5,13 +5,15 @@
 #include "skinmodelpoly.h"
 using namespace BinaryIO;
 
-CModelContainer::CModelContainer(const char* path)
+CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
 	: m_sFilePath(path),
 	  m_data(nullptr),
 	  m_fileBf(nullptr),
 	  m_isReady(false),
 	  m_model(nullptr)
 {
+	m_loadType = use_lightweight_loader ? enModelDefs::LoadLightWeight : enModelDefs::LoadNormal;
+
 	LoadFile();
 }
 
@@ -23,20 +25,26 @@ CModelContainer::CModelContainer(char* data, const size_t size, bool use_lightwe
 	m_model(nullptr),
 	m_fileSize(size)
 {
+	m_loadType = use_lightweight_loader ? enModelDefs::LoadLightWeight : enModelDefs::LoadNormal;
+
 	LoadFile();
+}
+
+int CModelContainer::getLoadType() {
+	return m_loadType;
 }
 
 CModelContainer::~CModelContainer() 
 {
-	if (m_fileBf)
-		delete m_fileBf;
+    if (m_fileBf)
+        delete m_fileBf;
 }
 
 void
 CModelContainer::free_model()
 {
 	if (this->m_model) {
-		delete m_model;
+		m_model->~CSkinModel();
 		m_model = nullptr;
 	}
 }
@@ -53,6 +61,20 @@ static const size_t getDiskFileSize(const std::string& filePath)
 	file.close();
 
 	return fileSize;
+}
+
+void CModelContainer::reload()
+{
+	try 
+	{
+		std::cout << ("\nModel loading....");
+		ValidateContainer();
+		CModelContainer::ReadContents();
+		std::cout << ("\nModel reloaded");
+	}
+	catch(...){
+		std::cout << ("\nModel failed to reload.");
+	}
 }
 
 void
@@ -75,10 +97,6 @@ CModelContainer::LoadFile()
 	catch(...){
 		throw std::runtime_error("Could not read MDL file.");
 	}
-
-	/* free memory */
-	delete[] m_fileBf;
-	m_fileBf = nullptr;
 }
 
 void
@@ -91,22 +109,34 @@ CModelContainer::ReadContents()
 	switch (m_version)
 	{
 		case MDL_VERSION_1_1:
-			this->m_model = new CSkinModel_1_1(m_data, this);
+			this->m_model = std::make_shared<CSkinModel_1_1>(m_data, this);
 			break;
 		case MDL_VERSION_2_0:
-			this->m_model = new CSkinModel_2_0(m_data, this);
+			this->m_model = std::make_shared<CSkinModel_2_0>(m_data, this);
 			break;
 		case MDL_VERSION_2_5:
-			this->m_model = new CSkinModel_2_5(m_data, this);
+			this->m_model = std::make_shared<CSkinModel_2_5>(m_data, this);
 			break;
 		case MDL_VERSION_2_8:
-			this->m_model = new CSkinModel_2_8(m_data, this);
+			this->m_model = std::make_shared<CSkinModel_2_8>(m_data, this);
 			break;
 		default:
 			throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
 			break;
 	}
 }
+
+//	case MDL_VERSION_1_1:
+//		this->m_model = new CSkinModel_1_1(m_data, this);
+//		break;
+//	case MDL_VERSION_2_0:
+//		this->m_model = new CSkinModel_2_0(m_data, this);
+//		break;
+//	case MDL_VERSION_2_5:
+//		this->m_model = new CSkinModel_2_5(m_data, this);
+//		break;
+//	case MDL_VERSION_2_8:
+//		this->m_model = new CSkinModel_2_8(m_data, this);
 
 void
 CModelContainer::ValidateContainer() 

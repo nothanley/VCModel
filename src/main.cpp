@@ -2,14 +2,17 @@
 #include <VCModel>
 #include "dll/interfaceskinmodel.h"
 #include "materialgen.h"
+#include "wavefront.h"
 
 int main()
 {
+
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/stress_1m.mdl");
-        CSkinModel* model = mdlFile.getModel();
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
+        auto model = mdlFile.getModel();
 
+        model->injectObj("C:/Users/wauke/Desktop/test.obj", 0);
         //model->linkMaterialsFile("C:/Users/wauke/Desktop/123_Attire.mdl");
 
         //CMaterialGen mtlGen(model, "material_presets.json");
@@ -17,15 +20,13 @@ int main()
         //    CMaterialGen::get_mtls_path("C:/Users/wauke/Desktop/123_Attire.mdl").c_str()
         //);
 
-        CModelSerializer serializer(model);
-        serializer.save("C:/Users/wauke/Desktop/OUT_VCMODEL.mdl");
+        CModelSerializer serializer(model.get());
+        serializer.save("C:/Users/wauke/Desktop/save.mdl");
 
         //for (auto& mesh : model->getMeshes())
             //mesh->calculateTangentsBinormals();
-
-        if (model)
-            delete model;
     }
 
+    printf("");
 }
 

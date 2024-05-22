@@ -11,5 +11,4 @@ public:
 protected:
 	void getMorphs();
 	void loadBlendshapeData(StBlendShape& shape);
-
 };
