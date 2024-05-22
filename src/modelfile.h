@@ -22,7 +22,7 @@ private:
 	void ReadContents();
 	void ValidateContainer();
 
-private:
+private: 
 	char* m_fileBf;
 	char* m_data;
 	bool m_isReady;
