@@ -13,7 +13,7 @@ namespace enModelDefs
 class CSkinModel;
 class CModelContainer 
 {
-public: 
+public:
 	CModelContainer(char* data, const size_t size, bool use_lightweight_loader);
 	CModelContainer(const char* path, bool use_lightweight_loader=false);
 	~CModelContainer();
@@ -34,7 +34,7 @@ private:
 	void ReadContents();
 	void ValidateContainer();
 
-private: 
+private:
 	char* m_fileBf;
 	char* m_data;
 	int m_loadType;
