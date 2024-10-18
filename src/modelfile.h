@@ -32,6 +32,7 @@ public:
 	 
 private:
 	void readModel();
+	void readYukes();
 	void validateFile();
 
 private:
@@ -42,5 +43,6 @@ private:
 	size_t m_fileSize;
 	std::string m_sFilePath;
 	uint32_t m_version;
+	uint32_t m_signature;
 	std::shared_ptr<CSkinModel> m_model;
 };

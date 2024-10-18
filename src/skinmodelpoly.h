@@ -66,5 +66,3 @@ private:
     void readBone() override;
     void getMeshMapInfo(Mesh& mesh) override;
 };
-
-

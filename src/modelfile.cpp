@@ -3,6 +3,8 @@
 #include "modelfile.h"
 #include "meshtags.h"
 #include "skinmodelpoly.h"
+#include "yukes/yukesobj.h"
+
 using namespace memreader;
 
 CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
@@ -87,11 +89,31 @@ CModelContainer::load()
 	this->validateFile();
 
 	try {
-		this->readModel();
+		switch (m_signature) {
+			case YOBJ_MAGIC:
+				this->readYukes();
+				break;
+			case MDL_MAGIC:
+				this->readModel();
+				break;
+			default:
+				throw std::runtime_error("Unknown model file format.");
+				break;}
 	}
 	catch(...){
 		throw std::runtime_error("Could not read MDL file.");
 	}
+}
+
+void
+CModelContainer::readYukes()
+{
+	if (!m_isReady)
+		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
+
+	printf("Opening YUKES Model File: %s\n", m_sFilePath.c_str());
+
+	this->m_model = std::make_shared<CYukesSkinModel>(m_data, this);
 }
 
 void
@@ -125,12 +147,11 @@ void
 CModelContainer::validateFile() 
 {
 	/* Initialize stream pointer*/
-	uint32_t signature;
 	this->m_data = m_fileBf;
 
 	/* Get file tag data */
-	signature  = ReadUInt32(m_data);
-	m_version  = ReadUInt32(m_data);
-	m_isReady  = (signature == MDL_MAGIC);
+	m_signature = ReadUInt32(m_data);
+	m_version   = ReadUInt32(m_data);
+	m_isReady   = (m_signature == MDL_MAGIC || m_signature == YOBJ_MAGIC);
 }
 
