@@ -118,48 +118,6 @@ void CYukesSkinModel::loadNorms(Mesh& mesh, char* stream)
 	};
 }
 
-inline static void loadMeshTriBf(Mesh& mesh, char* stream, const int numA, const int numB, const int size)
-{
-	std::vector<int> indices;
-	indices.reserve(size*3);
-
-	for (int i = 0; i < size; i++)
-	{
-		float unk0 = ReadFloat(stream);
-		float unk1 = ReadFloat(stream);
-		float unk2 = ReadFloat(stream);
-		int index  = ReadUInt32(stream);
-		float unk3 = ReadFloat(stream);
-		float unk4 = ReadFloat(stream);
-		float unk5 = ReadFloat(stream);
-		float unk6 = ReadFloat(stream);
-		indices.push_back(index);
-	}
-
-	// convert strips to triangle list ...
-}
-
-void CYukesSkinModel::loadTris(Mesh& mesh, char* stream)
-{
-	stream += 0xC0; // Skip unknown data section
-
-	// load lod table
-	int16_t  faceType    = ReadInt16(stream);
-	int16_t  numIndices  = ReadInt16(stream);
-	uint32_t numSegments = ReadUInt32(stream);
-	char*    faceTable   = m_info.ymxen + ReadUInt32(stream);
-	uint32_t unkOff      = ReadUInt32(stream);
-
-	for (int i = 0; i < numSegments; i++)
-	{
-		uint32_t unk0    = ReadUInt32(stream);
-		uint32_t unk1    = ReadUInt32(stream);
-		uint32_t numTris = ReadUInt32(stream);
-		char*    data    = m_info.ymxen + ReadUInt32(stream);
-		::loadMeshTriBf(mesh, data, unk0, unk1, numTris);
-	}
-}
-
 inline static void loadBlendWeights(Mesh& mesh, char* stream, const int numWeights, const int size)
 {
 	for (int i = 0; i < size; i++)
@@ -206,5 +164,90 @@ void CYukesSkinModel::loadWeights(Mesh& mesh, char* table, const int segments)
 
 void CYukesSkinModel::loadTexCoords(Mesh& mesh, char* stream)
 {
-
 }
+
+inline static
+std::vector<Triangle> stripsToIndices(const std::vector<int>& stripIndices) 
+{
+	std::vector<Triangle> tris;
+
+	// Ensure there are enough indices to form triangles
+	if (stripIndices.size() < 3) {
+		return tris; // Not enough indices to form any triangles
+	}
+
+	// Iterate through the strip and create triangles
+	for (size_t i = 2; i < stripIndices.size(); ++i) 
+	{
+		Triangle tri{ (stripIndices[i - 2]),
+			          (stripIndices[i - 1]), 
+			          (stripIndices[i])  };
+		tris.push_back(tri);
+
+		// For the next triangle, we need to alternate the vertex order
+		if (i % 2 == 0)
+		{
+			Triangle tri{ (stripIndices[i - 2]),
+			              (stripIndices[i - 1]), 
+			              (stripIndices[i]) };
+
+			tris.push_back(tri);
+		}
+		else
+		{
+			Triangle tri{ (stripIndices[i - 1]),
+			              (stripIndices[i - 2]), 
+			              (stripIndices[i]) };
+			tris.push_back(tri);
+		}
+	}
+
+	return tris;
+}
+
+
+
+inline static void loadMeshTriBf(Mesh& mesh, char* stream, std::vector<int>& indices, const int numA, const int numB, const int size)
+{
+	indices.reserve(size * 3);
+
+	for (int i = 0; i < size; i++)
+	{
+		float unk0  = ReadFloat(stream);
+		float unk1  = ReadFloat(stream);
+		float unk2  = ReadFloat(stream);
+		int   index = ReadUInt32(stream);
+		float unk3  = ReadFloat(stream);
+		float unk4  = ReadFloat(stream);
+		float unk5  = ReadFloat(stream);
+		float unk6  = ReadFloat(stream);
+		indices.push_back(index);
+	}
+}
+
+void CYukesSkinModel::loadTris(Mesh& mesh, char* stream)
+{
+	stream += 0xC0; // Skip unknown data section
+
+	// load lod table
+	int16_t  faceType    = ReadInt16(stream);
+	int16_t  numIndices  = ReadInt16(stream);
+	uint32_t numSegments = ReadUInt32(stream);
+	char* faceTable      = m_info.ymxen + ReadUInt32(stream);
+	uint32_t unkOff      = ReadUInt32(stream);
+
+	std::vector<int> indices;
+	for (int i = 0; i < numSegments; i++)
+	{
+		uint32_t unk0 = ReadUInt32(faceTable);
+		uint32_t unk1 = ReadUInt32(faceTable);
+		uint32_t numTris = ReadUInt32(faceTable);
+		char* data = m_info.ymxen + ReadUInt32(faceTable);
+		::loadMeshTriBf(mesh, data, indices, unk0, unk1, numTris);
+	}
+
+	mesh.triangles = ::stripsToIndices(indices);
+}
+
+
+
