@@ -1,10 +1,10 @@
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include "meshtags.h"
 #include "skinmodelpoly.h"
 #include "winsock.h"
 #include "modelfile.h"
 #include "blendshapes_legacy.h"
-using namespace BinaryIO;
+using namespace memreader;
 
 void CSkinModel_2_8::readBone() // v2.8
 {

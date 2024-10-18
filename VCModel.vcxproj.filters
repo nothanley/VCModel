@@ -55,6 +55,9 @@
     <Filter Include="LOCAL_MATERIALS_DIR">
       <UniqueIdentifier>{bfc9c95d-4522-4576-b041-a8e983bdf26c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Model\SkinModel\YUKES">
+      <UniqueIdentifier>{8980d9e0-adc1-498f-bcee-8990a89d1e7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\modelfile.h">
@@ -83,9 +86,6 @@
     </ClInclude>
     <ClInclude Include="src\cmodelserializer_ver.h">
       <Filter>Source\Model\Serializer</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BinaryIO.h">
-      <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="src\wavefront.h">
       <Filter>Include</Filter>
@@ -168,6 +168,12 @@
     <ClInclude Include="..\VCMaterials\VCMaterials\src\common.h">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClInclude>
+    <ClInclude Include="src\yukes\yukes_vertexbuffer.h">
+      <Filter>Source\Model\SkinModel\YUKES</Filter>
+    </ClInclude>
+    <ClInclude Include="src\yukes\yukesobj.h">
+      <Filter>Source\Model\SkinModel\YUKES</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -200,9 +206,6 @@
     <ClCompile Include="src\cmodelserializer_ver.cpp">
       <Filter>Source\Model\Serializer</Filter>
     </ClCompile>
-    <ClCompile Include="include\BinaryIO.cpp">
-      <Filter>Include</Filter>
-    </ClCompile>
     <ClCompile Include="src\wavefront.cpp">
       <Filter>Include</Filter>
     </ClCompile>
@@ -226,9 +229,6 @@
     </ClCompile>
     <ClCompile Include="src\meshstructs.cpp">
       <Filter>Source\Model\Mesh\Structs</Filter>
-    </ClCompile>
-    <ClCompile Include="include\hash.cpp">
-      <Filter>Include</Filter>
     </ClCompile>
     <ClCompile Include="include\mikktspace.c">
       <Filter>Include</Filter>
@@ -277,6 +277,15 @@
     </ClCompile>
     <ClCompile Include="..\VCMaterials\VCMaterials\src\common.cpp">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="include\hash.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\yukes\yukesobj.cpp">
+      <Filter>Source\Model\SkinModel\YUKES</Filter>
+    </ClCompile>
+    <ClCompile Include="src\yukes\yukes_vertexbuffer.cpp">
+      <Filter>Source\Model\SkinModel\YUKES</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

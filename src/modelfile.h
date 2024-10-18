@@ -19,7 +19,8 @@ public:
 	~CModelContainer();
 
 public:
-	void reload();
+	void load();
+	void refresh(); // Use 'refresh()' after injecting vertex/normal data to cskinmodel
 	std::shared_ptr<CSkinModel> getModel(){ return m_model; }
 	uint32_t getVersion(){ return m_version; }
 	const size_t size() const { return m_fileSize; }
@@ -30,9 +31,8 @@ public:
 	int getLoadType();
 	 
 private:
-	void LoadFile();
-	void ReadContents();
-	void ValidateContainer();
+	void readModel();
+	void validateFile();
 
 private:
 	char* m_fileBf;

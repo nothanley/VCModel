@@ -257,19 +257,22 @@ void setNewAttachPoint(void* pSkinModel, int bone_index, int id1, int id2, int f
 
 	StAttachPoint point;
 	point.bone_index = bone_index;
-	point.no_1 = id1;
-	point.no_2 = id2;
-	point.flag = flag;
+	point.no_1  = id1;
+	point.no_2  = id2;
+	point.flag  = flag;
 	point.coord = glm::vec4{ x, -z, y, 1.0 };
 	model->push_point(point);
 }
 
 
 extern "C" __declspec(dllexport)
-void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target, 
+void saveModelToFile(
+	void* pSkinModel, const char* savePath, int compile_target, 
 	bool use_shape_keys, 
 	bool use_tangents, 
-	bool generate_materials)
+	bool generate_materials,
+	int num_lods
+)
 {
 	// Convert void pointer back to CSkinModel pointer
 	CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
@@ -293,8 +296,11 @@ void saveModelToFile(void* pSkinModel, const char* savePath, int compile_target,
 			case 0x28:{ /* Save MDL format v2.8*/
 				CModelSerializer serializer(model);
 				serializer.setUseBlendshapes(use_shape_keys);
+				serializer.setNumLods(num_lods);
 				serializer.save(savePath);
-				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath); }
+				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
+				//printf("\n[Debug] Total Lods: %d\n", num_lods);
+			}
 				break;
 			default:
 				break;

@@ -1,5 +1,5 @@
 #include "modelcereal.h"
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include "meshbuffers.h"
 #include <meshtags.h>
 #include "winsock.h"
@@ -7,7 +7,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "modelfile.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 CSerializedModel::CSerializedModel(CModelContainer* parent)
@@ -297,7 +297,7 @@ void CSerializedModel::loadMeshes()
 
 static void modelApToWorldSpace(const int boneIndex, const std::vector<RigBone*>& bones, glm::vec4& translate)
 {
-	if (boneIndex > bones.size())
+	if (boneIndex >= bones.size())
 		return;
 
 	auto& bone = bones[boneIndex];

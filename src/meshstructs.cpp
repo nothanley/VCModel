@@ -1,9 +1,9 @@
 #include "meshstructs.h"
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include <glm/gtx/euler_angles.hpp>
 #include "meshshapes_serialize.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 //using namespace MeshSerializer;
 
 inline

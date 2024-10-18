@@ -1,9 +1,9 @@
 #include "meshbuffers.h"
 #include "windows.h"
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include <map>
 #include <iostream>
-using namespace BinaryIO;
+using namespace memreader;
 
 char* 
 MeshSerializer::Data::roundPointerToNearest4(char* ptr)

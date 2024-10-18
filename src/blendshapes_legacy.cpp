@@ -1,8 +1,8 @@
 #include "blendshapes_legacy.h"
-#include <BinaryIO.h>
+#include "MemoryReader/memoryreader.h"
 #include "meshbuffers.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 vCMeshShapes_2020::vCMeshShapes_2020(

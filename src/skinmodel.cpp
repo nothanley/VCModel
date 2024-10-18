@@ -1,5 +1,5 @@
 #include "skinmodel.h"
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include "modelfile.h"
 #include "wavefront.h"
 #include "meshencoder.h"
@@ -10,7 +10,7 @@
 #include "materiallibrary.h"
 #include "common.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 
 CSkinModel::CSkinModel() : CSerializedModel(nullptr)
 {

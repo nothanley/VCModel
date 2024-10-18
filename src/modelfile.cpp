@@ -1,9 +1,9 @@
-#include <BinaryIO.h>
+#include "MemoryReader/memoryreader.h"
 #include "common.h"
 #include "modelfile.h"
 #include "meshtags.h"
 #include "skinmodelpoly.h"
-using namespace BinaryIO;
+using namespace memreader;
 
 CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
 	: m_sFilePath(path),
@@ -13,8 +13,6 @@ CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
 	  m_model(nullptr)
 {
 	m_loadType = use_lightweight_loader ? enModelDefs::LoadLightWeight : enModelDefs::LoadNormal;
-
-	LoadFile();
 }
 
 CModelContainer::CModelContainer(char* data, const size_t size, bool use_lightweight_loader)
@@ -26,8 +24,6 @@ CModelContainer::CModelContainer(char* data, const size_t size, bool use_lightwe
 	m_fileSize(size)
 {
 	m_loadType = use_lightweight_loader ? enModelDefs::LoadLightWeight : enModelDefs::LoadNormal;
-
-	LoadFile();
 }
 
 int CModelContainer::getLoadType() {
@@ -63,13 +59,13 @@ static const size_t getDiskFileSize(const std::string& filePath)
 	return fileSize;
 }
 
-void CModelContainer::reload()
+void CModelContainer::refresh()
 {
 	try 
 	{
 		std::cout << ("\nModel loading....");
-		ValidateContainer();
-		CModelContainer::ReadContents();
+		validateFile();
+		CModelContainer::readModel();
 		std::cout << ("\nModel reloaded");
 	}
 	catch(...){
@@ -78,7 +74,7 @@ void CModelContainer::reload()
 }
 
 void
-CModelContainer::LoadFile() 
+CModelContainer::load() 
 {
 	if (!m_fileBf){
 		this->m_fileBf   = SysCommon::readBinaryFile(m_sFilePath);
@@ -88,11 +84,10 @@ CModelContainer::LoadFile()
 	if (!m_fileBf)
 		throw std::runtime_error("Could not read MDL file.");
 
-	/* load skin model object */
-	CModelContainer::ValidateContainer();
+	this->validateFile();
 
 	try {
-		CModelContainer::ReadContents();
+		this->readModel();
 	}
 	catch(...){
 		throw std::runtime_error("Could not read MDL file.");
@@ -100,7 +95,7 @@ CModelContainer::LoadFile()
 }
 
 void
-CModelContainer::ReadContents() 
+CModelContainer::readModel() 
 {
 	if (!m_isReady)
 		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
@@ -126,20 +121,8 @@ CModelContainer::ReadContents()
 	}
 }
 
-//	case MDL_VERSION_1_1:
-//		this->m_model = new CSkinModel_1_1(m_data, this);
-//		break;
-//	case MDL_VERSION_2_0:
-//		this->m_model = new CSkinModel_2_0(m_data, this);
-//		break;
-//	case MDL_VERSION_2_5:
-//		this->m_model = new CSkinModel_2_5(m_data, this);
-//		break;
-//	case MDL_VERSION_2_8:
-//		this->m_model = new CSkinModel_2_8(m_data, this);
-
 void
-CModelContainer::ValidateContainer() 
+CModelContainer::validateFile() 
 {
 	/* Initialize stream pointer*/
 	uint32_t signature;

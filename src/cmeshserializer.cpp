@@ -1,10 +1,10 @@
 #include "cmeshserializer.h"
 #include <skinmodel.h>
-#include <BinaryIO.h>
+#include "MemoryReader/memoryreader.h"
 #include <crc32c/crc32c.h>
 #include "meshshapes_serialize.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace crc32c;
 using bscompress = vCMeshShapeSerial;
 

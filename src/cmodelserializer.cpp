@@ -2,13 +2,14 @@
 #include <skinmodel.h>
 #include <meshencoder.h>
 #include <meshtags.h>
-#include <BinaryIO.h>
+#include "MemoryReader/memoryreader.h"
 #include "glm/gtx/euler_angles.hpp"
 #include "winsock.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 
-CModelSerializer::CModelSerializer(CSkinModel* target)	
+CModelSerializer::CModelSerializer(CSkinModel* target)
+	: m_numLods(2)
 {
 	this->m_exportBlendshapes = true;
 	this->m_model = target;
@@ -18,6 +19,12 @@ void CModelSerializer::save(const char* path)
 {
 	m_savePath = path;
 	this->serialize();
+}
+
+void CModelSerializer::setNumLods(const int levels)
+{
+	/* adjust improper input values to LOD level 1 */
+	this->m_numLods = (levels > 0) ? levels : 1;
 }
 
 void CModelSerializer::setUseBlendshapes(const bool use_blendshapes)
@@ -321,18 +328,17 @@ void CModelSerializer::createLODsBuffer()
 {
 	StModelBf stream;
 	const auto& meshes = m_model->getMeshes();
-	uint32_t numLodLevels = 2;
 
 	stream.type = "LODs";
-	stream.size = MeshEncoder::getLodsBufferSize(meshes, numLodLevels);
+	stream.size = MeshEncoder::getLodsBufferSize(meshes, m_numLods);
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 	 
 	/* Write high/low LOD buffers */
 	uint32_t numMeshes = meshes.size();
-	WriteUInt32(buffer, numLodLevels);
+	WriteUInt32(buffer, m_numLods);
 
-	for (int i = 0; i < numLodLevels; i++) {
+	for (int i = 0; i < m_numLods; i++) {
 		WriteUInt32(buffer, numMeshes);
 
 		for (int j = 0; j < numMeshes; j++) {

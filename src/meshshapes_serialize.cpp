@@ -1,11 +1,11 @@
 #include "meshshapes_serialize.h"
 #include "meshbuffers.h"
-#include "BinaryIO.h"
+#include "MemoryReader/memoryreader.h"
 #include "winsock.h"
 #undef min
 #undef max
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 
@@ -66,8 +66,14 @@ Matrix3 vCMeshShapeSerial::getBlendShapePrecisionMatrix(Mesh* mesh)
 
 void vCMeshShapeSerial::writeDeltaMatrix(std::stringstream& stream, Matrix3& delta_matrix)
 {
-	Vec3& deltaPrecision = delta_matrix.z;
-	Vec3& deltaMinimum = delta_matrix.x;
+	Vec3  deltaPrecision = delta_matrix.z;
+	Vec3  deltaMinimum   = delta_matrix.x;
+
+	/* debug - lessens or heightens the influence of mesh shapes */
+	float shapeInfluence = 0.275f;
+	deltaPrecision *= shapeInfluence;
+	deltaMinimum   *= shapeInfluence;
+	printf("\n[CSkinModel] Mesh blendshape influence: %0.1f", shapeInfluence);
 
 	WriteFloat(stream, deltaPrecision.x);
 	WriteFloat(stream, deltaPrecision.y);

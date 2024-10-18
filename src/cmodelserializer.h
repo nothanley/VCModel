@@ -10,6 +10,7 @@ public:
 
 	void save(const char* path);
 	void setUseBlendshapes(const bool use_blendshapes);
+	void setNumLods(const int level);
 
 private:
 	void formatFile();
@@ -35,6 +36,7 @@ private:
 protected:
 	void serialize();
 	std::string m_savePath;
+	int8_t m_numLods;
 };
 
 

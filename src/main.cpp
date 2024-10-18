@@ -10,9 +10,11 @@ int main()
     // Scope heap memory test - 
     {
         CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
+
+        mdlFile.load();
         auto model = mdlFile.getModel();
 
-        model->injectObj("C:/Users/wauke/Desktop/test.obj", 0);
+        //model->injectObj("C:/Users/wauke/Desktop/test.obj", 0);
         //model->linkMaterialsFile("C:/Users/wauke/Desktop/123_Attire.mdl");
 
         //CMaterialGen mtlGen(model, "material_presets.json");
@@ -20,11 +22,13 @@ int main()
         //    CMaterialGen::get_mtls_path("C:/Users/wauke/Desktop/123_Attire.mdl").c_str()
         //);
 
-        CModelSerializer serializer(model.get());
-        serializer.save("C:/Users/wauke/Desktop/save.mdl");
+        //CModelSerializer serializer(model.get());
+        //serializer.save("C:/Users/wauke/Desktop/save.mdl");
 
         //for (auto& mesh : model->getMeshes())
             //mesh->calculateTangentsBinormals();
+
+        printf("");
     }
 
     printf("");

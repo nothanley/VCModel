@@ -7,14 +7,16 @@ extern "C" __declspec(dllexport) void freeMemory_float32(float* data);
 
 extern "C" __declspec(dllexport) void freeMemory_intArr(int* data);
 
-extern "C" __declspec(dllexport) void freeSkinModel(void* pSkinModel);
+extern "C" __declspec(dllexport) void release_model(void* skinmodel);
+
+extern "C" __declspec(dllexport) void release_model_file(void* pModelFile);
 
 extern "C" __declspec(dllexport) void freeMemory_charArrPtr(const char** data);
 
 extern "C" __declspec(dllexport) void freeMemory_skinData(void* pSkinData);
 
 /* Interface methods for accessing 'CSkinModel' object data */
-extern "C" __declspec(dllexport) void* loadModelFile(const char* filePath, void* modelWrapperPtr, const bool use_materials);
+extern "C" __declspec(dllexport) void* loadModelFile(const char* filePath, void** pModelFile, const bool use_materials);
 
 extern "C" __declspec(dllexport) int getMeshTotal(void* pSkinModel);
 

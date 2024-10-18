@@ -2,43 +2,41 @@
 #include <VCModel>
 #include <vector>
 
-class ModelWrapper 
+void* loadModelFile(const char* filePath, void** filePtr, const bool use_materials)
 {
-public:
-    ModelWrapper() {};
-    void setModel(std::shared_ptr<CSkinModel> model) { m_model = model; }
-    CSkinModel* model() { return m_model.get(); }
+    /* Initialize CModelFile Address */
+    *filePtr = nullptr;
 
-private:
-    std::shared_ptr<CSkinModel> m_model;
-};
-
-void* loadModelFile(const char* filePath, void* modelWrapperPtr, const bool use_materials)
-{
-    ModelWrapper* wrapper = new ModelWrapper(); // Manually delete this after successful load 
-    modelWrapperPtr = (void*)wrapper;           // Update Blender Wrapper Link
-
+    /* Load file and model contents */
     try {
-        CModelContainer mdlFile(filePath);
-        auto skinmodel = mdlFile.getModel();
-        wrapper->setModel(skinmodel);
+        CModelContainer* file = new CModelContainer(filePath);
+        file->load();
+
+        auto skinModel = file->getModel();
+        *filePtr = file;
 
         if (use_materials)
-            skinmodel->linkMaterialsFile(filePath);
+            skinModel->linkMaterialsFile(filePath);
 
-        return wrapper->model();
+        return skinModel.get();
     }
     catch (...) {}
 
     printf("[CSkinModel] Failed to read user model file.\n");
-    delete wrapper;
     return nullptr;
 }
 
-void freeSkinModel(void* pSkinModel) 
+void release_model_file(void* filePtr)
 {
-    // Convert void pointer back to CSkinModel pointer
-    CSkinModel* model = static_cast<CSkinModel*>(pSkinModel);
+    CModelContainer* file = static_cast<CModelContainer*>(filePtr);
+    if (!file) return;
+
+    delete file;
+}
+
+void release_model(void* skinmodel)
+{
+    CSkinModel* model = static_cast<CSkinModel*>(skinmodel);
     if (!model) return;
 
     delete model;
