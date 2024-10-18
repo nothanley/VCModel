@@ -4,7 +4,7 @@
 #include "winsock.h"
 #include "modelfile.h"
 #include "blendshapes_legacy.h"
-using namespace memreader;
+using namespace BinaryIO;
 
 void CSkinModel_2_8::readBone() // v2.8
 {

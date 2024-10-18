@@ -5,7 +5,7 @@
 #include "skinmodelpoly.h"
 #include "yukes/yukesobj.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 
 CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
 	: m_sFilePath(path),

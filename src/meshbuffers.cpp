@@ -3,7 +3,7 @@
 #include "MemoryReader/memoryreader.h"
 #include <map>
 #include <iostream>
-using namespace memreader;
+using namespace BinaryIO;
 
 char* 
 MeshSerializer::Data::roundPointerToNearest4(char* ptr)

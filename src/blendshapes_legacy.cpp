@@ -2,7 +2,7 @@
 #include "MemoryReader/memoryreader.h"
 #include "meshbuffers.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 using namespace MeshSerializer;
 
 vCMeshShapes_2020::vCMeshShapes_2020(

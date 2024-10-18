@@ -7,7 +7,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "modelfile.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 using namespace MeshSerializer;
 
 CSerializedModel::CSerializedModel(CModelContainer* parent)

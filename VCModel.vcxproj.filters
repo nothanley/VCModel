@@ -174,6 +174,9 @@
     <ClInclude Include="src\yukes\yukesobj.h">
       <Filter>Source\Model\SkinModel\YUKES</Filter>
     </ClInclude>
+    <ClInclude Include="include\MemoryReader\memoryreader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="src\yukes\yukes_vertexbuffer.cpp">
       <Filter>Source\Model\SkinModel\YUKES</Filter>
+    </ClCompile>
+    <ClCompile Include="include\MemoryReader\memoryreader.cpp">
+      <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

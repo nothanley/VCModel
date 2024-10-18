@@ -12,7 +12,6 @@ struct YukesPOF0
     uint32_t numMeshes   = NULL;
     uint32_t numBones    = NULL;
     uint32_t numTexs     = NULL;
-    uint32_t numTexs     = NULL;
     uint32_t numStrings  = NULL;
 };
 
@@ -31,11 +30,11 @@ private:
     void readBone();
 
 private:
-    void loadVerts();
-    void loadNorms();
-    void loadTris();
+    void loadVerts(Mesh& mesh, char* stream);
+    void loadNorms(Mesh& mesh, char* stream);
+    void loadTris(Mesh& mesh, char* stream);
     void loadWeights(Mesh& mesh, char* table, const int segments);
-    void loadTexCoords();
+    void loadTexCoords(Mesh& mesh, char* stream);
 
 private:
     // todo: move these to yukes header struct ...

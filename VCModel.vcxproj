@@ -73,6 +73,7 @@
     <ClInclude Include="..\VCMaterials\VCMaterials\src\usersettings.h" />
     <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
+    <ClInclude Include="include\MemoryReader\memoryreader.h" />
     <ClInclude Include="include\mikktspace.h" />
     <ClInclude Include="src\blendshapes_legacy.h" />
     <ClInclude Include="src\cmeshserializer.h" />
@@ -111,6 +112,7 @@
     <ClCompile Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\usersettings.cpp" />
     <ClCompile Include="include\hash.cpp" />
+    <ClCompile Include="include\MemoryReader\memoryreader.cpp" />
     <ClCompile Include="include\mikktspace.c" />
     <ClCompile Include="src\blendshapes_legacy.cpp" />
     <ClCompile Include="src\cmeshserializer.cpp" />
@@ -463,7 +465,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;$(SOLUTIONDIR)libs\debug\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>

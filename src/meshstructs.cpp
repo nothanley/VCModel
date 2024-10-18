@@ -3,7 +3,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "meshshapes_serialize.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 //using namespace MeshSerializer;
 
 inline

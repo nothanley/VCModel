@@ -1,7 +1,7 @@
 #include <yukes/yukesobj.h>
 #include "MemoryReader/memoryreader.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 
 #define _u64   ReadUInt64(m_data)
 #define _u32   ReadUInt32(m_data)
@@ -22,6 +22,13 @@ void CYukesSkinModel::loadData()
 {
 	m_info.ymxen = m_data;
 	this->readHeader();
+
+	for (int i = 0; i < m_info.numMeshes; i++)
+	{
+		this->readMesh();
+	}
+
+	printf("");
 }
 
 void CYukesSkinModel::readHeader()
@@ -42,7 +49,7 @@ void CYukesSkinModel::readHeader()
 	m_data      += 0x10;
 }
 
-inline static void loadMeshAABBs(Mesh& mesh, char* m_data)
+inline static void loadMeshAABBs(Mesh& mesh, char*& m_data)
 {
 	mesh.bounds.minX   = _float;
 	mesh.bounds.minY   = _float;
@@ -52,7 +59,7 @@ inline static void loadMeshAABBs(Mesh& mesh, char* m_data)
 
 void CYukesSkinModel::readMesh()
 {
-	Mesh mesh;
+	Mesh* mesh = new Mesh; // todo: change this from a raw pointer ...
 
 	// Load mesh table data
 	uint32_t numWgtSegm   = _u32;
@@ -65,37 +72,92 @@ void CYukesSkinModel::readMesh()
 	char*    texCoordBf   = m_info.ymxen + _u32;
 	uint32_t unk4         = _u32;
 	uint32_t unk5         = _u32;
-	uint32_t unk6         = _u32;
+	uint32_t count        = _u32;
 	uint32_t unk7         = _u32;
 	
 	// Load mesh streams
-	::loadMeshAABBs(mesh, m_data);
-	  loadWeights(mesh, weightTable, numWgtSegm);
+	mesh->numVerts = count;
+
+	::loadMeshAABBs(*mesh, m_data);
+	  loadWeights(*mesh, weightTable, numWgtSegm);
+	  loadTris(*mesh, faceTable);
+	  loadVerts(*mesh, vtxPosBf);
+	  loadTexCoords(*mesh, nullptr);
+	  loadNorms(*mesh, nullptr);
+
+	// push to scene
+	m_meshes.push_back(mesh);
 }
 
 void CYukesSkinModel::readArmature()
 {
-
 }
 
 void CYukesSkinModel::readBone()
 {
-
 }
 
-void CYukesSkinModel::loadVerts()
+void CYukesSkinModel::loadVerts(Mesh& mesh, char* stream)
 {
+	stream += 0x20; // skip unknown data section
 
+	for (int i = 0; i < mesh.numVerts; i++)
+	{
+		mesh.vertices.push_back(ReadFloat(stream));
+		mesh.vertices.push_back(ReadFloat(stream));
+		mesh.vertices.push_back(ReadFloat(stream));
+		mesh.vertices.push_back(ReadFloat(stream));
+	}
 }
 
-void CYukesSkinModel::loadNorms()
+void CYukesSkinModel::loadNorms(Mesh& mesh, char* stream)
 {
-
+	for (int i = 0; i < mesh.numVerts; i++)
+	{
+		mesh.normals.push_back(1.0f);
+	};
 }
 
-void CYukesSkinModel::loadTris()
+inline static void loadMeshTriBf(Mesh& mesh, char* stream, const int numA, const int numB, const int size)
 {
+	std::vector<int> indices;
+	indices.reserve(size*3);
 
+	for (int i = 0; i < size; i++)
+	{
+		float unk0 = ReadFloat(stream);
+		float unk1 = ReadFloat(stream);
+		float unk2 = ReadFloat(stream);
+		int index  = ReadUInt32(stream);
+		float unk3 = ReadFloat(stream);
+		float unk4 = ReadFloat(stream);
+		float unk5 = ReadFloat(stream);
+		float unk6 = ReadFloat(stream);
+		indices.push_back(index);
+	}
+
+	// convert strips to triangle list ...
+}
+
+void CYukesSkinModel::loadTris(Mesh& mesh, char* stream)
+{
+	stream += 0xC0; // Skip unknown data section
+
+	// load lod table
+	int16_t  faceType    = ReadInt16(stream);
+	int16_t  numIndices  = ReadInt16(stream);
+	uint32_t numSegments = ReadUInt32(stream);
+	char*    faceTable   = m_info.ymxen + ReadUInt32(stream);
+	uint32_t unkOff      = ReadUInt32(stream);
+
+	for (int i = 0; i < numSegments; i++)
+	{
+		uint32_t unk0    = ReadUInt32(stream);
+		uint32_t unk1    = ReadUInt32(stream);
+		uint32_t numTris = ReadUInt32(stream);
+		char*    data    = m_info.ymxen + ReadUInt32(stream);
+		::loadMeshTriBf(mesh, data, unk0, unk1, numTris);
+	}
 }
 
 inline static void loadBlendWeights(Mesh& mesh, char* stream, const int numWeights, const int size)
@@ -105,19 +167,22 @@ inline static void loadBlendWeights(Mesh& mesh, char* stream, const int numWeigh
 		for (int j = 0; j < numWeights; j++)
 		{
 			Vec4 data{ ReadFloat(stream), ReadFloat(stream), ReadFloat(stream), ReadFloat(stream) };
-
 			mesh.skin.weights.push_back(data.x);
 		}
 	}
 };
 
-inline static void loadBlendIndices(Mesh& mesh, char* stream, const int numWeights)
+inline static void loadBlendIndices(Mesh& mesh, char*& stream, const int numWeights)
 {
 	// Load weight indices
-	for (int j = 0; j < numWeights; j++)
+	for (int j = 0; j < 4; j++)
 	{
 		auto index = ReadUInt32(stream);
-		mesh.skin.indices.push_back(index);
+
+		if (j < numWeights)
+		{
+			mesh.skin.indices.push_back(index);
+		}
 	}
 };
 
@@ -134,12 +199,12 @@ void CYukesSkinModel::loadWeights(Mesh& mesh, char* table, const int segments)
 			throw std::runtime_error("Too many weights");
 
 		// Load weight values
-		::loadBlendIndices(mesh, m_data, numWeights);
-		::loadBlendWeights(mesh, weightBf);
+		::loadBlendIndices(mesh, table, numWeights);
+		::loadBlendWeights(mesh, weightBf, numVerts, numWeights);
 	}
 }
 
-void CYukesSkinModel::loadTexCoords()
+void CYukesSkinModel::loadTexCoords(Mesh& mesh, char* stream)
 {
 
 }

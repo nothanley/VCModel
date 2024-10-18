@@ -10,7 +10,7 @@
 #include "materiallibrary.h"
 #include "common.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 
 CSkinModel::CSkinModel() : CSerializedModel(nullptr)
 {

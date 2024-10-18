@@ -4,7 +4,7 @@
 #include <crc32c/crc32c.h>
 #include "meshshapes_serialize.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 using namespace crc32c;
 using bscompress = vCMeshShapeSerial;
 

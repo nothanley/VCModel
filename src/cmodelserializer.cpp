@@ -6,7 +6,7 @@
 #include "glm/gtx/euler_angles.hpp"
 #include "winsock.h"
 
-using namespace memreader;
+using namespace BinaryIO;
 
 CModelSerializer::CModelSerializer(CSkinModel* target)
 	: m_numLods(2)

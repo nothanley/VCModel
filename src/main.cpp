@@ -10,7 +10,7 @@ int main()
     // Scope heap memory test - 
     {
         //CModelContainer mdlFile("C:/Users/wauke/Desktop/basemodel.mdl");
-        CModelContainer mdlFile("C:/Users/wauke/Desktop/0006.yobj");
+        CModelContainer mdlFile("C:/Users/wauke/Desktop/file.yobj");
 
         mdlFile.load();
         auto model = mdlFile.getModel();

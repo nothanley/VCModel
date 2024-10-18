@@ -5,7 +5,7 @@
 #undef min
 #undef max
 
-using namespace memreader;
+using namespace BinaryIO;
 using namespace MeshSerializer;
 
 
