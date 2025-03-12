@@ -11,30 +11,32 @@ public:
 	void save(const char* path);
 	void setUseBlendshapes(const bool use_blendshapes);
 	void setNumLods(const int level);
-
-private:
-	void formatFile();
-	void writeDataBuffer(std::ofstream& fs, const StModelBf& data);
-
-private:
-	void generateMeshBuffers(std::vector<StMeshBf>& buffers) override;
-	void createTextBuffer();
-	void createBoneBuffer();
-	void createAtPtBuffer();
-	void createMaterialBuffer();
-	void createMeshBufferDefs();
-	void createLODsBuffer();
-	void createModelBuffer();
-
-private:
-	void serializePoint(char*& buffer, const StAttachPoint& point);
-	void writeBoundingBox(char*& buffer, const BoundingBox& box);
-	void writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer);
-	void writeIndexBuffer(char*& buffer, int meshIndex);
-	void writeMaterialGroupBuffer(char*& buffer, int meshIndex);
+	static int getNumStacks(const StMeshBf& meshBuffer);
+	static void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix);
 
 protected:
-	void serialize();
+	virtual void serialize();
+	virtual void formatFile();
+	virtual void writeDataBuffer(std::ofstream& fs, const StModelBf& data);
+	virtual void createModelBuffer();
+
+protected:
+	virtual void generateMeshBuffers(std::vector<StMeshBf>& buffers) override;
+	virtual void createTextBuffer();
+	virtual void createBoneBuffer();
+	virtual void createAtPtBuffer();
+	virtual void createMaterialBuffer();
+	virtual void createMeshBufferDefs();
+	virtual void createLODsBuffer();
+
+protected:
+	virtual void writeBoundingBox(char*& buffer, const BoundingBox& box);
+	virtual void serializePoint(char*& buffer, const StAttachPoint& point);
+	virtual void writeMeshBuffer(char*& buffer, const StMeshBf& meshBuffer);
+	virtual void writeIndexBuffer(char*& buffer, int meshIndex);
+	virtual void writeMaterialGroupBuffer(char*& buffer, int meshIndex);
+
+protected:
 	std::string m_savePath;
 	int8_t m_numLods;
 };

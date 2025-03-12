@@ -5,7 +5,7 @@
 #undef min
 #undef max
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 
@@ -73,7 +73,6 @@ void vCMeshShapeSerial::writeDeltaMatrix(std::stringstream& stream, Matrix3& del
 	float shapeInfluence = 0.275f;
 	deltaPrecision *= shapeInfluence;
 	deltaMinimum   *= shapeInfluence;
-	printf("\n[CSkinModel] Mesh blendshape influence: %0.1f", shapeInfluence);
 
 	WriteFloat(stream, deltaPrecision.x);
 	WriteFloat(stream, deltaPrecision.y);

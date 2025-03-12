@@ -26,13 +26,13 @@ private:
 private:
     void readHeader();
     void readMesh();
-    void readArmature();
-    void readBone();
+    void loadArmature(char* stream);
+    RigBone* loadBone(char* stream);
 
 private:
     void loadVerts(Mesh& mesh, char* stream);
     void loadNorms(Mesh& mesh, char* stream);
-    void loadTris(Mesh& mesh, char* stream);
+    void loadTris(Mesh& mesh, const int numSections, char* stream);
     void loadWeights(Mesh& mesh, char* table, const int segments);
     void loadTexCoords(Mesh& mesh, char* stream);
 

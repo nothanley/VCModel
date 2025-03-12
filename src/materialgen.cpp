@@ -21,7 +21,7 @@ void CMaterialGen::save(const char* path)
 		return;
 
 	CMtlLibrarySerializer serializer(m_materials);
-	serializer.save( full_path.c_str() );
+	serializer.save( full_path.c_str(), 0x93 );
 }
 
 

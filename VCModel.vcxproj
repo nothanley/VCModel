@@ -59,9 +59,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\include\crc32c\crc32c.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\common.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer_serializer.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialconversion.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialdefs.h" />
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialdefs_3_0.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialfile.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.h" />
@@ -71,9 +76,7 @@
     <ClInclude Include="..\VCMaterials\VCMaterials\src\materialtemplates.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.h" />
     <ClInclude Include="..\VCMaterials\VCMaterials\src\usersettings.h" />
-    <ClInclude Include="include\crc32c\crc32c.h" />
     <ClInclude Include="include\hash.h" />
-    <ClInclude Include="include\MemoryReader\memoryreader.h" />
     <ClInclude Include="include\mikktspace.h" />
     <ClInclude Include="src\blendshapes_legacy.h" />
     <ClInclude Include="src\cmeshserializer.h" />
@@ -100,9 +103,13 @@
     <ClInclude Include="src\yukes\yukes_vertexbuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\common.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer_serializer.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialconversion.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialdefs.cpp" />
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialdefs_3_0.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materialfile.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\materiallibrary_5_0.cpp" />
@@ -112,12 +119,12 @@
     <ClCompile Include="..\VCMaterials\VCMaterials\src\mtllibraryserializer.cpp" />
     <ClCompile Include="..\VCMaterials\VCMaterials\src\usersettings.cpp" />
     <ClCompile Include="include\hash.cpp" />
-    <ClCompile Include="include\MemoryReader\memoryreader.cpp" />
     <ClCompile Include="include\mikktspace.c" />
     <ClCompile Include="src\blendshapes_legacy.cpp" />
     <ClCompile Include="src\cmeshserializer.cpp" />
     <ClCompile Include="src\cmodelserializer.cpp" />
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\materialgen.cpp" />
     <ClCompile Include="src\meshstructs.cpp" />
     <ClCompile Include="src\MikkGen.cpp" />
@@ -126,7 +133,6 @@
     <ClCompile Include="src\dll\interfaceskinmodel.cpp" />
     <ClCompile Include="src\dll\interface_serialize.cpp" />
     <ClCompile Include="src\dll\pch.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\meshbuffers.cpp" />
     <ClCompile Include="src\meshencoder.cpp" />
     <ClCompile Include="src\blendshapes.cpp" />
@@ -465,7 +471,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)libs\debug\crc32c.lib;$(SOLUTIONDIR)libs\debug\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -484,7 +490,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c-d.lib;$(SOLUTIONDIR)libs\debug\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)libs\debug\crc32c.lib;$(SOLUTIONDIR)libs\debug\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -531,7 +537,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c.lib;$(SOLUTIONDIR)libs\release\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)libs\release\crc32c.lib;$(SOLUTIONDIR)libs\release\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -557,7 +563,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c.lib;$(SOLUTIONDIR)libs\release\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)libs\release\memoryreader.lib;$(SOLUTIONDIR)libs\release\crc32c.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -584,7 +590,7 @@ copy /Y "$(TargetDir)$(TargetName).dll" "C:\Users\wauke\AppData\Roaming\Blender 
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SOLUTIONDIR)include\crc32c\crc32c.lib;$(SOLUTIONDIR)libs\release\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SOLUTIONDIR)libs\release\crc32c.lib;$(SOLUTIONDIR)libs\release\memoryreader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>

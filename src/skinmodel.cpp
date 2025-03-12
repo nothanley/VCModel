@@ -10,7 +10,7 @@
 #include "materiallibrary.h"
 #include "common.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 
 CSkinModel::CSkinModel() : CSerializedModel(nullptr)
 {
@@ -38,7 +38,7 @@ CSkinModel::~CSkinModel()
 void
 CSkinModel::loadData()
 {
-	printf("Loading VCModel v%x\n", m_parent->getVersion() );
+	//printf("Loading VCModel v%x\n", m_parent->getVersion() );
 	int numPacks = ReadUInt32(m_data);
 	this->loadAxisBounds();
 }
@@ -137,7 +137,8 @@ void CSkinModel::linkMaterialsFile(const char* model_path)
 	try {
 		mtlsFile.load();
 	}
-	catch (...) {
+	catch (...)
+	{
 		return;
 	}
 

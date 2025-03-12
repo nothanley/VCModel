@@ -293,18 +293,29 @@ void saveModelToFile(
 
 		switch (compile_target)
 		{
-			case 0x28:{ /* Save MDL format v2.8*/
-				CModelSerializer serializer(model);
-				serializer.setUseBlendshapes(use_shape_keys);
-				serializer.setNumLods(num_lods);
-				serializer.save(savePath);
-				printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
-				//printf("\n[Debug] Total Lods: %d\n", num_lods);
-			}
+			case 0x29:
+				{ /* Save MDL format v2.9*/
+					CModelSerializer_2_9 serializer(model);
+					serializer.setUseBlendshapes(use_shape_keys);
+					serializer.setNumLods(num_lods);
+					serializer.save(savePath);
+					printf("\n[CSkinModel] MDL v2.9 file saved to: \"%s\"\n", savePath);
+					//printf("\n[Debug] Total Lods: %d\n", num_lods);
+				}
 				break;
+			case 0x28:
+				{ /* Save MDL format v2.8*/
+					CModelSerializer serializer(model);
+					serializer.setUseBlendshapes(use_shape_keys);
+					serializer.setNumLods(num_lods);
+					serializer.save(savePath);
+					printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
+					//printf("\n[Debug] Total Lods: %d\n", num_lods);
+				}
+				break; 
 			default:
-				break;
-		}
+				break; 
+		} 
 
 		// Get the current time after executing the function
 		auto end = std::chrono::high_resolution_clock::now();

@@ -1,4 +1,5 @@
 #include "modelcereal.h"
+#include "meshencoder.h"
 #include <sstream>
 #pragma once 
 
@@ -31,7 +32,7 @@ struct StMeshBf {
 };
 
 class CSkinModel;
-class CMeshSerializer
+class CMeshSerializer : public MeshEncoder
 {
 protected:
 	int indexOf(const std::string& target);
@@ -39,17 +40,18 @@ protected:
 	void generateStringTable();
 
 protected:
-	void serializeVertices(StMeshBf& target);
-	void serializeVertexNormals(StMeshBf& target);
-	void serializeTangents(StMeshBf& target);
-	void serializeBinormals(StMeshBf& target);
-	void serializeVertexColors(StMeshBf& target);
-	void serializeTexCoords(StMeshBf& target);
-	void serializeSkin(StMeshBf& target);
-	void serializeVertexRemap(StMeshBf& target);
-	void serializeBlendShapes(StMeshBf& target);
-	void serializeColorDict(StMeshBf& target);
-	void serializeUVDict(StMeshBf& target);
+	virtual void serializeVertices(StMeshBf& target);
+	virtual void serializeVertexNormals(StMeshBf& target);
+	virtual void serializeTangents(StMeshBf& target);
+	virtual void serializeBinormals(StMeshBf& target);
+	virtual void serializePackedTbn(StMeshBf& target);
+	virtual void serializeVertexColors(StMeshBf& target);
+	virtual void serializeTexCoords(StMeshBf& target);
+	virtual void serializeSkin(StMeshBf& target);
+	virtual void serializeVertexRemap(StMeshBf& target);
+	virtual void serializeBlendShapes(StMeshBf& target);
+	virtual void serializeColorDict(StMeshBf& target);
+	virtual void serializeUVDict(StMeshBf& target);
 
 private:
 	void writeMeshShapes(std::stringstream& stream, Mesh* mesh);

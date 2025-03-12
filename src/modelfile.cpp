@@ -5,7 +5,7 @@
 #include "skinmodelpoly.h"
 #include "yukes/yukesobj.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 
 CModelContainer::CModelContainer(const char* path, bool use_lightweight_loader)
 	: m_sFilePath(path),
@@ -65,10 +65,8 @@ void CModelContainer::refresh()
 {
 	try 
 	{
-		std::cout << ("\nModel loading....");
 		validateFile();
 		CModelContainer::readModel();
-		std::cout << ("\nModel reloaded");
 	}
 	catch(...){
 		std::cout << ("\nModel failed to reload.");
@@ -84,25 +82,21 @@ CModelContainer::load()
 	}
 
 	if (!m_fileBf)
-		throw std::runtime_error("Could not read MDL file.");
+		throw std::runtime_error("Could not read Model file.");
 
 	this->validateFile();
+	switch (m_signature) {
+	case MCD_MAGIC:
+		this->readMcd();
+		break;
+	case MDL_MAGIC:
+		this->readModel();
+		break;
+	default:
+		break;
+	}
 
-	try {
-		switch (m_signature) {
-			case YOBJ_MAGIC:
-				this->readYukes();
-				break;
-			case MDL_MAGIC:
-				this->readModel();
-				break;
-			default:
-				throw std::runtime_error("Unknown model file format.");
-				break;}
-	}
-	catch(...){
-		throw std::runtime_error("Could not read MDL file.");
-	}
+	
 }
 
 void
@@ -111,9 +105,26 @@ CModelContainer::readYukes()
 	if (!m_isReady)
 		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
 
-	printf("Opening YUKES Model File: %s\n", m_sFilePath.c_str());
-
+	//printf("Opening YUKES Model File: %s\n", m_sFilePath.c_str());
 	this->m_model = std::make_shared<CYukesSkinModel>(m_data, this);
+ }
+
+void
+CModelContainer::readMcd()
+{
+	if (!m_isReady)
+		throw std::runtime_error("Attempting to read contents of an invalid MCD container.");
+
+	uint32_t size = ReadUInt32(m_data);
+	uint32_t sig  = ReadUInt32(m_data);
+
+	if (size == NULL || sig != MDL_MAGIC)
+		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
+
+	m_data   += sizeof(uint32_t);
+	m_version = ReadUInt32(m_data);
+
+	this->readModel();
 }
 
 void
@@ -122,7 +133,7 @@ CModelContainer::readModel()
 	if (!m_isReady)
 		throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
 
-	printf("Opening Model File: %s\n", m_sFilePath.c_str());
+	//printf("Opening Model File: %s\n", m_sFilePath.c_str());
 	switch (m_version)
 	{
 		case MDL_VERSION_1_1:
@@ -136,6 +147,9 @@ CModelContainer::readModel()
 			break;
 		case MDL_VERSION_2_8:
 			this->m_model = std::make_shared<CSkinModel_2_8>(m_data, this);
+			break;
+		case MDL_VERSION_2_9:
+			this->m_model = std::make_shared<CSkinModel_2_9>(m_data, this);
 			break;
 		default:
 			throw std::runtime_error("Attempting to read contents of an invalid MDL container.");
@@ -152,6 +166,5 @@ CModelContainer::validateFile()
 	/* Get file tag data */
 	m_signature = ReadUInt32(m_data);
 	m_version   = ReadUInt32(m_data);
-	m_isReady   = (m_signature == MDL_MAGIC || m_signature == YOBJ_MAGIC);
+	m_isReady   = (m_signature == MDL_MAGIC || m_signature == MCD_MAGIC);
 }
-

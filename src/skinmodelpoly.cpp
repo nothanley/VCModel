@@ -4,7 +4,42 @@
 #include "winsock.h"
 #include "modelfile.h"
 #include "blendshapes_legacy.h"
-using namespace BinaryIO;
+using namespace memreader;
+
+void CSkinModel_2_9::readBone() // v2.9
+{
+	int16_t index       = ReadInt16(m_data);
+	int16_t parentIndex = ReadInt16(m_data);
+
+	/* Check valid bone indices */
+	if (index == 0 && parentIndex == 0)
+		throw std::runtime_error("Failed to load bone data.");
+
+	/* Get bone transformation matrix */
+	RigBone* bone   = loadBoneTransform(m_data);
+	int8_t  use_jig = ReadUInt8(m_data);
+	int32_t jIndex  = ReadUInt32(m_data);
+	bone->index    = index;
+	bone->name     = m_stringTable.at(index);
+	m_bones[index] = bone;
+
+	/* Load special bone jiggle info */
+	if (jIndex >= 0)
+	{
+		auto boneId     = m_stringTable.at(bone->index);
+		auto jig        = std::make_shared<JigParam>();
+		jig->index      = jIndex;
+		jig->unk1       = ReadUInt32(m_data);
+		jig->unk2       = ReadUInt32(m_data);
+		jig->weightsA   = { ReadFloat(m_data), ReadFloat(m_data), ReadFloat(m_data) };
+		jig->weightsB   = { ReadFloat(m_data), ReadFloat(m_data), ReadFloat(m_data) };
+		bone->jig       = (jig->unk1 == NULL || jig->unk2 == NULL) ? jig : NULL;
+	}
+
+	/* Update bone hierarchy */
+	if (parentIndex != -1)
+		bone->set_parent(m_bones.at(parentIndex));
+}
 
 void CSkinModel_2_8::readBone() // v2.8
 {
@@ -77,6 +112,29 @@ void CSkinModel_2_5::readBone() // v2.5
 }
 
 void
+CSkinModel_2_9::loadModelBones(const uintptr_t& size) // v2.8
+{
+	uint32_t numUnks0 = ReadUInt32(m_data);
+	uint32_t numUnks1 = ReadUInt32(m_data);
+	uint32_t numBones = ReadUInt32(m_data);
+	uint32_t numUnks2 = ReadUInt32(m_data);
+	m_bones.resize(numBones);
+
+	/* Iterate and collect all rig bones */
+	for (int i = 0; i < numBones; i++) {
+		this->readBone();
+	}
+
+	/* Filter irregular joints */
+	std::vector<RigBone*> filtered_bones;
+	for (auto& bone : m_bones) {
+		if (bone)
+			filtered_bones.push_back(bone);
+	}
+	m_bones = filtered_bones;
+}
+
+void
 CSkinModel_2_8::loadModelBones(const uintptr_t& size) // v2.8
 {
 	uint32_t numUnks0 = ReadUInt32(m_data);
@@ -142,6 +200,17 @@ CSkinModel_2_0::loadModelBones(const uintptr_t& size)
 	m_bones = filtered_bones;
 }
 
+void CSkinModel_2_9::getMeshMapInfo(Mesh& mesh)
+{
+	int index = ReadUInt32(m_data);
+	mesh.definition = m_stringTable.at(index); // Def seems to always be "", has unknown use case
+
+	/* Load detail map info */
+	loadColorMapInfo(mesh);
+	loadUVInfo(mesh);
+	seekToEnd(m_data);
+}
+
 void CSkinModel_2_8::getMeshMapInfo(Mesh& mesh)
 {
 	int index = ReadUInt32(m_data);
@@ -176,14 +245,47 @@ void CSkinModel_2_0::getMeshMapInfo(Mesh& mesh)
 
 void CSkinModel_2_0::loadData()
 {
-	printf("Loading VCModel v%x\n", m_parent->getVersion());
+	//printf("Loading VCModel v%x\n", m_parent->getVersion());
 	this->loadAxisBounds();
 }
 
 void CSkinModel_1_1::loadData()
 {
-	printf("Loading VCModel v%x\n", m_parent->getVersion());
+	//printf("Loading VCModel v%x\n", m_parent->getVersion());
 	this->loadAxisBounds();
+}
+
+void CSkinModel_2_9::buildMesh(Mesh& mesh)
+{
+	uint32_t index, numStacks;
+	index = ReadUInt32(m_data);
+
+	mesh.sceneFlag = ReadUInt32(m_data);
+	m_data += sizeof(uint32_t); // null const
+	mesh.motionFlag = ReadUInt32(m_data);
+	getAxisAlignedBoundingBox(mesh);
+
+	mesh.numVerts = ReadUInt32(m_data);
+	numStacks = ReadUInt32(m_data);
+	mesh.name = m_stringTable.at(index);
+
+	for (int j = 0; j < numStacks; j++) {
+		uint32_t dataMagic = ReadUInt32(m_data);
+		uint32_t typeMagic = ReadUInt32(m_data);
+		uint32_t formatMagic = ReadUInt32(m_data);
+		this->loadMeshData(mesh);
+	}
+
+	/* Ignore data stream if using lightweight loader */
+	if (m_parent->getLoadType() == enModelDefs::LoadLightWeight) {
+		seekToEnd(m_data);
+		return;
+	}
+
+	this->getSkinData(mesh);
+	this->getVertexRemap(mesh);
+	this->getMorphWeights(mesh);
+	this->getMeshMapInfo(mesh);
 }
 
 void CSkinModel_2_0::buildMesh(Mesh& mesh)

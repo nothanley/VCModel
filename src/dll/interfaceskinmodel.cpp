@@ -190,6 +190,9 @@ const float* getMeshNormals(void* pSkinModel, const int index) {
 
     /* Load mesh */
     auto mesh = model->getMeshes().at(index);
+    if (mesh->normals.empty())
+		return nullptr;
+
     mesh->convertSplitNorms();
 
     /* Rearrange normal data */

@@ -6,7 +6,7 @@
 #include "glm/gtx/euler_angles.hpp"
 #include "winsock.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 
 CModelSerializer::CModelSerializer(CSkinModel* target)
 	: m_numLods(2)
@@ -52,7 +52,7 @@ void CModelSerializer::createTextBuffer()
 	StModelBf stream;
 	uint32_t numStrings = m_stringTable.size();
 	stream.type	 = "TEXT";
-	stream.size  = MeshEncoder::getStringBufferSize(m_stringTable);
+	stream.size  = getStringBufferSize(m_stringTable);
 	stream.data  = new char[stream.size];
 
 	char* tablePtr  = stream.data;
@@ -76,8 +76,7 @@ void CModelSerializer::createTextBuffer()
 }
 
 
-inline 
-void writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix) 
+void CModelSerializer::writeMatrixToBuffer(char*& buffer, const glm::mat4& matrix) 
 {
 	Vec3 rot;
 
@@ -102,15 +101,15 @@ void CModelSerializer::createBoneBuffer()
 
 	StModelBf stream;
 	stream.type = "BONE";
-	stream.size = MeshEncoder::getBoneBufferSize(bones);
+	stream.size = getBoneBufferSize(bones);
 	stream.data = new char[stream.size];
 	
 	/* Write buffer table */
 	char* buffer = stream.data;
-	WriteUInt32(buffer, 0); // Unknown Data Enum
-	WriteUInt32(buffer, 0); // Unknown Data Enum
+	WriteUInt32(buffer, 0);        // Unknown Data Enum
+	WriteUInt32(buffer, 0);        // Unknown Data Enum
 	WriteUInt32(buffer, numBones); // Number of Bones
-	WriteUInt32(buffer, 0); // Unknown Data Enum
+	WriteUInt32(buffer, 0);        // Unknown Data Enum
 
 	/* Write all bone data */
 	for (auto& bone : bones) 
@@ -141,7 +140,7 @@ void CModelSerializer::createMaterialBuffer()
 
 	StModelBf stream;
 	stream.type = "MTL!";
-	stream.size = MeshEncoder::getMtlBufferSize(meshes);
+	stream.size = getMtlBufferSize(meshes);
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 
@@ -183,7 +182,7 @@ void CModelSerializer::createAtPtBuffer()
 	/* Initialize model buffer stream */
 	StModelBf stream;
 	stream.type = "AtPt";
-	stream.size = MeshEncoder::getAtPtBufferSize(points);
+	stream.size = getAtPtBufferSize(points);
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 	int numPoints = points.size();
@@ -215,7 +214,7 @@ void CModelSerializer::generateMeshBuffers(std::vector<StMeshBf>& buffers)
 		serializeVertexRemap(meshbuffer);
 		serializeBlendShapes(meshbuffer);
 		serializeColorDict(meshbuffer);
-		serializeUVDict(meshbuffer); // - 2k24 only
+		serializeUVDict(meshbuffer); // 2K24+
 
 		buffers.push_back(meshbuffer);
 	}
@@ -231,7 +230,7 @@ void CModelSerializer::writeBoundingBox(char*& buffer, const BoundingBox& box)
 	WriteFloat(buffer, box.maxZ);
 }
 
-static inline int getNumStacks(const StMeshBf& meshBuffer) {
+int CModelSerializer::getNumStacks(const StMeshBf& meshBuffer) {
 	int numStacks = 0;
 
 	meshBuffer.data.size();
@@ -274,7 +273,7 @@ void CModelSerializer::createMeshBufferDefs()
 
 	StModelBf stream;
 	stream.type = "MBfD";
-	stream.size = MeshEncoder::getMeshBufferDefSize(m_meshBuffers);
+	stream.size = getMeshBufferDefSize(m_meshBuffers);
 	stream.data = new char[stream.size];
 
 	char* buffer = stream.data;
@@ -330,7 +329,7 @@ void CModelSerializer::createLODsBuffer()
 	const auto& meshes = m_model->getMeshes();
 
 	stream.type = "LODs";
-	stream.size = MeshEncoder::getLodsBufferSize(meshes, m_numLods);
+	stream.size = getLodsBufferSize(meshes, m_numLods);
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 	 
@@ -355,7 +354,7 @@ void CModelSerializer::createModelBuffer()
 	StModelBf stream;
 
 	stream.type = "MDL!";
-	stream.size = MeshEncoder::getMDLBufferSize();
+	stream.size = getMDLBufferSize();
 	stream.data = new char[stream.size];
 	char* buffer = stream.data;
 	bool use_rig = m_model->getNumBones();

@@ -2,3 +2,4 @@
 #include "modelfile.h"
 #include "skinmodelpoly.h"
 #include "cmodelserializer.h"
+#include "cmodelserializer_ver.h"

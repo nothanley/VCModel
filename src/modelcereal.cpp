@@ -7,7 +7,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "modelfile.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 CSerializedModel::CSerializedModel(CModelContainer* parent)
@@ -285,7 +285,6 @@ void CSerializedModel::buildMesh(Mesh& mesh)
 void CSerializedModel::loadMeshes()
 {
 	uint32_t numModels = ReadUInt32(m_data);
-	printf("\n\tTotal Models: %d\n", numModels);
 
 	for (int i = 0; i < numModels; i++) {
 		Mesh* mesh = new Mesh;

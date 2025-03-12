@@ -45,7 +45,7 @@ extern "C" __declspec(dllexport) const float* getMeshUvChannel(void* pSkinModel,
 extern "C" __declspec(dllexport) int getNumBones(void* pSkinModel);
 
 extern "C" __declspec(dllexport) const char* getBoneName(void* pSkinModel, const int boneIndex);
-
+ 
 extern "C" __declspec(dllexport) const float* getBoneTransformMatrix(void* pSkinModel, const int boneIndex);
 
 extern "C" __declspec(dllexport) int getBoneParentIndex(void* pSkinModel, const int boneIndex);

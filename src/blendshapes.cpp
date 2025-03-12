@@ -2,7 +2,7 @@
 #include "meshbuffers.h"
 #include "MemoryReader/memoryreader.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace MeshSerializer;
 
 vCMeshShapes::vCMeshShapes(char*& data, const std::vector<std::string>& table, Mesh* mesh) :

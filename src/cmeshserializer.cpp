@@ -4,14 +4,14 @@
 #include <crc32c/crc32c.h>
 #include "meshshapes_serialize.h"
 
-using namespace BinaryIO;
+using namespace memreader;
 using namespace crc32c;
 using bscompress = vCMeshShapeSerial;
 
 const std::vector<std::string> STREAM_TABLE{
 	"POSITION", "R32_G32_B32","float", "NORMAL", "R8_G8_B8_A8", "snorm",
-	"TANGENT","BINORMAL","R8", "COLOR","unorm","TEXCOORD",
-	"R32_G32","R16_G16_B16_A16","BLENDINDICES", "uint","BLENDWEIGHTS","R32_G32_B32_A32",""
+	"TANGENT","BINORMAL","R8", "PackedTBN","R32","uint", "COLOR","unorm","TEXCOORD",
+	"R32_G32","R16_G16_B16_A16","BLENDINDICES", "BLENDWEIGHTS","R32_G32_B32_A32",""
 };
 
 int get_str_index(const std::vector<std::string>& table, const std::string& target)
@@ -125,6 +125,23 @@ void CMeshSerializer::serializeBinormals(StMeshBf& target)
 		normal *= 127;
 
 		WriteSInt8(stream, normal.x);
+	}
+
+	::align_binary_stream(stream);
+	target.data.push_back(dataBf);
+}
+
+void CMeshSerializer::serializePackedTbn(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "PackedTBN", "R32", "uint");
+
+	/* Write packed tbn buffer */
+	auto& stream = dataBf->stream;
+
+	for (int i = 0; i < target.mesh->numVerts; ++i) 
+	{
+		WriteUInt32(stream, 0x0);
 	}
 
 	::align_binary_stream(stream);

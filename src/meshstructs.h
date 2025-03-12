@@ -144,12 +144,22 @@ struct Matrix4 {
 	Vec4 x, y, z, w;
 };
 
+struct JigParam
+{
+	uint32_t unk1  = 0;
+	uint32_t unk2  = 0;
+	uint32_t index = -1;
+	Vec3 weightsA;
+	Vec3 weightsB;
+};
+
 struct RigBone
 {
-	int16_t index;
+	int16_t     index;
 	std::string name;
-	RigBone* parent = nullptr;
-	std::vector<RigBone*> children;
+	RigBone*    parent = nullptr;
+	std::shared_ptr<JigParam> jig;
+	std::vector<RigBone*>     children;
 
 	glm::mat4 matrix_local; // Parent space transform
 	glm::mat4 matrix_world; // World space transform

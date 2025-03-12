@@ -90,9 +90,6 @@
     <ClInclude Include="src\wavefront.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="include\crc32c\crc32c.h">
-      <Filter>Include\Crc32C</Filter>
-    </ClInclude>
     <ClInclude Include="src\cmeshserializer.h">
       <Filter>Source\Model\Serializer</Filter>
     </ClInclude>
@@ -174,14 +171,23 @@
     <ClInclude Include="src\yukes\yukesobj.h">
       <Filter>Source\Model\SkinModel\YUKES</Filter>
     </ClInclude>
-    <ClInclude Include="include\MemoryReader\memoryreader.h">
-      <Filter>Include</Filter>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialdefs_3_0.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialdefs.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialbuffer_serializer.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\include\crc32c\crc32c.h">
+      <Filter>Include\Crc32C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>CLI</Filter>
-    </ClCompile>
     <ClCompile Include="src\modelfile.cpp">
       <Filter>Source\Container</Filter>
     </ClCompile>
@@ -290,8 +296,20 @@
     <ClCompile Include="src\yukes\yukes_vertexbuffer.cpp">
       <Filter>Source\Model\SkinModel\YUKES</Filter>
     </ClCompile>
-    <ClCompile Include="include\MemoryReader\memoryreader.cpp">
-      <Filter>Include</Filter>
+    <ClCompile Include="src\main.cpp">
+      <Filter>CLI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialdefs_3_0.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialdefs.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialbuffer_serializer.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

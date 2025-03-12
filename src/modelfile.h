@@ -31,6 +31,7 @@ public:
 	int getLoadType();
 	 
 private:
+	void readMcd();
 	void readModel();
 	void readYukes();
 	void validateFile();
