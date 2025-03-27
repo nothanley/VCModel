@@ -264,10 +264,41 @@ void setNewAttachPoint(void* pSkinModel, int bone_index, int id1, int id2, int f
 	model->push_point(point);
 }
 
+static inline std::string 
+get_model_path(const char* inPath, const int compile_target)
+{
+	std::string model_path = inPath;
+	std::string extension;
+
+	switch (compile_target)
+	{
+		case 0x29:
+			extension = "mcd";
+			break;
+		case 0x28:
+			extension = "mdl";
+			break;
+		default:
+			extension = "mdl";
+			break;
+	}
+
+	size_t lastDotPos = model_path.find_last_of(".");
+	if (lastDotPos != std::string::npos)
+	{
+		std::string baseName = model_path.substr(0, lastDotPos);
+		return baseName + "." + extension;
+	}
+
+	// If there's no existing extension, simply append the new extension
+	return model_path + "." + extension;
+}
 
 extern "C" __declspec(dllexport)
 void saveModelToFile(
-	void* pSkinModel, const char* savePath, int compile_target, 
+	void* pSkinModel,
+	const char* target_file_path, 
+	int compile_target, 
 	bool use_shape_keys, 
 	bool use_tangents, 
 	bool generate_materials,
@@ -282,10 +313,14 @@ void saveModelToFile(
 	for (auto& mesh : model->getMeshes())
 		mesh->calculateTangentsBinormals(use_tangents);
 
+	/* Update target extension */
+	std::string savePath = ::get_model_path(target_file_path, compile_target);
+
 	/* Create auto-gen .mtls file */
-	if (generate_materials){
+	if (generate_materials)
+	{
 		CMaterialGen mtlGen(model, "material_presets.json");
-		mtlGen.save(savePath);
+		mtlGen.save(savePath.c_str());
 	}
 
 	try {
@@ -298,8 +333,8 @@ void saveModelToFile(
 					CModelSerializer_2_9 serializer(model);
 					serializer.setUseBlendshapes(use_shape_keys);
 					serializer.setNumLods(num_lods);
-					serializer.save(savePath);
-					printf("\n[CSkinModel] MDL v2.9 file saved to: \"%s\"\n", savePath);
+					serializer.save(savePath.c_str());
+					printf("\n[CSkinModel] MDL v2.9 file saved to: \"%s\"\n", savePath.c_str());
 					//printf("\n[Debug] Total Lods: %d\n", num_lods);
 				}
 				break;
@@ -308,8 +343,8 @@ void saveModelToFile(
 					CModelSerializer serializer(model);
 					serializer.setUseBlendshapes(use_shape_keys);
 					serializer.setNumLods(num_lods);
-					serializer.save(savePath);
-					printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath);
+					serializer.save(savePath.c_str());
+					printf("\n[CSkinModel] MDL v2.8 file saved to: \"%s\"\n", savePath.c_str());
 					//printf("\n[Debug] Total Lods: %d\n", num_lods);
 				}
 				break; 

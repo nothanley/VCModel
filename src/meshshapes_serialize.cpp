@@ -70,7 +70,7 @@ void vCMeshShapeSerial::writeDeltaMatrix(std::stringstream& stream, Matrix3& del
 	Vec3  deltaMinimum   = delta_matrix.x;
 
 	/* debug - lessens or heightens the influence of mesh shapes */
-	float shapeInfluence = 0.275f;
+	float shapeInfluence = 1.0f;
 	deltaPrecision *= shapeInfluence;
 	deltaMinimum   *= shapeInfluence;
 

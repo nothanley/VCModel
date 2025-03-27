@@ -230,6 +230,12 @@ void CSerializedModel::loadUVInfo(Mesh& mesh)
 		int index = ReadUInt32(m_data);
 		map.name = m_stringTable.at(index);
 	}
+
+	//for (auto& map : mesh.uvs)
+	//{
+		//float scale = ReadFloat(m_data);
+		//scale += 0;
+	//}
 }
 
 void CSerializedModel::getMorphWeights(Mesh& mesh)
