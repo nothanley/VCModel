@@ -272,6 +272,7 @@ get_model_path(const char* inPath, const int compile_target)
 
 	switch (compile_target)
 	{
+		case 0x2F:
 		case 0x29:
 			extension = "mcd";
 			break;

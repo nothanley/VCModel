@@ -556,10 +556,14 @@ void CSkinModel_2_15::getTriangleBuffer(Mesh& mesh)
 	for (int i = 0; i < numMaterials; i++)
 	{
 		FaceGroup mtlGroup;
-		uint32_t mtlIndex     = ReadUInt32(m_data);
-		mtlGroup.faceBegin    = ReadUInt32(m_data) / 3;
-		mtlGroup.numTriangles = ReadUInt32(m_data) / 3;
-		uint32_t unk          = ReadUInt32(m_data) / 3; // ???
+		uint32_t mtlIndex        = ReadUInt32(m_data);
+		uint32_t faceBeginRaw    = ReadUInt32(m_data);
+		uint32_t numTrianglesRaw = ReadUInt32(m_data);
+		uint32_t unkRaw          = ReadUInt32(m_data);
+
+		mtlGroup.faceBegin    = faceBeginRaw / 3;
+		mtlGroup.numTriangles = numTrianglesRaw / 3;
+		uint32_t unk          = unkRaw / 3; // Max vertex index - added in 2k26
 		mtlGroup.material     = m_materials.at(mtlIndex);
 
 		mesh.groups.push_back(mtlGroup);

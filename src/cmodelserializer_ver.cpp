@@ -385,10 +385,22 @@ void CModelSerializer_2_15::writeMaterialGroupBuffer(char*& buffer, int meshInde
 	for (int i = 0; i < numGroups; i++)
 	{
 		auto& group = mesh->groups.at(i);
+		uint32_t maxVertexIndex = 0;
+		if (group.numTriangles > 0 &&
+			static_cast<size_t>(group.faceBegin + group.numTriangles) <= mesh->triangles.size())
+		{
+			for (int t = 0; t < group.numTriangles; t++)
+			{
+				const auto& tri = mesh->triangles.at(group.faceBegin + t);
+				if (tri[0] > maxVertexIndex) maxVertexIndex = tri[0];
+				if (tri[1] > maxVertexIndex) maxVertexIndex = tri[1];
+				if (tri[2] > maxVertexIndex) maxVertexIndex = tri[2];
+			}
+		}
 		WriteUInt32(buffer, meshIndex);		// material index
 		WriteUInt32(buffer, group.faceBegin * 3);
 		WriteUInt32(buffer, group.numTriangles * 3);
-		WriteUInt32(buffer, group.numTriangles * 3); // unknown currently ...
+		WriteUInt32(buffer, maxVertexIndex);
 	}
 
 	/* Write ENDM tag */
