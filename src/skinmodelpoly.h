@@ -17,6 +17,26 @@ private:
     void getMeshMapInfo(Mesh& mesh) override;
 };
 
+class CSkinModel_2_15 : public CSkinModel
+{
+public:
+    CSkinModel_2_15(char* data, CModelContainer* pParent)  : CSkinModel(data, pParent)
+    {
+        this->loadData();
+        this->loadBuffer();
+    }
+
+private:
+    void buildMesh(Mesh& mesh) override;
+    void loadModelBones(const uintptr_t& size) override;
+    void readBone() override;
+    void getMeshMapInfo(Mesh& mesh) override;
+
+private:
+    void loadMaterials() override;
+    void getTriangleBuffer(Mesh& mesh) override;
+};
+
 class CSkinModel_2_8 : public CSkinModel
 {
 public:
@@ -31,6 +51,7 @@ private:
     void readBone() override;
     void getMeshMapInfo(Mesh& mesh) override;
 };
+
 
 
 class CSkinModel_2_5 : public CSkinModel

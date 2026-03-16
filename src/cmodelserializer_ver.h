@@ -53,3 +53,25 @@ protected:
 };
 
 
+class CModelSerializer_2_15 : public CModelSerializer_2_9
+{
+public:
+	CModelSerializer_2_15(CSkinModel* target) : CModelSerializer_2_9(target)
+	{}
+
+protected:
+	void serialize() override;
+
+protected:
+	void createModelBuffer() override;
+	void createMaterialBuffer() override;
+	void writeMaterialGroupBuffer(char*& buffer, int meshIndex) override;
+
+protected:
+	uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes) override;
+	void updateIndexBufferSize(uint32_t& size, const Mesh* mesh) override;
+
+};
+
+
+

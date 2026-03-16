@@ -308,14 +308,15 @@ void CModelSerializer::writeIndexBuffer(char*& buffer, int meshIndex)
 void CModelSerializer::writeMaterialGroupBuffer(char*& buffer, int meshIndex)
 {
 	/* Write material groups */
-	auto mesh = m_model->getMeshes().at(meshIndex);
+	auto mesh     = m_model->getMeshes().at(meshIndex);
 	int numGroups = mesh->groups.size();
 	WriteUInt32(buffer, numGroups);
 
-	for (int i = 0; i < numGroups; i++) {
+	for (int i = 0; i < numGroups; i++) 
+	{
 		auto& group = mesh->groups.at(i);
-		WriteUInt32(buffer, meshIndex); // material index
-		WriteUInt32(buffer, group.faceBegin);
+		WriteUInt32(buffer, meshIndex);		// material index
+		WriteUInt32(buffer, group.faceBegin    * 3);
 		WriteUInt32(buffer, group.numTriangles * 3);
 	}
 
@@ -337,10 +338,12 @@ void CModelSerializer::createLODsBuffer()
 	uint32_t numMeshes = meshes.size();
 	WriteUInt32(buffer, m_numLods);
 
-	for (int i = 0; i < m_numLods; i++) {
+	for (int i = 0; i < m_numLods; i++) 
+	{
 		WriteUInt32(buffer, numMeshes);
 
-		for (int j = 0; j < numMeshes; j++) {
+		for (int j = 0; j < numMeshes; j++) 
+		{
 			writeIndexBuffer(buffer, j);
 			writeMaterialGroupBuffer(buffer, j);
 		}

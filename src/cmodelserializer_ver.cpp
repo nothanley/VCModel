@@ -308,3 +308,114 @@ void CModelSerializer_2_9::doJigBoneCheck(std::vector<RigBone*>& bones)
 	}
 }
 
+void CModelSerializer_2_15::serialize()
+{
+	this->generateStringTable();
+
+	this->createMCDBuffer();
+	this->createModelBuffer();
+	this->createTextBuffer();
+	this->createBoneBuffer();
+	this->createAtPtBuffer();
+	this->createMaterialBuffer();
+	this->createMeshBufferDefs();
+	this->createLODsBuffer();
+
+	this->formatFile();
+}
+
+void CModelSerializer_2_15::createModelBuffer()
+{
+	StModelBf stream;
+
+	stream.type = "MDL!";
+	stream.size = getMDLBufferSize();
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+	bool use_rig = m_model->getNumBones();
+
+	WriteUInt32(buffer, 0x2F); // File format version
+	WriteUInt32(buffer, use_rig); // Unknown value
+	writeBoundingBox(buffer, m_model->getAABBs()); // Model bounds
+
+	m_dataBuffers.push_back(stream);
+}
+
+void CModelSerializer_2_15::createMaterialBuffer()
+{
+	/* Initialize model buffer stream */
+	const auto& meshes = m_model->getMeshes();
+	uint32_t numMeshes = meshes.size();
+
+	StModelBf stream;
+	stream.type = "MTL!";
+	stream.size = getMtlBufferSize(meshes);
+	stream.data = new char[stream.size];
+	char* buffer = stream.data;
+
+	WriteUInt32(buffer, numMeshes);
+	for (auto& mesh : meshes) 
+	{
+		int16_t index = -1;
+		uint32_t crc  = 0;
+
+		if (mesh->groups.size() > 0)
+		{
+			FaceGroup& group = mesh->groups.front();
+			index = indexOf(group.material.name);
+
+			crc = CSerializedModel::getStringCrc(group.material.name, true); // unchecked if str should be lower - verify this
+		}
+
+		WriteUInt16(buffer, index);
+		WriteUInt32(buffer, crc);
+	}
+
+	m_dataBuffers.push_back(stream);
+}
+
+
+void CModelSerializer_2_15::writeMaterialGroupBuffer(char*& buffer, int meshIndex)
+{
+	/* Write material groups */
+	auto mesh = m_model->getMeshes().at(meshIndex);
+	int numGroups = mesh->groups.size();
+	WriteUInt32(buffer, numGroups);
+
+	for (int i = 0; i < numGroups; i++)
+	{
+		auto& group = mesh->groups.at(i);
+		WriteUInt32(buffer, meshIndex);		// material index
+		WriteUInt32(buffer, group.faceBegin * 3);
+		WriteUInt32(buffer, group.numTriangles * 3);
+		WriteUInt32(buffer, group.numTriangles * 3); // unknown currently ...
+	}
+
+	/* Write ENDM tag */
+	WriteUInt32(buffer, 0); // pad
+	WriteUInt64(buffer, ntohl(ENDM));
+}
+
+
+uint32_t 
+CModelSerializer_2_15::getMtlBufferSize(const std::vector<Mesh*>& meshes)
+{
+	uint32_t size = sizeof(uint32_t);
+	size += ((sizeof(uint16_t) + sizeof(uint32_t)) * meshes.size());
+	return size;
+}
+
+void 
+CModelSerializer_2_15::updateIndexBufferSize(uint32_t& size, const Mesh* mesh)
+{
+	int encodeWidth = (mesh->numVerts > UINT16_MAX) ? sizeof(uint32_t) : sizeof(uint16_t);
+	size += sizeof(uint16_t); // Mesh Index
+	size += sizeof(uint32_t); // Num Faces
+	size += encodeWidth * (mesh->triangles.size() * 3); // Index buffer
+	::round_size(size, 4); // align
+
+	size += sizeof(uint32_t); // Num Material Groups
+	size += mesh->groups.size() * (sizeof(uint32_t) * 4); // mtl index, faceBegin, faceEnd
+	size += sizeof(uint32_t); // pad
+	size += sizeof(uint64_t); // ENDM Tag
+}

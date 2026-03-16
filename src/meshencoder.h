@@ -18,8 +18,6 @@ protected:
 	virtual uint32_t getBoneBufferSize(const std::vector<RigBone*>& bones);
 	virtual uint32_t getMeshBufferDefSize(std::vector<StMeshBf>& meshbuffers);
 	virtual uint32_t getLodsBufferSize(const std::vector<Mesh*>& meshes, int numLevels);
-
-private:
-	static void updateIndexBufferSize(uint32_t& size, const Mesh* mesh);
+	virtual void updateIndexBufferSize(uint32_t& size, const Mesh* mesh);
 };
 

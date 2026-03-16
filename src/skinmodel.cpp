@@ -232,3 +232,52 @@ CSkinModel::injectObj(const char* path, const int index)
 	return true;
 }
 
+RigBone*
+CSkinModel::find_bone(const char* target)
+{
+	for (auto& bone : m_bones)
+	{
+		if (bone->name == target)
+			return bone;
+	}
+
+	return nullptr;
+}
+
+inline static 
+void pushBoneToVec(std::vector<RigBone*>& bones, RigBone* bone)
+{
+	bool has_bone = std::find(bones.begin(), bones.end(), bone) != bones.end();
+	if (has_bone) return;
+
+	bone->index = bones.size();
+	bones.push_back(bone);
+}
+
+inline static
+void addBoneRecursive(std::vector<RigBone*>& bones, RigBone* bone)
+{
+	::pushBoneToVec(bones, bone);
+
+	for (auto& child : bone->children)
+	{
+		::addBoneRecursive(bones, child);
+	}
+}
+
+void
+CSkinModel::sort_bones()
+{
+	return;
+
+	// todo: fix blend weight indices ...
+	std::vector<RigBone*> sorted;
+	sorted.reserve(m_bones.size());
+
+	for (auto& bone : m_bones)
+	{
+		::addBoneRecursive(sorted, bone);
+	}
+
+	this->m_bones = sorted;
+}

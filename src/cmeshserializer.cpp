@@ -46,7 +46,6 @@ int CMeshSerializer::indexOf(const std::string& target) {
 	return get_str_index(m_stringTable, target);
 }
 
-
 void CMeshSerializer::serializeVertices(StMeshBf& target)
 {
 	auto dataBf = std::make_shared<StDataBf>();
@@ -93,8 +92,10 @@ void CMeshSerializer::serializeTangents(StMeshBf& target)
 	/* Write vertex normal buffer */
 	auto& stream = dataBf->stream;
 	std::vector<float>& tangents = target.mesh->tangents;
+	uint8_t array_size = (tangents.size() == target.mesh->vertices.size()) ? 3 : 4;
 
-	for (int i = 0; i < tangents.size(); i += 4) {
+	for (int i = 0; i < tangents.size(); i += array_size)
+	{
 		// Convert to snorm
 		Vec3 tangent{ tangents[i], tangents[i + 1], tangents[i + 2] };
 		tangent.pack_values(1.0);

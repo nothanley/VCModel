@@ -186,6 +186,15 @@
     <ClInclude Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.h">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClInclude>
+    <ClInclude Include="src\model_utils.h">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="src\global_defs.hpp">
+      <Filter>Source\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VCMaterials\VCMaterials\src\materialdefs_4_0.h">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\modelfile.cpp">
@@ -309,6 +318,12 @@
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
     <ClCompile Include="..\VCMaterials\VCMaterials\include\crc32c\CRC32.cpp">
+      <Filter>LOCAL_MATERIALS_DIR</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model_utils.cpp">
+      <Filter>Source\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VCMaterials\VCMaterials\src\materialdefs_4_0.cpp">
       <Filter>LOCAL_MATERIALS_DIR</Filter>
     </ClCompile>
   </ItemGroup>

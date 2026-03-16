@@ -6,6 +6,7 @@
 #include "blendshapes.h"
 #include <glm/gtx/euler_angles.hpp>
 #include "modelfile.h"
+#include "crc32c/crc32c.h"
 
 using namespace memreader;
 using namespace MeshSerializer;
@@ -209,10 +210,14 @@ void CSerializedModel::loadLods()
 	uint32_t lodCap = (true) ? 1 : numFaceBufs;
 
 	/* Iterate through face buffers and collect lods and material sets */
-	for (int i = 0; i < lodCap; i++){
+	for (int i = 0; i < lodCap; i++)
+	{
 		uint32_t numIndices = ReadUInt32(m_data);
+
 		for (int j = 0; j < numIndices; j++)
+		{
 			this->getTriangleBuffer(*m_meshes.at(j));
+		}
 	}
 }
 
@@ -377,6 +382,19 @@ const Vec3 CSerializedModel::getAttachPointLocalPos(const StAttachPoint& point) 
 	glm::vec4 localSpaceCo = glm::inverse(bone->matrix_world) * point.coord;
 
 	return Vec3{ localSpaceCo.x, -localSpaceCo.y, -localSpaceCo.z };
+}
+
+uint32_t
+CSerializedModel::getStringCrc(const std::string& str, bool use_lower)
+{
+	std::string target(str);
+
+	if (use_lower)
+	{
+		std::transform(target.begin(), target.end(), target.begin(), ::tolower);
+	}
+
+	return crc32c::Crc32c(target.data(), target.size());
 }
 
 

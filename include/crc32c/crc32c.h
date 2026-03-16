@@ -66,7 +66,7 @@ inline uint32_t Crc32c(const std::string& string) {
                 string.size());
 }
 
-uint32_t crc32c_lower(std::string string) {
+inline uint32_t crc32c_lower(std::string string) {
 	std::transform(string.begin(), string.end(), string.begin(),
 		[](unsigned char c) { return std::tolower(c); });
 	return Crc32c(string);

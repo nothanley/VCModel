@@ -20,13 +20,14 @@ public:
 public:
 	const BoundingBox getAABBs();
 	const Vec3 getAttachPointLocalPos(const StAttachPoint& point) const;
+	static uint32_t getStringCrc(const std::string& str, bool use_lower = true);
 
 protected:
 	void loadMeshes();
 	void loadStringTable();
-	void loadMaterials();
 	void loadLods();
 
+	virtual void loadMaterials();
 	virtual void buildMesh(Mesh& mesh);
 	virtual void getMeshMapInfo(Mesh& mesh) {};
 	virtual void loadModelBones(const uintptr_t& size) {};
@@ -39,11 +40,11 @@ protected:
 	void loadMeshData(Mesh& mesh);
 	void getSkinData(Mesh& mesh);
 	void getVertexRemap(Mesh& mesh);
-	void getTriangleBuffer(Mesh& mesh);
 	void loadColorMapInfo(Mesh& mesh);
 	void loadUVInfo(Mesh& mesh);
 	static inline void seekToEnd(char*& buffer);
 
+	virtual void getTriangleBuffer(Mesh& mesh);
 	virtual void loadAttachPtData();
 	virtual void loadGtPtData();
 	virtual void getMorphWeights(Mesh& mesh);

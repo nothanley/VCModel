@@ -26,6 +26,8 @@ public:
 	void push_bone(RigBone* bone) { this->m_bones.push_back(bone); }
 	void push_mesh(Mesh* mesh)	{ this->m_meshes.push_back(mesh); }
 	void push_point(StAttachPoint& point) { this->m_attachpoints.push_back(point); }
+	RigBone* find_bone(const char* target);
+	void sort_bones();
 
 public:
 	bool injectObj(const char* path, const int index);

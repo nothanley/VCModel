@@ -63,7 +63,6 @@ protected:
 	std::vector<StModelBf>   m_dataBuffers;
 	std::vector<std::string> m_stringTable;
 	CSkinModel* m_model;
-
 };
 
 

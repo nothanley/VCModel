@@ -92,8 +92,8 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 	mesh->numVerts = mesh->vertices.size() / 3;
 	mesh->generateAABBs();
 
-	/* Setup mesh default mtl */
-	FaceGroup faceMat{ mesh->material, 0, numFaces};
+	/* Setup mesh default mtl - assumes single mat per mesh group */
+	FaceGroup faceMat{ mesh->material, 0, (numFaces * 3) };
 	mesh->groups.push_back(faceMat);
 }
 
@@ -328,8 +328,18 @@ void saveModelToFile(
 
 		switch (compile_target)
 		{
+			case 0x2F:
+				{ /* Save MDL format v2.15*/
+					CModelSerializer_2_9 serializer(model);
+					serializer.setUseBlendshapes(use_shape_keys);
+					serializer.setNumLods(num_lods);
+					serializer.save(savePath.c_str());
+					printf("\n[CSkinModel] MDL v2.15 file saved to: \"%s\"\n", savePath.c_str());
+					//printf("\n[Debug] Total Lods: %d\n", num_lods);
+				}
+				break;
 			case 0x29:
-				{ /* Save MDL format v2.9*/
+				{ /* Save MDL format v2.09*/
 					CModelSerializer_2_9 serializer(model);
 					serializer.setUseBlendshapes(use_shape_keys);
 					serializer.setNumLods(num_lods);
@@ -339,7 +349,7 @@ void saveModelToFile(
 				}
 				break;
 			case 0x28:
-				{ /* Save MDL format v2.8*/
+				{ /* Save MDL format v2.08*/
 					CModelSerializer serializer(model);
 					serializer.setUseBlendshapes(use_shape_keys);
 					serializer.setNumLods(num_lods);
