@@ -12,7 +12,8 @@ int main()
 
     // Scope heap memory test - 
     {
-        CModelContainer mdlFile("C:/Users/brian/Desktop/basemodel.mcd");
+		//CModelContainer mdlFile("C:/Users/brian/Desktop/Blockout_Plane.mcd");
+        CModelContainer mdlFile("C:/Users/brian/Desktop/og_basemodel.mcd");
         //CModelContainer mdlFile("C:/Users/brian/Desktop/2k25-0173_Reference_Cube.mcd");
         //CModelContainer mdlFile("C:/Users/brian/Desktop/0173_Reference_Cube.mcd");
         //CModelContainer mdlFile("C:/Users/wauke/Desktop/0002.yobj");

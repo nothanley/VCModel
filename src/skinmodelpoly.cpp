@@ -260,6 +260,23 @@ CSkinModel_2_0::loadModelBones(const uintptr_t& size)
 	m_bones = filtered_bones;
 }
 
+void
+CSkinModel_2_15::loadUnknownData(Mesh& mesh)
+{
+	float unkA = ReadFloat(m_data);
+	float unkB = ReadFloat(m_data);
+	uint32_t numUnks = ReadUInt32(m_data);
+
+	for (int i = 0; i < numUnks; ++i)
+	{
+		uint32_t unk = ReadUInt32(m_data);
+		float unk2 = ReadFloat(m_data);
+		float unk3 = ReadFloat(m_data);
+		float unk4 = ReadFloat(m_data);
+		float unk5 = ReadFloat(m_data);
+	}
+}
+
 void CSkinModel_2_15::getMeshMapInfo(Mesh& mesh)
 {
 	int index = ReadUInt32(m_data);
@@ -268,6 +285,7 @@ void CSkinModel_2_15::getMeshMapInfo(Mesh& mesh)
 	/* Load detail map info */
 	loadColorMapInfo(mesh);
 	loadUVInfo(mesh);
+	loadUnknownData(mesh); // new in 2K26
 	seekToEnd(m_data);
 }
 
@@ -338,8 +356,8 @@ void CSkinModel_2_15::buildMesh(Mesh& mesh)
 	getAxisAlignedBoundingBox(mesh);
 
 	mesh.numVerts = ReadUInt32(m_data);
-	numStacks = ReadUInt32(m_data);
-	mesh.name = m_stringTable.at(index);
+	numStacks     = ReadUInt32(m_data);
+	mesh.name     = m_stringTable.at(index);
 
 	for (int j = 0; j < numStacks; j++) {
 		uint32_t dataMagic = ReadUInt32(m_data);
@@ -558,12 +576,11 @@ void CSkinModel_2_15::getTriangleBuffer(Mesh& mesh)
 		FaceGroup mtlGroup;
 		uint32_t mtlIndex        = ReadUInt32(m_data);
 		uint32_t faceBeginRaw    = ReadUInt32(m_data);
-		uint32_t numTrianglesRaw = ReadUInt32(m_data);
-		uint32_t unkRaw          = ReadUInt32(m_data);
+		uint32_t numTrianglesRaw = ReadUInt32(m_data); 
+		uint32_t unkRaw          = ReadUInt32(m_data); // Max vertex index - added in 2k26
 
 		mtlGroup.faceBegin    = faceBeginRaw / 3;
 		mtlGroup.numTriangles = numTrianglesRaw / 3;
-		uint32_t unk          = unkRaw / 3; // Max vertex index - added in 2k26
 		mtlGroup.material     = m_materials.at(mtlIndex);
 
 		mesh.groups.push_back(mtlGroup);

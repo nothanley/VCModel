@@ -297,7 +297,8 @@ void CSerializedModel::loadMeshes()
 {
 	uint32_t numModels = ReadUInt32(m_data);
 
-	for (int i = 0; i < numModels; i++) {
+	for (int i = 0; i < numModels; i++) 
+	{
 		Mesh* mesh = new Mesh;
 
 		this->buildMesh(*mesh);

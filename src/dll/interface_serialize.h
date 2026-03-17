@@ -331,7 +331,7 @@ void saveModelToFile(
 		{
 			case 0x2F:
 				{ /* Save MDL format v2.15*/
-					CModelSerializer_2_9 serializer(model);
+					CModelSerializer_2_15 serializer(model);
 					serializer.setUseBlendshapes(use_shape_keys);
 					serializer.setNumLods(num_lods);
 					serializer.save(savePath.c_str());

@@ -71,6 +71,11 @@ protected:
 	uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes) override;
 	void updateIndexBufferSize(uint32_t& size, const Mesh* mesh) override;
 
+protected:
+	void serializeVertices(StMeshBf& target);
+	void serializeVertexNormals(StMeshBf& target);
+	void serializeTangents(StMeshBf& target);
+
 };
 
 

@@ -26,6 +26,9 @@ public:
         this->loadBuffer();
     }
 
+protected:
+	void loadUnknownData(Mesh& mesh);
+
 private:
     void buildMesh(Mesh& mesh) override;
     void loadModelBones(const uintptr_t& size) override;

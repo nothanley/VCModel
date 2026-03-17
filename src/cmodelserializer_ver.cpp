@@ -371,6 +371,7 @@ void CModelSerializer_2_15::createMaterialBuffer()
 		WriteUInt32(buffer, crc);
 	}
 
+	::align_binary_stream(buffer);
 	m_dataBuffers.push_back(stream);
 }
 
@@ -414,6 +415,8 @@ CModelSerializer_2_15::getMtlBufferSize(const std::vector<Mesh*>& meshes)
 {
 	uint32_t size = sizeof(uint32_t);
 	size += ((sizeof(uint16_t) + sizeof(uint32_t)) * meshes.size());
+	::round_size(size, 4); // align
+
 	return size;
 }
 
@@ -431,3 +434,65 @@ CModelSerializer_2_15::updateIndexBufferSize(uint32_t& size, const Mesh* mesh)
 	size += sizeof(uint32_t); // pad
 	size += sizeof(uint64_t); // ENDM Tag
 }
+
+
+void 
+CModelSerializer_2_15::serializeVertices(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "POSITION", "R32_G32_B32", "float");
+
+	/* Write vertex buffer */
+	std::vector<float>& vertices = target.mesh->vertices;
+	dataBf->stream.write((char*)vertices.data(), sizeof(float) * vertices.size());
+
+	target.data.push_back(dataBf);
+}
+
+void 
+CModelSerializer_2_15::serializeVertexNormals(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "NORMAL", "R32_G32_B32", "float");
+
+	/* Write vertex normal buffer */
+	auto& stream = dataBf->stream;
+	std::vector<float>& normals = target.mesh->normals;
+	int array_size = (normals.size() == target.mesh->vertices.size()) ? 3 : 4;
+
+	for (int i = 0; i < normals.size(); i += array_size) {
+		Vec3 normal{ normals[i], normals[i + 1], normals[i + 2] };
+
+		WriteFloat(stream, normal.x);
+		WriteFloat(stream, normal.y);
+		WriteFloat(stream, normal.z);
+	}
+
+	::align_binary_stream(stream);
+	target.data.push_back(dataBf);
+}
+
+void 
+CModelSerializer_2_15::serializeTangents(StMeshBf& target)
+{
+	auto dataBf = std::make_shared<StDataBf>();
+	dataBf->setHeader(m_stringTable, "TANGENT", "R32_G32_B32", "float");
+
+	/* Write vertex normal buffer */
+	auto& stream = dataBf->stream;
+	std::vector<float>& tangents = target.mesh->tangents;
+	uint8_t array_size = (tangents.size() == target.mesh->vertices.size()) ? 3 : 4;
+
+	for (int i = 0; i < tangents.size(); i += array_size)
+	{
+		Vec3 tangent{ tangents[i], tangents[i + 1], tangents[i + 2] };
+
+		WriteFloat(stream, tangent.x);
+		WriteFloat(stream, tangent.y);
+		WriteFloat(stream, tangent.z);
+	}
+
+	::align_binary_stream(stream);
+	target.data.push_back(dataBf);
+}
+
