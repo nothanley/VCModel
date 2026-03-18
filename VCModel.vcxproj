@@ -85,7 +85,6 @@
     <ClInclude Include="src\cmodelserializer_ver.h" />
     <ClInclude Include="src\global_defs.hpp" />
     <ClInclude Include="src\materialgen.h" />
-    <ClInclude Include="src\lodbias_debug.h" />
     <ClInclude Include="src\meshstructs.h" />
     <ClInclude Include="src\MikkGen.h" />
     <ClInclude Include="src\modelcereal.h" />
@@ -131,7 +130,6 @@
     <ClCompile Include="src\cmodelserializer_ver.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\materialgen.cpp" />
-    <ClCompile Include="src\lodbias_debug.cpp" />
     <ClCompile Include="src\meshstructs.cpp" />
     <ClCompile Include="src\MikkGen.cpp" />
     <ClCompile Include="src\modelcereal.cpp" />

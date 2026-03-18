@@ -6,7 +6,6 @@
 #include "materialgen.h"
 #include "wavefront.h"
 #include "model_utils.h"
-#include "lodbias_debug.h"
 
 int main()
 {

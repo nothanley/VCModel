@@ -5,7 +5,6 @@
 #include "modelfile.h"
 #include "blendshapes_legacy.h"
 #include "meshbuffers.h"
-#include "lodbias_debug.h"
 
 using namespace memreader;
 
