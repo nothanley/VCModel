@@ -5,6 +5,7 @@
 #include "modelfile.h"
 #include "blendshapes_legacy.h"
 #include "meshbuffers.h"
+#include "lodbias_debug.h"
 
 using namespace memreader;
 
@@ -263,26 +264,17 @@ CSkinModel_2_0::loadModelBones(const uintptr_t& size)
 void
 CSkinModel_2_15::loadUnknownData(Mesh& mesh)
 {
-	(void)mesh;
-
 	float edgeLodBiasA = ReadFloat(m_data);
 	float edgeLodBiasB = ReadFloat(m_data);
 	uint32_t lodCount = ReadUInt32(m_data);
 
 	for (uint32_t i = 0; i < lodCount; ++i)
 	{
-		uint32_t edgeCount  = ReadUInt32(m_data);
-		float maxEdge       = ReadFloat(m_data);
-		float avgEdge       = ReadFloat(m_data);
-		float minEdge       = ReadFloat(m_data);
-		float medianEdge    = ReadFloat(m_data);
-		(void)edgeCount;
-		(void)maxEdge;
-		(void)avgEdge;
-		(void)minEdge;
-		(void)medianEdge;
-		(void)edgeLodBiasA;
-		(void)edgeLodBiasB;
+		auto edgeCount  =  ReadUInt32(m_data);
+		auto maxEdge    =  ReadFloat(m_data);
+		auto avgEdge    =  ReadFloat(m_data);
+		auto minEdge    =  ReadFloat(m_data);
+		auto medianEdge =  ReadFloat(m_data);
 	}
 }
 

@@ -93,7 +93,7 @@ void setMeshData(void* pMesh, float* position, int* indexList, int numVerts, int
 	mesh->generateAABBs();
 
 	/* Setup mesh default mtl - assumes single mat per mesh group */
-	FaceGroup faceMat{ mesh->material, 0, (numFaces * 3) };
+	FaceGroup faceMat{ mesh->material, 0, (numFaces) }; // don't do (numFaces * 3) unless you want to wreck your brain ...
 	mesh->groups.push_back(faceMat);
 }
 

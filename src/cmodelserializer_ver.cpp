@@ -101,6 +101,12 @@ static EdgeLodStat compute_edge_lod_stat(const Mesh* mesh)
 	return out;
 }
 
+static float compute_edge_lod_bias(const Mesh* mesh, float k)
+{
+	if (!mesh || mesh->triangles.empty()) return 0.0f;
+	return k / static_cast<float>(mesh->triangles.size());
+}
+
 void CModelSerializer_2_9::createModelBuffer()
 {
 	StModelBf stream;
@@ -564,21 +570,24 @@ CModelSerializer_2_15::serializeTangents(StMeshBf& target)
 
 void CModelSerializer_2_15::writeUvDictTail(std::stringstream& stream, Mesh* mesh)
 {
-	EdgeLodStat lod0 = compute_edge_lod_stat(mesh);
+	EdgeLodStat lod0  = compute_edge_lod_stat(mesh);
 	uint32_t lodCount = (m_numLods > 0) ? m_numLods : 1;
+	const float kBiasA = 0.00569339f;
+	const float kBiasB = 0.00569648f;
+	const float biasA = compute_edge_lod_bias(mesh, kBiasA);
+	const float biasB = compute_edge_lod_bias(mesh, kBiasB);
 
-	// TODO: bias values are still unknown; keep at 0 until verified.
-	WriteFloat(stream, 0.0f);
-	WriteFloat(stream, 0.0f);
-	WriteUInt32(stream, lodCount);
+	WriteFloat  ( stream, biasA    );
+	WriteFloat  ( stream, biasB    );
+	WriteUInt32 ( stream, lodCount );
 
 	for (uint32_t i = 0; i < lodCount; ++i)
 	{
-		WriteUInt32(stream, lod0.edgeCount);
-		WriteFloat(stream, lod0.maxEdge);
-		WriteFloat(stream, lod0.avgEdge);
-		WriteFloat(stream, lod0.minEdge);
-		WriteFloat(stream, lod0.medianEdge);
+		WriteUInt32 ( stream, lod0.edgeCount  );
+		WriteFloat  ( stream, lod0.maxEdge    );
+		WriteFloat  ( stream, lod0.avgEdge    );
+		WriteFloat  ( stream, lod0.minEdge    );
+		WriteFloat  ( stream, lod0.medianEdge );
 	}
 }
 
