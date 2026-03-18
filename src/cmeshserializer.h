@@ -52,6 +52,7 @@ protected:
 	virtual void serializeBlendShapes(StMeshBf& target);
 	virtual void serializeColorDict(StMeshBf& target);
 	virtual void serializeUVDict(StMeshBf& target);
+	virtual void writeUvDictTail(std::stringstream& stream, Mesh* mesh);
 
 private:
 	void writeMeshShapes(std::stringstream& stream, Mesh* mesh);

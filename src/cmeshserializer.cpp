@@ -269,12 +269,17 @@ void CMeshSerializer::serializeUVDict(StMeshBf& target)
 		WriteUInt32(stream, indexOf(uvMap.name));
 	}
 
-	/* Unknown 2024 values */
-	WriteFloat(stream, 0.0f);
-	WriteFloat(stream, 0.0f);
+	writeUvDictTail(stream, target.mesh);
 
 	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
+}
+
+void CMeshSerializer::writeUvDictTail(std::stringstream& stream, Mesh* mesh)
+{
+	(void)mesh;
+	WriteFloat(stream, 0.0f);
+	WriteFloat(stream, 0.0f);
 }
 
 void CMeshSerializer::generateStringTable()

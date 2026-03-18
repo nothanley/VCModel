@@ -66,6 +66,7 @@ protected:
 	void createModelBuffer() override;
 	void createMaterialBuffer() override;
 	void writeMaterialGroupBuffer(char*& buffer, int meshIndex) override;
+	void writeUvDictTail(std::stringstream& stream, Mesh* mesh) override;
 
 protected:
 	uint32_t getMtlBufferSize(const std::vector<Mesh*>& meshes) override;

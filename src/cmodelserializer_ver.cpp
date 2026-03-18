@@ -7,6 +7,8 @@
 #include "glm/gtx/euler_angles.hpp"
 #include "winsock.h"
 #include <algorithm>
+#include <unordered_set>
+#include <cmath>
 
 using namespace memreader;
 
@@ -33,6 +35,70 @@ inline static bool startsWith(std::string str, std::string prefix)
 	std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 	std::transform(prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
 	return str.substr(0, prefix.length()) == prefix;
+}
+
+struct EdgeLodStat
+{
+	uint32_t edgeCount = 0;
+	float maxEdge = 0.0f;
+	float avgEdge = 0.0f;
+	float minEdge = 0.0f;
+	float medianEdge = 0.0f;
+};
+
+static uint64_t make_edge_key(uint32_t a, uint32_t b)
+{
+	uint32_t lo = (a < b) ? a : b;
+	uint32_t hi = (a < b) ? b : a;
+	return (uint64_t(hi) << 32) | uint64_t(lo);
+}
+
+static EdgeLodStat compute_edge_lod_stat(const Mesh* mesh)
+{
+	EdgeLodStat out{};
+	if (!mesh || mesh->triangles.empty()) return out;
+
+	std::unordered_set<uint64_t> edges;
+	edges.reserve(mesh->triangles.size() * 3);
+	std::vector<float> lengths;
+	lengths.reserve(mesh->triangles.size() * 3);
+
+	auto push_edge = [&](uint32_t a, uint32_t b)
+	{
+		uint64_t key = make_edge_key(a, b);
+		if (!edges.insert(key).second) return;
+
+		Vec3 va = mesh->vertex(static_cast<int>(a));
+		Vec3 vb = mesh->vertex(static_cast<int>(b));
+		Vec3 d  = va - vb;
+		float len = std::sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+		lengths.push_back(len);
+	};
+
+	for (const auto& tri : mesh->triangles)
+	{
+		push_edge(tri[0], tri[1]);
+		push_edge(tri[1], tri[2]);
+		push_edge(tri[2], tri[0]);
+	}
+
+	if (lengths.empty()) return out;
+
+	out.edgeCount = static_cast<uint32_t>(lengths.size());
+	out.maxEdge = *std::max_element(lengths.begin(), lengths.end());
+	out.minEdge = *std::min_element(lengths.begin(), lengths.end());
+
+	double sum = 0.0;
+	for (float v : lengths) sum += v;
+	out.avgEdge = static_cast<float>(sum / lengths.size());
+
+	std::sort(lengths.begin(), lengths.end());
+	size_t mid = lengths.size() / 2;
+	out.medianEdge = (lengths.size() % 2 == 1)
+		? lengths[mid]
+		: (lengths[mid - 1] + lengths[mid]) * 0.5f;
+
+	return out;
 }
 
 void CModelSerializer_2_9::createModelBuffer()
@@ -494,5 +560,25 @@ CModelSerializer_2_15::serializeTangents(StMeshBf& target)
 
 	::align_binary_stream(stream);
 	target.data.push_back(dataBf);
+}
+
+void CModelSerializer_2_15::writeUvDictTail(std::stringstream& stream, Mesh* mesh)
+{
+	EdgeLodStat lod0 = compute_edge_lod_stat(mesh);
+	uint32_t lodCount = (m_numLods > 0) ? m_numLods : 1;
+
+	// TODO: bias values are still unknown; keep at 0 until verified.
+	WriteFloat(stream, 0.0f);
+	WriteFloat(stream, 0.0f);
+	WriteUInt32(stream, lodCount);
+
+	for (uint32_t i = 0; i < lodCount; ++i)
+	{
+		WriteUInt32(stream, lod0.edgeCount);
+		WriteFloat(stream, lod0.maxEdge);
+		WriteFloat(stream, lod0.avgEdge);
+		WriteFloat(stream, lod0.minEdge);
+		WriteFloat(stream, lod0.medianEdge);
+	}
 }
 
